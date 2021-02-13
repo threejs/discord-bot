@@ -10,9 +10,6 @@ const Help = {
       return msg.channel.send(
         embed({
           title: 'Commands',
-          footer: {
-            text: `${config.prefix}help`,
-          },
           fields: client.commands.map(({ name, args, description }) => {
             return {
               name: `${config.prefix}${name}${

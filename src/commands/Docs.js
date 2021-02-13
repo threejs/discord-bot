@@ -1,15 +1,22 @@
 import chalk from 'chalk';
 import config from '../config';
-import { getDocs, embed, puppeteer, transformMarkdown } from '../utils';
+import { embed, getDocs, puppeteer, transformMarkdown } from '../utils';
 
 const Docs = {
   name: 'docs',
   description: 'Searches https://threejs.org/docs for specified query or class.',
   args: ['query or class'],
-  async execute({ msg, args }) {
+  async execute({ args, msg }) {
     try {
       const [entry] = args;
-      if (!entry) return;
+      if (!entry) {
+        return msg.channel.send(
+          embed({
+            title: 'Invalid usage.',
+            description: `Usage: \`${config.prefix}docs <query or class>\``,
+          })
+        );
+      }
 
       const [query, ...rest] = entry.split(/[.#]+/);
       const properties = rest ? `.${rest.join('.')}` : '';

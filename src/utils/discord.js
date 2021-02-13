@@ -39,9 +39,9 @@ export const transformMarkdown = (html, query) => {
   // Convert HTML to markdown
   const markdown = target
     .replace(/<\/?code>/g, '```')
-    .replace(/<?\/h1>/g, '**')
+    .replace(/<\/?h1>/g, '**')
     .replace(/<span.*?>([^<]*)<\/span>/gim, '$1')
-    .replace(/<a.+class="permalink">#<\/a>/g, '')
+    .replace(/<a.*?class="permalink">#<\/a>/g, '')
     .replace(/<a.*?onclick=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '$2')
     .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
     .replace(/\s+/g, ' ')

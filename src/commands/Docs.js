@@ -35,9 +35,7 @@ const Docs = {
           const { name: title, url } = entries[0];
           const description = await puppeteer(url, transformMarkdown);
 
-          return msg.channel.send({
-            embed: { title, url, description },
-          });
+          return msg.channel.send(embed({ title, url, description }));
         }
         default:
           return msg.channel.send(

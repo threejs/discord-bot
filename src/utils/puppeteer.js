@@ -1,15 +1,15 @@
-import { launch } from 'puppeteer';
-
-const args = ['--no-sandbox', '--disable-setuid-sandbox'];
+import puppeteer from 'puppeteer';
 
 /**
- * Fetches and crawls a url and executes a callback
+ * Fetches and crawls a url, executing a callback
  */
-export const puppeteer = async (url, callback) => {
+export const crawl = async (url, callback, args) => {
   if (!url) return null;
 
   try {
-    const browser = await launch({ args });
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
 
     await page.setRequestInterception(true);
@@ -24,11 +24,17 @@ export const puppeteer = async (url, callback) => {
       }
     });
 
-    const document = await page.evaluate(callback, url);
+    await page.goto(url);
+
+    await page.waitForSelector('iframe');
+
+    const document = await page.evaluate(
+      () => document.querySelector('iframe').contentWindow.document.body.innerHTML
+    );
 
     await browser.close();
 
-    return document;
+    return callback(document, args);
   } catch (error) {
     console.error(error);
   }

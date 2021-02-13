@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import config from '../config';
-import { embed, getDocs, puppeteer, transformMarkdown } from '../utils';
+import { embed, getDocs, crawl, transformMarkdown } from '../utils';
 
 const Docs = {
   name: 'docs',
@@ -19,7 +19,7 @@ const Docs = {
       }
 
       const [query, ...rest] = entry.split(/[.#]+/);
-      const properties = rest ? `.${rest.join('.')}` : '';
+      const properties = rest.length > 0 ? `.${rest.join('.')}` : '';
 
       const docs = await getDocs('en');
       const entries = Object.keys(docs)
@@ -40,7 +40,11 @@ const Docs = {
           );
         case 1: {
           const { name: title, url } = entries[0];
-          const description = await puppeteer(url, transformMarkdown);
+          const description = await crawl(
+            url,
+            transformMarkdown,
+            properties && `${query}${properties}`
+          );
 
           return msg.channel.send(embed({ title, url, description }));
         }

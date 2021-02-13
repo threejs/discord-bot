@@ -12,7 +12,7 @@ class Bot extends Client {
 
   loadEvents(dir) {
     readdir(`${dir}${sep}events`, (error, events) => {
-      if (error) return console.log(error);
+      if (error) return console.error(error);
 
       events.forEach(event => {
         const handler = require(`${dir}${sep}events${sep}${event}`).default;

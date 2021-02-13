@@ -26,10 +26,10 @@ export const crawl = async (url, callback, args) => {
 
     await page.goto(url);
 
-    await page.waitForSelector('iframe');
-
     const document = await page.evaluate(
-      () => document.querySelector('iframe').contentWindow.document.body.innerHTML
+      () =>
+        (document.querySelector('iframe')?.contentWindow.document || document).body
+          .innerHTML
     );
 
     await browser.close();

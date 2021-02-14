@@ -13,7 +13,7 @@ export const transformMarkdown = (html, query) => {
     // Early return if we're not scraping
     const elements = Array.from(document.body.children);
     const element = elements.find(node =>
-      node.outerHTML.toLowerCase().includes(query.toLowerCase())
+      node.outerHTML.toLowerCase().includes(query?.toLowerCase())
     );
     if (!element) return document.body.innerHTML;
 

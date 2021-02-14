@@ -57,7 +57,9 @@ const Docs = {
             `${name}${properties}`
           );
 
-          return msg.channel.send(embed({ title, url, description }));
+          return msg.channel.send(
+            embed({ title, url: `${url}${properties}`, description })
+          );
         }
         default:
           // Handle multiple results

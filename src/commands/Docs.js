@@ -33,6 +33,9 @@ const Docs = {
           url: `${config.apiEndpoint}${docs[key]}${properties}`,
         }));
 
+      // Limit to first 10 results
+      if (results.length > 10) results.length = 10;
+
       switch (results.length) {
         case 0:
           // Handle no results

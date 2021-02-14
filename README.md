@@ -35,6 +35,7 @@ yarn test
 | ------- | ---------------- | ------------------------------------------------------------------------------------------- |
 | !docs   | `query or class` | Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class. |
 | !help   | _none_           | Displays this bot's commands.                                                               |
+| !uptime | _none_           | Responds with this bot's current uptime.                                                    |
 
 ## !docs
 
@@ -47,3 +48,9 @@ Usage: `!docs vector3#set`
 Displays this bot's commands.
 
 Usage: `!help`
+
+## !uptime
+
+Responds with this bot's current uptime.
+
+Usage: `!uptime`

@@ -23,17 +23,11 @@ describe('utils/embed', () => {
   it('generates an embed template', () => {
     const output = embed({ title: 'title', description: 'description' });
 
+    expect(output.embed.title).toBe('title');
+    expect(output.embed.description).toBe('description');
+    expect(output.embed.color).toBe(config.color);
     expect(output.embed.timestamp).toBeDefined();
-
-    delete output.embed.timestamp;
-
-    expect(output).toStrictEqual({
-      embed: {
-        title: 'title',
-        description: 'description',
-        color: config.color,
-      },
-    });
+    expect(output.embed.author).toBeDefined();
   });
 });
 

@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import fuzzysort from 'fuzzysort';
 import config from '../config';
 import { embed, getDocs, crawl, transformMarkdown } from '../utils';
 
@@ -24,21 +25,36 @@ const Docs = {
       const [query, ...rest] = arg.split(/[.#]+/);
       const properties = rest.length > 0 ? `.${rest.join('.')}` : '';
 
+      // Fetches strict results and uses fuzzy searching as fallback
+      let results = [];
+
       // Get localized docs
       const docs = await getDocs('en');
-      const results = Object.keys(docs)
+
+      // Get strict results
+      results = Object.keys(docs)
         .filter(entry => entry.toLowerCase().includes(query.toLowerCase()))
-        .map(key => ({
-          name: `${key}${properties}`,
-          url: `${config.apiEndpoint}${docs[key]}${properties}`,
+        ?.map(name => ({
+          name,
+          url: `${config.apiEndpoint}${docs[name]}${properties}`,
         }));
 
-      // Limit to first 10 results
-      if (results.length > 10) results.length = 10;
+      // Fallback to fuzzy-matched results
+      if (!results.length) {
+        results = fuzzysort
+          .go(query, Object.keys(docs))
+          ?.sort((a, b) => a - b)
+          .map(({ target }) => ({
+            name: target,
+            url: `${config.apiEndpoint}${docs[target]}`,
+          }));
+      }
 
-      switch (results.length) {
+      results = results?.filter(Boolean);
+
+      switch (results?.length) {
         case 0:
-          // Handle no results
+          // Offer alternative results
           return msg.channel.send(
             embed({
               title: `No results were found for "${args.join(' ')}"`,
@@ -48,11 +64,11 @@ const Docs = {
           );
         case 1: {
           // Handle single result
-          const { url } = results[0];
+          const { url, name } = results[0];
           const { title, description } = await crawl(
             url,
             transformMarkdown,
-            `${query}${properties}`
+            `${name}${properties}`
           );
 
           return msg.channel.send(embed({ title, url, description }));
@@ -63,6 +79,7 @@ const Docs = {
             embed({
               title: `Results for "${args.join(' ')}"`,
               description: results
+                .filter((_, index) => index < 10)
                 .map(({ name, url }) => `**[${name}](${url})**`)
                 .join('\n'),
             })

@@ -22,6 +22,7 @@
     "chalk": "4.1.0",
     "discord.js": "12.5.1",
     "dotenv": "8.2.0",
+    "fuzzysort": "^1.1.4",
     "jsdom": "^16.4.0",
     "node-fetch": "^2.6.1",
     "puppeteer": "^7.1.0"
@@ -30,7 +31,7 @@
     "start": "nodemon --exec babel-node src/index.js",
     "serve": "babel-node src/index.js",
     "test": "jest --watchAll --verbose --testTimeout=10000",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "format": "prettier src --write"
   },
   "jest": {

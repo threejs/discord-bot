@@ -21,9 +21,6 @@ const Uptime = {
         embed({
           title: 'Uptime',
           description: `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`,
-          footer: {
-            text: '!uptime',
-          },
         })
       );
     } catch (error) {

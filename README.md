@@ -6,8 +6,9 @@ Discord bot for the [three.js Discord server](https://discord.gg/HF4UdyF).
 
 - [Install and Run](#install--run)
 - [Commands](#commands)
-  - [Help](#help)
   - [Docs](#docs)
+  - [Help](#help)
+  - [Uptime](#uptime)
 
 ## Install & run
 

@@ -23,12 +23,15 @@ describe('utils/embed', () => {
   it('generates an embed template', () => {
     const output = embed({ title: 'title', description: 'description' });
 
+    expect(output.embed.timestamp).toBeDefined();
+
+    delete output.embed.timestamp;
+
     expect(output).toStrictEqual({
       embed: {
         title: 'title',
         description: 'description',
         color: config.color,
-        timestamp: new Date(),
       },
     });
   });

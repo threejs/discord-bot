@@ -10,32 +10,50 @@ class Bot extends Client {
     this.commands = new Collection();
   }
 
-  loadEvents(dir) {
-    readdir(`${dir}${sep}events`, (error, events) => {
-      if (error) return console.error(error);
+  async loadEvents(dir) {
+    return await Promise.resolve(
+      new Promise((resolve, reject) => {
+        readdir(`${dir}${sep}events`, (error, events) => {
+          if (error) return reject(error);
 
-      events.forEach(event => {
-        const handler = require(`${dir}${sep}events${sep}${event}`).default;
+          events.forEach(event => {
+            const handler = require(`${dir}${sep}events${sep}${event}`).default;
 
-        this.on(event.split('.').shift(), (...args) => handler(this, ...args));
-      });
+            this.on(event.split('.').shift(), (...args) => handler(this, ...args));
+          });
 
-      console.info(`${chalk.cyanBright('[Bot]')} ${events.length} events loaded`);
-    });
+          if (process.env.NODE_ENV !== 'test') {
+            console.info(`${chalk.cyanBright('[Bot]')} ${events.length} events loaded`);
+          }
+
+          resolve(true);
+        });
+      })
+    );
   }
 
-  loadCommands(dir) {
-    readdir(`${dir}${sep}commands`, (error, commands) => {
-      if (error) return console.error(error);
+  async loadCommands(dir) {
+    return await Promise.resolve(
+      new Promise((resolve, reject) => {
+        readdir(`${dir}${sep}commands`, (error, commands) => {
+          if (error) return reject(error);
 
-      commands.forEach(command => {
-        const handler = require(`${dir}${sep}commands${sep}${command}`).default;
+          commands.forEach(command => {
+            const handler = require(`${dir}${sep}commands${sep}${command}`).default;
 
-        this.commands.set(handler.name, handler);
-      });
+            this.commands.set(handler.name, handler);
+          });
 
-      console.info(`${chalk.cyanBright('[Bot]')} ${commands.length} commands loaded`);
-    });
+          if (process.env.NODE_ENV !== 'test') {
+            console.info(
+              `${chalk.cyanBright('[Bot]')} ${commands.length} commands loaded`
+            );
+          }
+
+          resolve(true);
+        });
+      })
+    );
   }
 }
 

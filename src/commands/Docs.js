@@ -57,8 +57,13 @@ const Docs = {
             `${name}${properties}`
           );
 
+          // Return auto-generated url and props
           return msg.channel.send(
-            embed({ title, url: `${url}${properties}`, description })
+            embed({
+              title,
+              url: rest.length ? url.replace(name, title.split('(').shift()).trim() : url,
+              description,
+            })
           );
         }
         default:

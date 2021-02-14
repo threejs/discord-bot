@@ -10,14 +10,10 @@ const Help = {
       return msg.channel.send(
         embed({
           title: 'Commands',
-          fields: client.commands.map(({ name, args, description }) => {
-            return {
-              name: `${config.prefix}${name}${
-                args ? args.map(arg => ` \`${arg}\``) : ''
-              }`,
-              value: description,
-            };
-          }),
+          fields: client.commands.map(({ name, args, description }) => ({
+            name: `${config.prefix}${name}${args ? args.map(arg => ` \`${arg}\``) : ''}`,
+            value: description,
+          })),
         })
       );
     } catch (error) {

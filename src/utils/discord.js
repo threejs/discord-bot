@@ -40,19 +40,26 @@ export const transformMarkdown = (html, query) => {
 
   // Convert HTML to markdown
   const markdown = target
-    .replace(/<\/?code>/g, '```')
-    .replace(/<\/?h1>/g, '**')
+    .replace(/<\/?code>/gi, '```')
+    .replace(/<\/?h1>/gi, '**')
     .replace(/<span.*?>([^<]*)<\/span>/gim, '$1')
-    .replace(/<a.*?class="permalink">#<\/a>/g, '')
+    .replace(/<a.*?class="permalink">#<\/a>/gim, '')
     .replace(/<a.*?onclick=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '$2')
     .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
     .replace(/\s+/g, ' ')
-    .replace(/(\n \n|\n\n)/g, '\n')
+    .replace(/(\n \n|\n\n|<br\/?>)/gi, '\n')
     .replace(/<\/?.>/g, '')
     .trim();
 
   if (markdown.includes(metaDelimiter)) {
     const [title, description] = markdown.split(metaDelimiter);
+
+    // Fix method formatting in title
+    if (/^[a-zA-Z0-9_-]+\s\./.test(title)) {
+      const entries = title.split(/\s+\./);
+
+      return { title: `${entries.shift()}.${entries.join(' .').trim()}`, description };
+    }
 
     return { title, description };
   }

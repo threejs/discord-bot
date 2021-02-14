@@ -25,32 +25,18 @@ const Docs = {
       const [query, ...rest] = arg.split(/[.#]+/);
       const properties = rest.length > 0 ? `.${rest.join('.')}` : '';
 
-      // Fetches strict results and uses fuzzy searching as fallback
-      let results = [];
-
       // Get localized docs
       const docs = await getDocs('en');
 
-      // Get strict results
-      results = Object.keys(docs)
-        .filter(entry => entry.toLowerCase().includes(query.toLowerCase()))
-        ?.map(name => ({
-          name,
-          url: `${config.apiEndpoint}${docs[name]}${properties}`,
-        }));
-
-      // Fallback to fuzzy-matched results
-      if (!results.length) {
-        results = fuzzysort
-          .go(query, Object.keys(docs))
-          ?.sort((a, b) => a - b)
-          .map(({ target }) => ({
-            name: target,
-            url: `${config.apiEndpoint}${docs[target]}`,
-          }));
-      }
-
-      results = results?.filter(Boolean);
+      // Get localized results
+      const results = fuzzysort
+        .go(query, Object.keys(docs))
+        ?.sort((a, b) => a - b)
+        .map(({ target }) => ({
+          name: target,
+          url: `${config.apiEndpoint}${docs[target]}`,
+        }))
+        .filter(Boolean);
 
       switch (results?.length) {
         case 0:

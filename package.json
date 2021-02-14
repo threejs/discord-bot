@@ -31,6 +31,7 @@
     "start": "nodemon --exec babel-node src/index.js",
     "serve": "babel-node src/index.js",
     "test": "jest --watchAll --verbose --testTimeout=10000",
+    "test:ci": "jest .",
     "lint": "eslint src",
     "format": "prettier src --write"
   },

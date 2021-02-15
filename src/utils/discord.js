@@ -21,26 +21,11 @@ export const transformMarkdown = (html, query) => {
 
     // Class defaults
     const title = document.querySelector('h1');
-    const descElement = document.querySelector('.desc');
-    const description = elements
-      .slice(
-        elements.indexOf(descElement),
-        elements.indexOf(
-          elements
-            .slice(elements.indexOf(descElement) + 1)
-            .find(
-              element => !['P', 'UL', 'BR'].includes(element.nextElementSibling.tagName)
-            )
-        )
-      )
-      .map(element => element.innerHTML)
-      .join('\n');
+    const description = document.querySelector('.desc');
 
     // Method properties
-    const methodDesc = (element.nextElementSibling.tagName === 'H3'
-      ? element
-      : element.nextElementSibling
-    ).innerHTML;
+    const methodDesc =
+      element.nextElementSibling.tagName === 'H3' ? element : element.nextElementSibling;
     const methodArgs = `${title.innerHTML}${element.innerHTML}`;
     const isMethod = !!element.querySelector('a.permalink');
 
@@ -50,7 +35,11 @@ export const transformMarkdown = (html, query) => {
 
     const args = `${isMethod ? methodArgs : constructorArgs}${metaDelimiter}`;
 
-    return `${args}${isMethod ? methodDesc : description}`;
+    return `${args}${(isMethod ? methodDesc : description).innerHTML}${
+      isMethod || description.nextElementSibling.outerHTML.includes('Constructor')
+        ? ''
+        : '...'
+    }`;
   };
 
   // Find element by query if specified and skip to descriptor if method

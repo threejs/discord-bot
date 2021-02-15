@@ -17,6 +17,16 @@ describe('utils/discord', () => {
     expect(title).toBe('Class()');
     expect(description).toBe('Class description.');
   });
+
+  it('shows a trail if HTML meta is trimmed', () => {
+    const { title, description } = transformMarkdown(
+      '<h1>Class</h1><p class="desc">Class description.</p><p>More stuff.</p><h2>Constructor</h2><h3>Class()</h3>',
+      'class'
+    );
+
+    expect(title).toBe('Class()');
+    expect(description).toBe('Class description....');
+  });
 });
 
 describe('utils/embed', () => {

@@ -6,12 +6,6 @@ import config from '../config';
 export const embed = props => ({
   embed: {
     color: config.color,
-    author: {
-      name: 'Three.js docs',
-      icon_url: config.icon,
-      url: `${config.apiEndpoint}manual/en/introduction/Creating-a-scene`,
-    },
-    timestamp: new Date(),
     ...props,
   },
 });

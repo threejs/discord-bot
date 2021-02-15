@@ -26,8 +26,6 @@ describe('utils/embed', () => {
     expect(output.embed.title).toBe('title');
     expect(output.embed.description).toBe('description');
     expect(output.embed.color).toBe(config.color);
-    expect(output.embed.timestamp).toBeDefined();
-    expect(output.embed.author).toBeDefined();
   });
 });
 

@@ -54,11 +54,14 @@ export const transformMarkdown = (html, query) => {
   if (markdown.includes(metaDelimiter)) {
     const [title, description] = markdown.split(metaDelimiter);
 
-    // Fix method formatting in title
+    // Split properties from title
     if (/^[a-zA-Z0-9_-]+\s\./.test(title)) {
-      const entries = title.split(/\s+\./);
+      const [object, ...props] = title.split(/\s+\./);
 
-      return { title: `${entries.shift()}.${entries.join(' .').trim()}`, description };
+      const property = props.join('.').split('(').shift().trim();
+      const classTitle = `${object}.${property}`;
+
+      return { title: classTitle, property, description };
     }
 
     return { title, description };

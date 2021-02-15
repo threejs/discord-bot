@@ -35,7 +35,11 @@ export const transformMarkdown = (html, query) => {
 
     const args = `${isMethod ? methodArgs : constructorArgs}${metaDelimiter}`;
 
-    return `${args}${(isMethod ? methodDesc : description).innerHTML}`;
+    return `${args}${(isMethod ? methodDesc : description).innerHTML}${
+      isMethod || description.nextElementSibling.outerHTML.includes('Constructor')
+        ? ''
+        : '...'
+    }`;
   };
 
   // Find element by query if specified and skip to descriptor if method

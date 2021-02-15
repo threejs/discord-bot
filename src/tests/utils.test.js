@@ -10,12 +10,22 @@ describe('utils/discord', () => {
 
   it('transforms HTML meta to markdown meta', () => {
     const { title, description } = transformMarkdown(
-      '<h1>class</h1><h2>Constructor</h2><h3>title</h3><p class="desc">description</p>',
+      '<h1>Class</h1><p class="desc">Class description.</p><h2>Constructor</h2><h3>Class()</h3>',
       'class'
     );
 
-    expect(title).toBe('title');
-    expect(description).toBe('description');
+    expect(title).toBe('Class()');
+    expect(description).toBe('Class description.');
+  });
+
+  it('shows a trail if HTML meta is trimmed', () => {
+    const { title, description } = transformMarkdown(
+      '<h1>Class</h1><p class="desc">Class description.</p><p>More stuff.</p><h2>Constructor</h2><h3>Class()</h3>',
+      'class'
+    );
+
+    expect(title).toBe('Class()');
+    expect(description).toBe('Class description....');
   });
 });
 

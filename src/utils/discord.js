@@ -12,8 +12,10 @@ export const transformMarkdown = (html, query) => {
   const getTargetElement = () => {
     // Early return if we're not scraping
     const elements = Array.from(document.body.children);
-    const element = elements.find(node =>
-      node.outerHTML.toLowerCase().includes(query?.toLowerCase())
+    const element = elements.find(
+      node =>
+        ['H1', 'H3'].includes(node.tagName) &&
+        node.outerHTML.toLowerCase().includes(query?.toLowerCase())
     );
     if (!element) return document.body.innerHTML;
 
@@ -22,9 +24,10 @@ export const transformMarkdown = (html, query) => {
     const description = document.querySelector('.desc');
 
     // Method properties
-    const methodText = element.nextElementSibling;
+    const methodDesc =
+      element.nextElementSibling.tagName === 'H3' ? element : element.nextElementSibling;
     const methodArgs = `${title.innerHTML}${element.innerHTML}`;
-    const isMethod = /<a.+class="permalink">#<\/a>/.test(element.innerHTML);
+    const isMethod = !!element.querySelector('a.permalink');
 
     // Constructor properties
     const constructor = elements.find(node => node.outerHTML.includes('Constructor'));
@@ -32,7 +35,7 @@ export const transformMarkdown = (html, query) => {
 
     const args = `${isMethod ? methodArgs : constructorArgs}${metaDelimiter}`;
 
-    return `${args}${(isMethod ? methodText : description).innerHTML}`;
+    return `${args}${(isMethod ? methodDesc : description).innerHTML}`;
   };
 
   // Find element by query if specified and skip to descriptor if method
@@ -47,18 +50,22 @@ export const transformMarkdown = (html, query) => {
     .replace(/<a.*?onclick=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '$2')
     .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
     .replace(/\s+/g, ' ')
-    .replace(/(\n \n|\n\n|<br\/?>)/gi, '\n')
+    .replace(/(\s\.)+/, '.')
+    .replace(/(\n\s?\n|<br\/?>)/gi, '\n')
     .replace(/<\/?.>/g, '')
     .trim();
 
-  if (markdown.includes(metaDelimiter)) {
-    const [title, description] = markdown.split(metaDelimiter);
+  if (query) {
+    const [title, description] = markdown.split(metaDelimiter) || [markdown];
 
     // Split properties from title
-    if (/^[a-zA-Z0-9_-]+\s\./.test(title)) {
-      const [object, ...props] = title.split(/\s+\./);
+    if (/^[a-zA-Z0-9_-]+\./.test(title)) {
+      const [object, ...props] = title.split('.');
 
-      const property = props.join('.').split('(').shift().trim();
+      const property = props
+        .join('.')
+        .replace(/(\(|:).+/, '')
+        .trim();
       const classTitle = `${object}.${property}`;
 
       return { title: classTitle, property, description };

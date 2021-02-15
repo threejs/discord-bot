@@ -56,8 +56,8 @@ describe('commands/Docs', () => {
     await command.execute({ client, msg, args });
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith(...args)).toBe(true);
-    expect(output.embed.url.endsWith(...args)).toBe(true);
+    expect(output.embed.title.startsWith('Vector3.set')).toBe(true);
+    expect(output.embed.url.endsWith('Vector3.set')).toBe(true);
     expect(output.embed.description).toBeDefined();
   });
 
@@ -77,14 +77,13 @@ describe('commands/Docs', () => {
   it('gets a class property', async () => {
     const command = client.commands.get('docs');
     const msg = message('!docs');
-    const args = ['Vector3.length'];
+    const args = ['Vector3.x'];
 
     await command.execute({ client, msg, args });
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3.length')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3.length')).toBe(true);
-    expect(output.embed.description).toBeDefined();
+    expect(output.embed.title.startsWith('Vector3.x')).toBe(true);
+    expect(output.embed.url.endsWith('Vector3.x')).toBe(true);
   });
 
   it('fuzzily gets a specified class', async () => {
@@ -109,17 +108,16 @@ describe('commands/Docs', () => {
     expect(output).toBeDefined();
   });
 
-  it('fizzily gets a class property', async () => {
+  it('fuzzily gets a class property', async () => {
     const command = client.commands.get('docs');
     const msg = message('!docs');
-    const args = ['Vectr3.length'];
+    const args = ['Vectr3.x'];
 
     await command.execute({ client, msg, args });
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3.length')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3.length')).toBe(true);
-    expect(output.embed.description).toBeDefined();
+    expect(output.embed.title.startsWith('Vector3.x')).toBe(true);
+    expect(output.embed.url.endsWith('Vector3.x')).toBe(true);
   });
 });
 

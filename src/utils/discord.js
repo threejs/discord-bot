@@ -21,11 +21,26 @@ export const transformMarkdown = (html, query) => {
 
     // Class defaults
     const title = document.querySelector('h1');
-    const description = document.querySelector('.desc');
+    const descElement = document.querySelector('.desc');
+    const description = elements
+      .slice(
+        elements.indexOf(descElement),
+        elements.indexOf(
+          elements
+            .slice(elements.indexOf(descElement) + 1)
+            .find(
+              element => !['P', 'UL', 'BR'].includes(element.nextElementSibling.tagName)
+            )
+        )
+      )
+      .map(element => element.innerHTML)
+      .join('\n');
 
     // Method properties
-    const methodDesc =
-      element.nextElementSibling.tagName === 'H3' ? element : element.nextElementSibling;
+    const methodDesc = (element.nextElementSibling.tagName === 'H3'
+      ? element
+      : element.nextElementSibling
+    ).innerHTML;
     const methodArgs = `${title.innerHTML}${element.innerHTML}`;
     const isMethod = !!element.querySelector('a.permalink');
 
@@ -35,11 +50,7 @@ export const transformMarkdown = (html, query) => {
 
     const args = `${isMethod ? methodArgs : constructorArgs}${metaDelimiter}`;
 
-    return `${args}${(isMethod ? methodDesc : description).innerHTML}${
-      isMethod || description.nextElementSibling.outerHTML.includes('Constructor')
-        ? ''
-        : '...'
-    }`;
+    return `${args}${isMethod ? methodDesc : description}`;
   };
 
   // Find element by query if specified and skip to descriptor if method
@@ -48,7 +59,7 @@ export const transformMarkdown = (html, query) => {
   // Convert HTML to markdown
   const markdown = target
     .replace(/<\/?code>/gi, '```')
-    .replace(/<\/?h1>/gi, '**')
+    .replace(/<\/?h[0-9]>/gi, '**')
     .replace(/<span.*?>([^<]*)<\/span>/gim, '$1')
     .replace(/<a.*?class="permalink">#<\/a>/gim, '')
     .replace(/<a.*?onclick=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '$2')
@@ -56,7 +67,7 @@ export const transformMarkdown = (html, query) => {
     .replace(/\s+/g, ' ')
     .replace(/(\s\.)+/, '.')
     .replace(/(\n\s?\n|<br\/?>)/gi, '\n')
-    .replace(/<\/?.>/g, '')
+    .replace(/<\/?(br|li|div)>/gi, '')
     .trim();
 
   if (query) {

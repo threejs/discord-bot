@@ -43,7 +43,7 @@ describe('utils/puppeteer', () => {
   it('crawls a webpage and callsback', async () => {
     const output = await crawl('about:blank', res => res + 'callback');
 
-    expect(output.includes('callback')).toBe(true);
+    expect(output).toBe('callback');
   });
 });
 

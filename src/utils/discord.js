@@ -69,19 +69,9 @@ export const transformMarkdown = (html, query) => {
       const [title, description] = markdown.split(META_DELIMITER) || [markdown];
 
       // Split properties from title
-      if (/^[a-zA-Z0-9_-]+\./.test(title)) {
-        const [object, ...props] = title.split('.');
+      const property = title.replace(/.*\.|(\s*?(\(|:).*)/g, '');
 
-        const property = props
-          .join('.')
-          .replace(/(\(|:).+/, '')
-          .trim();
-        const classTitle = `${object}.${property}`;
-
-        return { title: classTitle, property, description };
-      }
-
-      return { title, description };
+      return { title, property, description };
     }
 
     return markdown;

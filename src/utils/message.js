@@ -30,6 +30,6 @@ export const sendMessage = async (client, content) => {
 
     return message;
   } catch (error) {
-    console.error(chalk.red(`sendMessage >> ${error.stack}`));
+    console.error(chalk.red(`message/sendMessage >> ${error.stack}`));
   }
 };

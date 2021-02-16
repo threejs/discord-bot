@@ -57,7 +57,9 @@ const Examples = {
           const [{ tags, name: title, ...rest }] = results;
 
           // List tags in result
-          const description = `Tags: ${tags.length ? tags.join(', ') : 'none'}`;
+          const description = `Tags: ${tags
+            .map(tag => `[${tag}](${config.examples.url}?q=${tag})`)
+            .join(', ')}`;
 
           return msg.channel.send(
             embed({

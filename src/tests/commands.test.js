@@ -91,6 +91,44 @@ describe('commands/Docs', () => {
   });
 });
 
+describe('commands/Examples', () => {
+  it('has fallback on no result', async () => {
+    const msg = await sendMessage(client, `${config.prefix}examples ThisDoesNotExist`);
+
+    const [output] = msg.channel.messages;
+    expect(output.embed.title.includes('ThisDoesNotExist')).toBe(true);
+  });
+
+  it('gets multiple results', async () => {
+    const msg = await sendMessage(client, `${config.prefix}examples webgl`);
+
+    const [output] = msg.channel.messages;
+    expect(output.embed.title.includes('webgl')).toBe(true);
+  });
+
+  it('gets a result by key', async () => {
+    const msg = await sendMessage(
+      client,
+      `${config.prefix}examples webgl_animation_cloth`
+    );
+
+    const [output] = msg.channel.messages;
+    expect(output.embed.title.includes('webgl_animation_cloth')).toBe(true);
+    expect(output.embed.description.includes('Tags')).toBe(true);
+  });
+
+  it('fuzzily gets a result by key', async () => {
+    const msg = await sendMessage(
+      client,
+      `${config.prefix}examples webgl animation cloth`
+    );
+
+    const [output] = msg.channel.messages;
+    expect(output.embed.title.includes('webgl_animation_cloth')).toBe(true);
+    expect(output.embed.description.includes('Tags')).toBe(true);
+  });
+});
+
 describe('commands/Help', () => {
   it("displays this bot's commands", async () => {
     const msg = await sendMessage(client, `${config.prefix}help`);

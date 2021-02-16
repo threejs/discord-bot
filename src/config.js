@@ -6,11 +6,17 @@ dotenv.config();
  * Bot config vars
  */
 const config = {
-  apiEndpoint: process.env.APIENDPOINT || 'https://threejs.org/docs/index.html#',
-  docsEndpoint: process.env.DOCSENDPOINT || 'https://threejs.org/docs/list.json',
-  icon:
-    process.env.ICON ||
-    'https://rawcdn.githack.com/mrdoob/three.js/dc2b340839e0fb1cf810a08dfbccf534121606b8/icon.png',
+  docs: {
+    url: process.env.DOCS_URL || 'https://threejs.org/docs/index.html#',
+    list: process.env.DOCS_LIST || 'https://threejs.org/docs/list.json',
+  },
+  examples: {
+    url: process.env.EXAMPLES_URL || 'https://threejs.org/examples/',
+    list: process.env.EXAMPLES_LIST || 'https://threejs.org/examples/files.json',
+    tags: process.env.EXAMPLES_TAGS || 'https://threejs.org/examples/tags.json',
+  },
+  github: process.env.GITHUB || 'https://github.com/threejs/discord-bot',
+  icon: process.env.ICON || 'https://threejs.org/editor/images/icon.png',
   color: process.env.COLOR || 0x049ef4,
   prefix: process.env.PREFIX || '!',
   locale: process.env.LOCALE || 'en',

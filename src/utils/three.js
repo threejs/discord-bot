@@ -3,19 +3,18 @@ import fetch from 'node-fetch';
 import config from '../config';
 
 /**
- * Returns a breakdown of the three.js docs in an optional locale
+ * Returns a list of the three.js docs in an optional locale
  */
 export const getDocs = async locale => {
   try {
-    const response = await fetch(config.docsEndpoint);
-    const json = await response.json();
+    const json = await fetch(config.docs.list).then(res => res.json());
 
     const docs = Object.assign(
       {},
       ...(function _flatten(o) {
         return [].concat(
-          ...Object.keys(o).map(v =>
-            typeof o[v] === 'object' ? _flatten(o[v]) : { [v]: o[v] }
+          ...Object.keys(o).map(k =>
+            typeof o[k] === 'object' ? _flatten(o[k]) : { [k]: o[k] }
           )
         );
       })(locale ? json[locale] : json)
@@ -24,5 +23,31 @@ export const getDocs = async locale => {
     return docs;
   } catch (error) {
     console.error(chalk.red(`three/getDocs >> ${error.stack}`));
+  }
+};
+
+/**
+ * Returns a list of the three.js examples
+ */
+export const getExamples = async () => {
+  try {
+    const json = await fetch(config.examples.list).then(res => res.json());
+    const tags = await fetch(config.examples.tags).then(res => res.json());
+
+    const docs = Object.keys(json)
+      .map(key => json[key])
+      .flat()
+      .map(key => ({
+        name: key,
+        url: `${config.examples.url}#${key}`,
+        tags: tags[key],
+        thumbnail: {
+          url: `${config.examples.url}screenshots/${key}.jpg`,
+        },
+      }));
+
+    return docs;
+  } catch (error) {
+    console.error(chalk.red(`three/getExamples >> ${error.stack}`));
   }
 };

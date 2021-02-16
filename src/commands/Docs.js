@@ -9,7 +9,7 @@ const embed = props =>
     author: {
       name: 'Three.js Docs',
       icon_url: config.icon,
-      url: `${config.apiEndpoint}manual/en/introduction/Creating-a-scene`,
+      url: `${config.docs.url}manual/en/introduction/Creating-a-scene`,
     },
     ...props,
   });
@@ -45,7 +45,7 @@ const Docs = {
         .sort((a, b) => a - b)
         .map(({ target }) => ({
           name: target,
-          url: `${config.apiEndpoint}${docs[target]}`,
+          url: `${config.docs.url}${docs[target]}`,
         }))
         .filter(Boolean);
 
@@ -54,9 +54,8 @@ const Docs = {
           // Handle no results
           return msg.channel.send(
             embed({
-              title: `No results were found for "${args.join(' ')}"`,
-              description:
-                'Discover an issue? You can report it [here](https://github.com/threejs/discord-bot).',
+              title: `No documentation was found for "${args.join(' ')}"`,
+              description: `Discover an issue? You can report it [here](${config.github}).`,
             })
           );
         case 1: {
@@ -87,7 +86,7 @@ const Docs = {
           // Handle multiple results
           return msg.channel.send(
             embed({
-              title: `Results for "${args.join(' ')}"`,
+              title: `Documentation for "${args.join(' ')}"`,
               description: results
                 .filter((_, index) => index < 10)
                 .map(({ name, url }) => `**[${name}](${url})**`)

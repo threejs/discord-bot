@@ -16,7 +16,6 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs ThisDoesNotExist`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.includes('No results')).toBe(true);
     expect(output.embed.title.includes('ThisDoesNotExist')).toBe(true);
   });
 
@@ -24,7 +23,6 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs create`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.includes('Results for')).toBe(true);
     expect(output.embed.title.includes('create')).toBe(true);
     expect(output.embed.description).toBeDefined();
   });
@@ -62,20 +60,25 @@ describe('commands/Docs', () => {
     const [output] = msg.channel.messages;
     expect(output.embed.title.startsWith('Vector3.x')).toBe(true);
     expect(output.embed.url.endsWith('Vector3.x')).toBe(true);
+    expect(output.embed.description).not.toBeDefined();
   });
 
   it('fuzzily gets a specified class', async () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vectr3`);
 
     const [output] = msg.channel.messages;
-    expect(output).toBeDefined();
+    expect(output.embed.title.startsWith('Vector3')).toBe(true);
+    expect(output.embed.url.endsWith('Vector3')).toBe(true);
+    expect(output.embed.description).toBeDefined();
   });
 
   it('fuzzily gets a specified class method', async () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vectr3.set`);
 
     const [output] = msg.channel.messages;
-    expect(output).toBeDefined();
+    expect(output.embed.title.startsWith('Vector3.set')).toBe(true);
+    expect(output.embed.url.endsWith('Vector3.set')).toBe(true);
+    expect(output.embed.description).toBeDefined();
   });
 
   it('fuzzily gets a class property', async () => {
@@ -84,6 +87,7 @@ describe('commands/Docs', () => {
     const [output] = msg.channel.messages;
     expect(output.embed.title.startsWith('Vector3.x')).toBe(true);
     expect(output.embed.url.endsWith('Vector3.x')).toBe(true);
+    expect(output.embed.description).not.toBeDefined();
   });
 });
 

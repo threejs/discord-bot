@@ -42,14 +42,14 @@ const Docs = {
       // Get localized results
       const results = fuzzysort
         .go(query, Object.keys(docs))
-        ?.sort((a, b) => a - b)
+        .sort((a, b) => a - b)
         .map(({ target }) => ({
           name: target,
           url: `${config.apiEndpoint}${docs[target]}`,
         }))
         .filter(Boolean);
 
-      switch (results?.length) {
+      switch (results.length) {
         case 0:
           // Handle no results
           return msg.channel.send(

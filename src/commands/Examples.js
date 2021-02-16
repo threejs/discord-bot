@@ -32,20 +32,18 @@ const Examples = {
       // Get localized docs
       const examples = await getExamples();
 
-      // Fuzzy search examples
-      const results = examples
-        .filter(({ name, tags }) =>
-          args.some(
-            arg => name.includes(arg.toLowerCase()) || tags?.includes(arg.toLowerCase())
-          )
-        )
-        .sort((a, b) => a - b)
-        .filter(Boolean);
-
       // See if a specific example was specified
-      const result = results.find(res => res.name === args.join('_').toLowerCase());
+      const result = examples.find(res => res.name === args.join('_').toLowerCase());
 
-      switch ((result && 1) || results.length) {
+      // Fuzzy search examples
+      const results =
+        (result && [result]) ||
+        examples
+          .filter(({ tags }) => args.some(arg => tags.includes(arg.toLowerCase())))
+          .sort((a, b) => a - b)
+          .filter(Boolean);
+
+      switch (results.length) {
         case 0:
           // Handle no results
           return msg.channel.send(
@@ -56,7 +54,7 @@ const Examples = {
           );
         case 1: {
           // Handle single result
-          const { tags, name: title, ...rest } = result;
+          const [{ tags, name: title, ...rest }] = results;
 
           // List tags in result
           const description = `Tags: ${tags.length ? tags.join(', ') : 'none'}`;

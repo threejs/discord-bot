@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { JSDOM } from 'jsdom';
 
 // Delimiter used to separate stringified meta HTML
-const metaDelimiter = 'META';
+const META_DELIMITER = 'META';
 
 /**
  * Queries for an element and its properties
@@ -34,7 +34,7 @@ const getQueryElement = (document, query) => {
     const description = `${(isProperty ? propertyDesc : constructorDesc).innerHTML}`;
     const trim = isProperty || constructorDesc.nextElementSibling === constructor;
 
-    return `${title}${metaDelimiter}${description}${trim ? '' : '...'}`;
+    return `${title}${META_DELIMITER}${description}${trim ? '' : '...'}`;
   } catch (error) {
     console.error(chalk.red(`discord/getQueryElement >> ${error.stack}`));
   }
@@ -66,7 +66,7 @@ export const transformMarkdown = (html, query) => {
 
     // Return meta object on query
     if (query) {
-      const [title, description] = markdown.split(metaDelimiter) || [markdown];
+      const [title, description] = markdown.split(META_DELIMITER) || [markdown];
 
       // Split properties from title
       if (/^[a-zA-Z0-9_-]+\./.test(title)) {

@@ -4,5 +4,5 @@ import config from './config';
 const bot = new Bot();
 
 bot.login(config.token);
-bot.loadEvents(__dirname);
-bot.loadCommands(__dirname);
+bot.loadEvents();
+bot.loadCommands();

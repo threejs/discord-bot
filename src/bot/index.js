@@ -1,7 +1,9 @@
 import chalk from 'chalk';
 import { Client, Collection } from 'discord.js';
 import { readdir } from 'fs';
-import { sep } from 'path';
+import { resolve, sep } from 'path';
+
+const DEFAULT_PATH = resolve(__dirname, '..');
 
 class Bot extends Client {
   constructor(options) {
@@ -11,22 +13,22 @@ class Bot extends Client {
     this.commands = new Collection();
   }
 
-  async loadEvents(dir) {
+  async loadEvents(path = DEFAULT_PATH) {
     return await Promise.resolve(
       new Promise((resolve, reject) => {
-        readdir(`${dir}${sep}events`, (error, events) => {
+        readdir(`${path}${sep}events`, (error, files) => {
           if (error) return reject(error);
 
-          events.forEach(event => {
-            const handler = require(`${dir}${sep}events${sep}${event}`).default;
-            const key = event.split('.').shift();
+          files.forEach(file => {
+            const handler = require(`${path}${sep}events${sep}${file}`).default;
+            const event = file.split('.').shift();
 
-            this.events.set(key, handler);
-            this.on(key, (...args) => handler(this, ...args));
+            this.events.set(event, handler);
+            this.on(event, (...args) => handler(this, ...args));
           });
 
           if (process.env.NODE_ENV !== 'test') {
-            console.info(`${chalk.cyanBright('[Bot]')} ${events.length} events loaded`);
+            console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
           }
 
           resolve(true);
@@ -35,22 +37,20 @@ class Bot extends Client {
     );
   }
 
-  async loadCommands(dir) {
+  async loadCommands(path = DEFAULT_PATH) {
     return await Promise.resolve(
       new Promise((resolve, reject) => {
-        readdir(`${dir}${sep}commands`, (error, commands) => {
+        readdir(`${path}${sep}commands`, (error, files) => {
           if (error) return reject(error);
 
-          commands.forEach(command => {
-            const handler = require(`${dir}${sep}commands${sep}${command}`).default;
+          files.forEach(file => {
+            const command = require(`${path}${sep}commands${sep}${file}`).default;
 
-            this.commands.set(handler.name, handler);
+            this.commands.set(command.name, command);
           });
 
           if (process.env.NODE_ENV !== 'test') {
-            console.info(
-              `${chalk.cyanBright('[Bot]')} ${commands.length} commands loaded`
-            );
+            console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
           }
 
           resolve(true);

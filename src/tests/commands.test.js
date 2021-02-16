@@ -1,5 +1,4 @@
 import Bot from '../bot';
-import { resolve } from 'path';
 import { sendMessage } from '../utils';
 import config from '../config';
 
@@ -8,8 +7,8 @@ let client;
 beforeAll(async () => {
   client = new Bot();
 
-  await client.loadEvents(resolve(__dirname, '..'));
-  await client.loadCommands(resolve(__dirname, '..'));
+  await client.loadEvents();
+  await client.loadCommands();
 });
 
 describe('commands/Docs', () => {

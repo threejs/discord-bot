@@ -40,7 +40,7 @@ export const getExamples = async () => {
       .map(key => ({
         name: key,
         url: `${config.examples.url}#${key}`,
-        tags: Array.from(new Set(...[key.split('_'), tags[key]].filter(Boolean))),
+        tags: Array.from(new Set([key.split('_'), tags[key]].filter(Boolean))).flat(),
         thumbnail: {
           url: `${config.examples.url}screenshots/${key}.jpg`,
         },

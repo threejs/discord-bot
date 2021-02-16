@@ -7,6 +7,7 @@ class Bot extends Client {
   constructor(options) {
     super(options);
 
+    this.events = new Collection();
     this.commands = new Collection();
   }
 
@@ -18,8 +19,10 @@ class Bot extends Client {
 
           events.forEach(event => {
             const handler = require(`${dir}${sep}events${sep}${event}`).default;
+            const key = event.split('.').shift();
 
-            this.on(event.split('.').shift(), (...args) => handler(this, ...args));
+            this.events.set(key, handler);
+            this.on(key, (...args) => handler(this, ...args));
           });
 
           if (process.env.NODE_ENV !== 'test') {

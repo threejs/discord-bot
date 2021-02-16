@@ -1,12 +1,25 @@
 import Bot from '../bot';
 
-describe('Bot', () => {
-  it('runs without crashing', async () => {
-    const client = new Bot();
+let client;
 
+beforeAll(() => {
+  client = new Bot();
+});
+
+describe('Bot', () => {
+  it('loads events', async () => {
     await client.loadEvents();
+
+    expect(client.events.keys().length).not.toBe(0);
+  });
+
+  it('loads commands', async () => {
     await client.loadCommands();
 
-    client.destroy();
+    expect(client.commands.keys().length).not.toBe(0);
   });
+});
+
+afterAll(() => {
+  client.destroy();
 });

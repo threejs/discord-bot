@@ -1,29 +1,35 @@
+import chalk from 'chalk';
+
 /**
  * Triggers a message event, returning message context
  */
-export const message = async (client, content) => {
-  const message = {
-    content,
-    author: {
-      id: 'test',
-      username: 'TestUser',
-      discriminator: '1234',
-    },
-    channel: {
-      id: 'testID',
-      messages: [],
-      send(content) {
-        this.messages.push(content);
-
-        return content;
+export const sendMessage = async (client, content) => {
+  try {
+    const message = {
+      content,
+      author: {
+        id: 'test',
+        username: 'TestUser',
+        discriminator: '1234',
       },
-    },
-    guild: {
-      id: 'testID',
-    },
-  };
+      channel: {
+        id: 'testID',
+        messages: [],
+        send(content) {
+          this.messages.push(content);
 
-  await client.events.get('message')(client, message);
+          return content;
+        },
+      },
+      guild: {
+        id: 'testID',
+      },
+    };
 
-  return message;
+    await client.events.get('message')(client, message);
+
+    return message;
+  } catch (error) {
+    console.error(chalk.red(`sendMessage >> ${error.stack}`));
+  }
 };

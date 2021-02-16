@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import fetch from 'node-fetch';
 import config from '../config';
 
@@ -22,6 +23,6 @@ export const getDocs = async locale => {
 
     return docs;
   } catch (error) {
-    console.error(error);
+    console.error(chalk.red(`three/getDocs >> ${error.stack}`));
   }
 };

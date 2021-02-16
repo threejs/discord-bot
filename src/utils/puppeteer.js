@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import puppeteer from 'puppeteer';
 
 /**
@@ -37,6 +38,6 @@ export const crawl = async (url, callback, args) => {
 
     return callback(document, args);
   } catch (error) {
-    console.error(error);
+    console.error(chalk.red(`puppeteer/crawl >> ${error.stack}`));
   }
 };

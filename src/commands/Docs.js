@@ -95,7 +95,9 @@ const Docs = {
           );
       }
     } catch (error) {
-      console.error(chalk.red(`${config.prefix}docs >> ${error.stack}`));
+      console.error(
+        chalk.red(`${config.prefix}docs ${args.join(' ')} >> ${error.stack}`)
+      );
     }
   },
 };

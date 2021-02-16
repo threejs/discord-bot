@@ -69,9 +69,10 @@ const Docs = {
           );
 
           // Correct url if property found
-          const url = property
-            ? result.url.replace(name, `${name}.${property}`)
-            : result.url;
+          const url =
+            name !== property
+              ? result.url.replace(name, `${name}.${property}`)
+              : result.url;
 
           // Return auto-generated url and props
           return msg.channel.send(

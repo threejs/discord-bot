@@ -32,7 +32,8 @@ const getQueryElement = (document, query) => {
     // Class meta
     const title = `${isProperty ? propertyTitle : constructorTitle}`;
     const description = `${(isProperty ? propertyDesc : constructorDesc).innerHTML}`;
-    const trim = isProperty || constructorDesc.nextElementSibling === constructor;
+    const trim =
+      isProperty || !['P', 'UL'].includes(constructorDesc.nextElementSibling.tagName);
 
     return `${title}${META_DELIMITER}${description}${trim ? '' : '...'}`;
   } catch (error) {
@@ -53,7 +54,8 @@ export const transformMarkdown = (html, query) => {
     // Convert HTML to markdown
     const markdown = target
       .replace(/<\/?code>/gi, '```')
-      .replace(/<\/?h[0-9]>/gi, '**')
+      .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
+      .replace(/<\/?(italic|i)>/gi, '*')
       .replace(/<span.*?>([^<]*)<\/span>/gim, '$1')
       .replace(/<a.*?class="permalink">#<\/a>/gim, '')
       .replace(/<a.*?onclick=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '$2')

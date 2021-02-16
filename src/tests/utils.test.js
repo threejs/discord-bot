@@ -55,7 +55,7 @@ describe('utils/three', () => {
   });
 
   it('gets localized three.js docs', async () => {
-    const output = await getDocs('en');
+    const output = await getDocs(config.locale);
 
     expect(Object.keys(output).length).not.toBe(0);
   });

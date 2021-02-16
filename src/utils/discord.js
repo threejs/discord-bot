@@ -3,47 +3,45 @@ import { JSDOM } from 'jsdom';
 const metaDelimiter = 'META';
 
 /**
+ * Queries for an element and its properties
+ */
+const getQueryElement = (document, query) => {
+  // Early return if we're not scraping
+  const elements = Array.from(document.body.children);
+  const element = elements.find(
+    node =>
+      ['H1', 'H3'].includes(node.tagName) &&
+      node.outerHTML.toLowerCase().includes(query?.toLowerCase())
+  );
+  if (!element) return;
+
+  // Property meta
+  const propertyTitle = `${document.querySelector('h1').innerHTML}${element.innerHTML}`;
+  const propertyDesc =
+    element.nextElementSibling.tagName === 'H3' ? element : element.nextElementSibling;
+  const isProperty = !!element.querySelector('a.permalink');
+
+  // Constructor meta
+  const constructor = elements.find(node => node.outerHTML.includes('Constructor'));
+  const constructorTitle = constructor?.nextElementSibling.innerHTML;
+  const constructorDesc = document.querySelector('.desc');
+
+  // Class meta
+  const title = `${isProperty ? propertyTitle : constructorTitle}`;
+  const description = `${(isProperty ? propertyDesc : constructorDesc).innerHTML}`;
+  const trim = isProperty || constructorDesc.nextElementSibling === constructor;
+
+  return `${title}${metaDelimiter}${description}${trim ? '' : '...'}`;
+};
+
+/**
  * Parses HTML into Discord markdown
  */
 export const transformMarkdown = (html, query) => {
   const { document } = new JSDOM(html).window;
 
-  // Queries for an element and its properties
-  const getTargetElement = () => {
-    // Early return if we're not scraping
-    const elements = Array.from(document.body.children);
-    const element = elements.find(
-      node =>
-        ['H1', 'H3'].includes(node.tagName) &&
-        node.outerHTML.toLowerCase().includes(query?.toLowerCase())
-    );
-    if (!element) return document.body.innerHTML;
-
-    // Class defaults
-    const title = document.querySelector('h1');
-    const description = document.querySelector('.desc');
-
-    // Method properties
-    const methodDesc =
-      element.nextElementSibling.tagName === 'H3' ? element : element.nextElementSibling;
-    const methodArgs = `${title.innerHTML}${element.innerHTML}`;
-    const isMethod = !!element.querySelector('a.permalink');
-
-    // Constructor properties
-    const constructor = elements.find(node => node.outerHTML.includes('Constructor'));
-    const constructorArgs = constructor?.nextElementSibling.innerHTML;
-
-    const args = `${isMethod ? methodArgs : constructorArgs}${metaDelimiter}`;
-
-    return `${args}${(isMethod ? methodDesc : description).innerHTML}${
-      isMethod || description.nextElementSibling.outerHTML.includes('Constructor')
-        ? ''
-        : '...'
-    }`;
-  };
-
-  // Find element by query if specified and skip to descriptor if method
-  const target = getTargetElement();
+  // Find element by query if specified
+  const target = getQueryElement(document, query) || document.body.innerHTML;
 
   // Convert HTML to markdown
   const markdown = target

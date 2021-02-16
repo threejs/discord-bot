@@ -37,7 +37,7 @@ const Docs = {
       const properties = rest.length > 0 ? `.${rest.join('.')}` : '';
 
       // Get localized docs
-      const docs = await getDocs('en');
+      const docs = await getDocs(config.locale);
 
       // Get localized results
       const results = fuzzysort
@@ -51,7 +51,7 @@ const Docs = {
 
       switch (results?.length) {
         case 0:
-          // Offer alternative results
+          // Handle no results
           return msg.channel.send(
             embed({
               title: `No results were found for "${args.join(' ')}"`,

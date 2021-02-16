@@ -13,6 +13,7 @@ const config = {
     'https://rawcdn.githack.com/mrdoob/three.js/dc2b340839e0fb1cf810a08dfbccf534121606b8/icon.png',
   color: process.env.COLOR || 0x049ef4,
   prefix: process.env.PREFIX || '!',
+  locale: process.env.LOCALE || 'en',
   token: process.env.TOKEN,
 };
 

@@ -1,11 +1,13 @@
-import { transformMarkdown, embed, crawl, getDocs } from '../utils';
+import { transformMarkdown, embed, crawl, getDocs, getExamples } from '../utils';
 import config from '../config';
 
 describe('utils/discord', () => {
   it('transforms HTML to markdown', () => {
-    const output = transformMarkdown('<h1><a href="#">link</link></h1>');
+    const output = transformMarkdown(
+      '<a href="#">Link</a><h1>Header</h1><strong>Bold</strong><b>Bold</b><italic>Italic</italic><i>Italic</i>'
+    );
 
-    expect(output).toBe('**[link](#)**');
+    expect(output).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
   });
 
   it('transforms HTML meta to markdown meta', () => {
@@ -57,6 +59,13 @@ describe('utils/three', () => {
   it('gets localized three.js docs', async () => {
     const output = await getDocs(config.locale);
 
+    expect(Object.keys(output).length).not.toBe(0);
+  });
+
+  it('gets tagged three.js examples', async () => {
+    const output = await getExamples();
+
+    expect(output[0].tags.length).not.toBe(0);
     expect(Object.keys(output).length).not.toBe(0);
   });
 });

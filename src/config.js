@@ -21,6 +21,7 @@ const config = {
   prefix: process.env.PREFIX || '!',
   locale: process.env.LOCALE || 'en',
   token: process.env.TOKEN,
+  env: process.env.NODE_ENV,
 };
 
 export default config;

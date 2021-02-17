@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { Client, Collection } from 'discord.js';
 import { readdir } from 'fs';
 import { resolve, sep } from 'path';
+import config from '../config';
 
 const DEFAULT_PATH = resolve(__dirname, '..');
 
@@ -27,7 +28,7 @@ class Bot extends Client {
             this.on(event, (...args) => handler(this, ...args));
           });
 
-          if (process.env.NODE_ENV !== 'test') {
+          if (config.env !== 'test') {
             console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
           }
 
@@ -49,7 +50,7 @@ class Bot extends Client {
             this.commands.set(command.name, command);
           });
 
-          if (process.env.NODE_ENV !== 'test') {
+          if (config.env !== 'test') {
             console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
           }
 

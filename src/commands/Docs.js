@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
 import config from '../config';
-import { embed as makeEmbed, getDocs, crawl, transformMarkdown } from '../utils';
+import { embed as embedConfig, getDocs, crawl, transformMarkdown } from '../utils';
 
 // Extend embed headers
 const embed = props =>
-  makeEmbed({
+  embedConfig({
     author: {
       name: 'Three.js Docs',
       icon_url: config.icon,
@@ -32,9 +32,9 @@ const Docs = {
         );
       }
 
-      // Separate base class and props from query
-      const [query, ...rest] = arg.split(/[.#]+/);
-      const properties = rest.length > 0 ? `.${rest.join('.')}` : '';
+      // Separate methods and props from query
+      const [query, ...props] = arg.split(/[.#]+/);
+      const properties = props.length ? `.${props.join('.')}` : '';
 
       // Get localized docs
       const docs = await getDocs(config.locale);

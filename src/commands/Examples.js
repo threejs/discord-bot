@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import config from '../config';
-import { embed as makeEmbed, getExamples } from '../utils';
+import { embed as embedConfig, getExamples } from '../utils';
 
 // Extend embed headers
 const embed = props =>
-  makeEmbed({
+  embedConfig({
     author: {
       name: 'Three.js Examples',
       icon_url: config.icon,
@@ -29,7 +29,7 @@ const Examples = {
         );
       }
 
-      // Get localized docs
+      // Get tagged examples
       const examples = await getExamples();
 
       // See if a specific example was specified

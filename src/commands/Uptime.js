@@ -20,7 +20,7 @@ const Uptime = {
       return msg.channel.send(
         embed({
           title: 'Uptime',
-          description: `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`,
+          description: `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`,
         })
       );
     } catch (error) {

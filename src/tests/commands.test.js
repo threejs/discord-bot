@@ -31,8 +31,8 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vector3`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3')).toBe(true);
+    expect(output.embed.title).toBe('Vector3( x : Float, y : Float, z : Float )');
+    expect(output.embed.url).toBe(`${config.docs.url}api/${config.locale}/math/Vector3`);
     expect(output.embed.description).toBeDefined();
   });
 
@@ -40,8 +40,12 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vector3.set`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3.set')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3.set')).toBe(true);
+    expect(output.embed.title).toBe(
+      'Vector3.set ( x : Float, y : Float, z : Float ) : this'
+    );
+    expect(output.embed.url).toBe(
+      `${config.docs.url}api/${config.locale}/math/Vector3.set`
+    );
     expect(output.embed.description).toBeDefined();
   });
 
@@ -49,8 +53,10 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vector3.get`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3.getComponent')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3.getComponent')).toBe(true);
+    expect(output.embed.title).toBe('Vector3.getComponent ( index : Integer ) : Float');
+    expect(output.embed.url).toBe(
+      `${config.docs.url}api/${config.locale}/math/Vector3.getComponent`
+    );
     expect(output.embed.description).toBeDefined();
   });
 
@@ -58,8 +64,10 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vector3.x`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3.x')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3.x')).toBe(true);
+    expect(output.embed.title).toBe('Vector3.x : Float');
+    expect(output.embed.url).toBe(
+      `${config.docs.url}api/${config.locale}/math/Vector3.x`
+    );
     expect(output.embed.description).not.toBeDefined();
   });
 
@@ -67,8 +75,8 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vectr3`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3')).toBe(true);
+    expect(output.embed.title).toBe('Vector3( x : Float, y : Float, z : Float )');
+    expect(output.embed.url).toBe(`${config.docs.url}api/${config.locale}/math/Vector3`);
     expect(output.embed.description).toBeDefined();
   });
 
@@ -76,8 +84,12 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vectr3.set`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3.set')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3.set')).toBe(true);
+    expect(output.embed.title).toBe(
+      'Vector3.set ( x : Float, y : Float, z : Float ) : this'
+    );
+    expect(output.embed.url).toBe(
+      `${config.docs.url}api/${config.locale}/math/Vector3.set`
+    );
     expect(output.embed.description).toBeDefined();
   });
 
@@ -85,8 +97,10 @@ describe('commands/Docs', () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vectr3.x`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.startsWith('Vector3.x')).toBe(true);
-    expect(output.embed.url.endsWith('Vector3.x')).toBe(true);
+    expect(output.embed.title).toBe('Vector3.x : Float');
+    expect(output.embed.url).toBe(
+      `${config.docs.url}api/${config.locale}/math/Vector3.x`
+    );
     expect(output.embed.description).not.toBeDefined();
   });
 });
@@ -97,6 +111,7 @@ describe('commands/Examples', () => {
 
     const [output] = msg.channel.messages;
     expect(output.embed.title.includes('ThisDoesNotExist')).toBe(true);
+    expect(output.embed.description).toBeDefined();
   });
 
   it('gets multiple results', async () => {
@@ -104,6 +119,7 @@ describe('commands/Examples', () => {
 
     const [output] = msg.channel.messages;
     expect(output.embed.title.includes('webgl')).toBe(true);
+    expect(output.embed.description).toBeDefined();
   });
 
   it('gets a result by key', async () => {
@@ -113,7 +129,7 @@ describe('commands/Examples', () => {
     );
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.includes('webgl_animation_cloth')).toBe(true);
+    expect(output.embed.title).toBe('webgl_animation_cloth');
     expect(output.embed.description.includes('Tags')).toBe(true);
   });
 
@@ -124,7 +140,7 @@ describe('commands/Examples', () => {
     );
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.includes('webgl_animation_cloth')).toBe(true);
+    expect(output.embed.title).toBe('webgl_animation_cloth');
     expect(output.embed.description.includes('Tags')).toBe(true);
   });
 });

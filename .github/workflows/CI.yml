@@ -12,9 +12,6 @@ jobs:
       - uses: ianwalter/puppeteer-container@v4.0.0
         with:
           args: pnpm i
-    
-      # Get local dependencies
-      - run: yarn install
 
       # Check for regressions
       - run: yarn run lint

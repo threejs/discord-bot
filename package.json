@@ -28,12 +28,12 @@
     "puppeteer": "^7.1.0"
   },
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
-    "serve": "babel-node src/index.js",
-    "test": "jest --watchAll --verbose --testTimeout=10000",
-    "test:ci": "jest .",
-    "lint": "eslint src",
-    "format": "prettier src --write"
+    "start": "nodemon --exec babel-node src",
+    "serve": "babel-node src",
+    "test": "jest .",
+    "test-watch": "jest --watchAll --verbose --testTimeout=10000",
+    "lint": "eslint src && prettier src --check",
+    "lint-fix": "eslint src --fix && prettier src --write src"
   },
   "jest": {
     "testEnvironment": "node"

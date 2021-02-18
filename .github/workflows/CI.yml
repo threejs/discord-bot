@@ -12,9 +12,6 @@ jobs:
       - uses: ianwalter/puppeteer-container@v4.0.0
         with:
           args: pnpm i
-
-      # Check for regressions
-      - run: yarn run lint
-
-      # Run tests
-      - run: yarn run test:ci
+      - uses: ianwalter/puppeteer-container@v4.0.0
+        with:
+          args: pnpm t

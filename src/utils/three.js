@@ -9,7 +9,7 @@ export const getDocs = async locale => {
   try {
     const json = await fetch(config.docs.list).then(res => res.json());
 
-    const docs = Object.assign(
+    const endpoints = Object.assign(
       {},
       ...(function _flatten(o) {
         return [].concat(
@@ -19,6 +19,11 @@ export const getDocs = async locale => {
         );
       })(locale ? json[locale] : json)
     );
+
+    const docs = Object.keys(endpoints).map(key => ({
+      name: key,
+      url: `${config.docs.url}${endpoints[key]}`,
+    }));
 
     return docs;
   } catch (error) {

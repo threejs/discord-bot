@@ -53,19 +53,19 @@ describe('utils/three', () => {
   it('gets three.js docs', async () => {
     const output = await getDocs();
 
-    expect(Object.keys(output).length).not.toBe(0);
+    expect(output.length).not.toBe(0);
   });
 
   it('gets localized three.js docs', async () => {
     const output = await getDocs(config.locale);
 
-    expect(Object.keys(output).length).not.toBe(0);
+    expect(output.length).not.toBe(0);
   });
 
   it('gets tagged three.js examples', async () => {
     const output = await getExamples();
 
     expect(output[0].tags.length).not.toBe(0);
-    expect(Object.keys(output).length).not.toBe(0);
+    expect(output.length).not.toBe(0);
   });
 });

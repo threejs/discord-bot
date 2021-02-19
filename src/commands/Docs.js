@@ -39,14 +39,14 @@ const Docs = {
       // Get localized docs
       const docs = await getDocs(config.locale);
 
-      // Get localized results
+      // Get fuzzy results
       const results = fuzzysort
-        .go(query, Object.keys(docs))
+        .go(
+          query,
+          docs.map(({ name }) => name)
+        )
         .sort((a, b) => a - b)
-        .map(({ target }) => ({
-          name: target,
-          url: `${config.docs.url}${docs[target]}`,
-        }))
+        .map(({ target }) => docs.find(({ name }) => name === target))
         .filter(Boolean);
 
       switch (results.length) {

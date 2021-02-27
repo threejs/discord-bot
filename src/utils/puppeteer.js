@@ -2,9 +2,9 @@ import chalk from 'chalk';
 import puppeteer from 'puppeteer';
 
 /**
- * Fetches and crawls a url, executing a callback
+ * Fetches and crawls a url, returning html
  */
-export const crawl = async (url, callback, args) => {
+export const crawl = async url => {
   if (!url) return null;
 
   try {
@@ -28,15 +28,16 @@ export const crawl = async (url, callback, args) => {
 
     await page.goto(url);
 
-    const document = await page.evaluate(
+    const html = await page.evaluate(
       () =>
+        // eslint-disable-next-line no-undef
         (document.querySelector('iframe')?.contentWindow.document || document).body
           .innerHTML
     );
 
     await browser.close();
 
-    return callback(document, args);
+    return html;
   } catch (error) {
     console.error(chalk.red(`puppeteer/crawl >> ${error.stack}`));
   }

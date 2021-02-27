@@ -61,9 +61,10 @@ const Docs = {
         case 1: {
           // Handle single result
           const [{ name, ...result }] = results;
-          const { title, property, description } = await crawl(
-            result.url,
-            transformMarkdown,
+
+          const html = await crawl(result.url);
+          const { title, property, description } = transformMarkdown(
+            html,
             `${name}${properties}`
           );
 

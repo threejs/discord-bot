@@ -9,7 +9,7 @@ const META_DELIMITER = 'META';
  */
 const getQueryElement = (document, query) => {
   try {
-    // Early return if we're not scraping
+    // Early return if we're not querying
     const elements = Array.from(document.body.children);
     const element = elements.find(
       node =>

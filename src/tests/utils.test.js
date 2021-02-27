@@ -43,9 +43,9 @@ describe('utils/embed', () => {
 
 describe('utils/puppeteer', () => {
   it('crawls a webpage and callsback', async () => {
-    const output = await crawl('about:blank', res => res + 'callback');
+    const output = await crawl('about:blank');
 
-    expect(output).toBe('callback');
+    expect(output).toBe('');
   });
 });
 

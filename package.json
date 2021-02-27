@@ -15,17 +15,17 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
-    "@babel/core": "^7.12.17",
-    "@babel/node": "^7.12.17",
-    "@babel/plugin-transform-runtime": "^7.12.17",
-    "@babel/preset-env": "^7.12.17",
+    "@babel/core": "^7.13.8",
+    "@babel/node": "^7.13.8",
+    "@babel/plugin-transform-runtime": "^7.13.8",
+    "@babel/preset-env": "^7.13.8",
     "chalk": "4.1.0",
     "discord.js": "12.5.1",
     "dotenv": "8.2.0",
     "fuzzysort": "^1.1.4",
     "jsdom": "^16.4.0",
     "node-fetch": "^2.6.1",
-    "puppeteer": "^7.1.0"
+    "puppeteer": "^8.0.0"
   },
   "scripts": {
     "start": "nodemon --exec babel-node src",

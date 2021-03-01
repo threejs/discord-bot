@@ -1,4 +1,4 @@
-# Discord Bot
+# Three Bot
 
 Discord bot for the [three.js Discord server](https://discord.gg/HF4UdyF).
 

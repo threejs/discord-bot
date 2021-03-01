@@ -1,15 +1,15 @@
 {
-  "name": "@threejs/discord-bot",
+  "name": "three-bot",
   "version": "0.1.0",
-  "homepage": "https://github.com/threejs/discord-bot",
+  "homepage": "https://github.com/CodyJasonBennett/three-bot",
   "description": "Discord bot for the three.js Discord server.",
-  "repository": "https://github.com/threejs/discord-bot.git",
-  "author": "threejs",
+  "repository": "https://github.com/threejs/CodyJasonBennett/three-bot.git",
+  "author": "Cody Bennett <hi@codyb.co>",
   "license": "MIT",
   "main": "src/config.js",
   "private": true,
   "devDependencies": {
-    "eslint": "^7.20.0",
+    "eslint": "^7.21.0",
     "jest": "26.6.3",
     "nodemon": "2.0.7",
     "prettier": "^2.2.1"

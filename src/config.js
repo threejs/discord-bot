@@ -15,7 +15,7 @@ const config = {
     list: process.env.EXAMPLES_LIST || 'https://threejs.org/examples/files.json',
     tags: process.env.EXAMPLES_TAGS || 'https://threejs.org/examples/tags.json',
   },
-  github: process.env.GITHUB || 'https://github.com/threejs/discord-bot',
+  github: process.env.GITHUB || 'https://github.com/CodyJasonBennett/three-bot',
   icon: process.env.ICON || 'https://threejs.org/editor/images/icon.png',
   color: process.env.COLOR || 0x049ef4,
   prefix: process.env.PREFIX || '!',

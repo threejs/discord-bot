@@ -6,6 +6,7 @@ import config from '../config';
 export const embed = props => ({
   embed: {
     color: config.color,
+    timestamp: new Date(),
     ...props,
   },
 });

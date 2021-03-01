@@ -55,7 +55,7 @@ export const transformMarkdown = (html, query) => {
     const markdown = target
       .replace(/<\/?code>/gi, '```')
       .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
-      .replace(/<\/?(italic|i)>/gi, '*')
+      .replace(/<\/?(italic|i|em)>/gi, '*')
       .replace(/<span.*?>([^<]*)<\/span>/gim, '$1')
       .replace(/<a.*?class="permalink">#<\/a>/gim, '')
       .replace(/<a.*?onclick=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '$2')

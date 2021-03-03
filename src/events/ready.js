@@ -1,6 +1,10 @@
 import chalk from 'chalk';
 import config from '../config';
 
+/**
+ * Handles the bot's ready state
+ * @param client Discord client context
+ */
 const ready = async client => {
   try {
     client.user.setActivity(`${config.prefix}help`, { type: 'LISTENING' });

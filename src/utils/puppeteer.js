@@ -11,21 +11,22 @@ export const crawl = async url => {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      ignoreHTTPSErrors: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--ignore-certificate-errors'],
     });
     const page = await browser.newPage();
 
-    // await page.setRequestInterception(true);
+    await page.setRequestInterception(true);
 
-    // page.on('request', request => {
-    //   switch (request.resourceType()) {
-    //     case 'image':
-    //     case 'stylesheet':
-    //       return request.abort();
-    //     default:
-    //       return request.continue();
-    //   }
-    // });
+    page.on('request', request => {
+      switch (request.resourceType()) {
+        case 'image':
+        case 'stylesheet':
+          return request.abort();
+        default:
+          return request.continue();
+      }
+    });
 
     await page.goto(url);
 

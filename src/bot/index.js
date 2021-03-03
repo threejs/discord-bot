@@ -14,6 +14,10 @@ class Bot extends Client {
     this.commands = new Collection();
   }
 
+  /**
+   * Loads Discord events from the `event` folder
+   * @param [path] Optional root folder
+   */
   async loadEvents(path = DEFAULT_PATH) {
     return await Promise.resolve(
       new Promise((resolve, reject) => {
@@ -38,6 +42,10 @@ class Bot extends Client {
     );
   }
 
+  /**
+   * Loads Discord commands from the `commands` folder
+   * @param [path] Optional root folder
+   */
   async loadCommands(path = DEFAULT_PATH) {
     return await Promise.resolve(
       new Promise((resolve, reject) => {

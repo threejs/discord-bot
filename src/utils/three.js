@@ -4,6 +4,7 @@ import config from '../config';
 
 /**
  * Returns a list of the three.js docs in an optional locale
+ * @param {string} [locale] Optional docs locale to read from
  */
 export const getDocs = async locale => {
   try {

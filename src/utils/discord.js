@@ -1,13 +1,36 @@
 import chalk from 'chalk';
 import { JSDOM } from 'jsdom';
 
+/**
+ * Sanitizes Discord syntax from command arguments
+ * @param {string} message Discord message string to sanitize
+ */
+export const sanitize = message => {
+  if (!message) return;
+
+  return (
+    message
+      // Remove newline characters
+      .replace(/\n/gm, ' ')
+      // Remove mentions
+      .replace(/<@!\d*>/g, '')
+      // Remove formatting
+      .replace(/(\*|`|:)*/g, '')
+      // Trim inline spaces
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
+};
+
 // Delimiter used to separate stringified meta HTML
 const META_DELIMITER = 'META';
 
 /**
  * Queries for an element and its properties
+ * @param {HTMLDocument} document HTML document context to query
+ * @param {string} query Query selector to query with
  */
-const getQueryElement = (document, query) => {
+export const getQueryElement = (document, query) => {
   try {
     // Early return if we're not querying
     const elements = Array.from(document.body.children);
@@ -43,6 +66,8 @@ const getQueryElement = (document, query) => {
 
 /**
  * Parses HTML into Discord markdown
+ * @param {string} html HTML markup string
+ * @param {string} [query] Optional query string to select from parsed HTML
  */
 export const transformMarkdown = (html, query) => {
   try {
@@ -53,16 +78,25 @@ export const transformMarkdown = (html, query) => {
 
     // Convert HTML to markdown
     const markdown = target
+      // Transform code blocks
       .replace(/<\/?code>/gi, '```')
+      // Transform bold text
       .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
+      // Transform italic text
       .replace(/<\/?(italic|i|em)>/gi, '*')
+      //
       .replace(/<span.*?>([^<]*)<\/span>/gim, '$1')
+      // Remove hidden anchors
       .replace(/<a.*?class="permalink">#<\/a>/gim, '')
       .replace(/<a.*?onclick=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '$2')
+      // Transform anchors
       .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
+      // Trim spaces
       .replace(/\s+/g, ' ')
       .replace(/(\s\.)+/, '.')
+      // Transform newlines
       .replace(/(\n\s?\n|<br\/?>)/gi, '\n')
+      // Remove excess markdown
       .replace(/<\/?(br|li|div)>/gi, '')
       .trim();
 

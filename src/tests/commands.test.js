@@ -20,11 +20,11 @@ describe('commands/Docs', () => {
   });
 
   it('fuzzy searches alternate docs', async () => {
-    const msg = await sendMessage(client, `${config.prefix}docs create`);
+    const msg = await sendMessage(client, `${config.prefix}docs vector`);
 
     const [output] = msg.channel.messages;
-    expect(output.embed.title.includes('create')).toBe(true);
-    expect(output.embed.description).toBeDefined();
+    expect(output.embed.title.includes('vector')).toBe(true);
+    expect(output.embed.description.length).not.toBe(0);
   });
 
   it('gets a specified class', async () => {

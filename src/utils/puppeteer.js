@@ -11,8 +11,7 @@ export const crawl = async url => {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      ignoreHTTPSErrors: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--ignore-certificate-errors'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
 

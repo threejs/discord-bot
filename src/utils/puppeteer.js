@@ -15,17 +15,17 @@ export const crawl = async url => {
     });
     const page = await browser.newPage();
 
-    await page.setRequestInterception(true);
+    // await page.setRequestInterception(true);
 
-    page.on('request', request => {
-      switch (request.resourceType()) {
-        case 'image':
-        case 'stylesheet':
-          return request.abort();
-        default:
-          return request.continue();
-      }
-    });
+    // page.on('request', request => {
+    //   switch (request.resourceType()) {
+    //     case 'image':
+    //     case 'stylesheet':
+    //       return request.abort();
+    //     default:
+    //       return request.continue();
+    //   }
+    // });
 
     await page.goto(url);
 

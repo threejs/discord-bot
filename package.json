@@ -36,7 +36,6 @@
     "lint-fix": "eslint src --fix && prettier src --write src"
   },
   "jest": {
-    "testEnvironment": "node",
-    "testTimeout": 30000
+    "testEnvironment": "node"
   }
 }

@@ -74,10 +74,11 @@ const Examples = {
           return msg.channel.send(
             embed({
               title: `Examples for "${args.join(' ')}"`,
-              description: results
-                .filter((_, index) => index < 10)
-                .map(({ name, url }) => `**[${name}](${url})**`)
-                .join('\n'),
+              description: results.reduce((message, { name, url }, index) => {
+                if (index < 10) message += `**[${name}](${url})**\n`;
+
+                return message;
+              }, ''),
             })
           );
       }

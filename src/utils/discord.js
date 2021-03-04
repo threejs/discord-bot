@@ -42,7 +42,11 @@ export const getQueryElement = (document, query) => {
     if (!element) return;
 
     // Property meta
-    const propertyTitle = `${document.querySelector('h1').innerHTML}${element.innerHTML}`;
+    const titleElement = document.querySelector('h1');
+    const propertyTitle =
+      titleElement === element
+        ? titleElement.innerHTML
+        : titleElement.innerHTML + element.innerHTML;
     const propertyDesc =
       element.nextElementSibling.tagName === 'H3' ? element : element.nextElementSibling;
     const isProperty = !!element.querySelector('a.permalink');
@@ -53,8 +57,11 @@ export const getQueryElement = (document, query) => {
     const constructorDesc = document.querySelector('.desc');
 
     // Class meta
-    const title = `${isProperty ? propertyTitle : constructorTitle}`;
-    const description = `${(isProperty ? propertyDesc : constructorDesc).innerHTML}`;
+    const title = `${isProperty || !constructorTitle ? propertyTitle : constructorTitle}`;
+    const description = (isProperty ? propertyDesc : constructorDesc)?.innerHTML;
+
+    if (!description) return title;
+
     const trim =
       isProperty || !['P', 'UL'].includes(constructorDesc.nextElementSibling.tagName);
 
@@ -79,7 +86,7 @@ export const transformMarkdown = (html, query) => {
     // Convert HTML to markdown
     const markdown = target
       // Transform code blocks
-      .replace(/<\/?code>/gi, '```')
+      .replace(/<\/?code.*?>/gi, '```')
       // Transform bold text
       .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
       // Transform italic text

@@ -39,15 +39,18 @@ const Docs = {
       // Get localized docs
       const docs = await getDocs(config.locale);
 
-      // Get fuzzy results
-      const results = fuzzysort
-        .go(
-          query,
-          docs.map(({ name }) => name)
-        )
-        .sort((a, b) => a - b)
-        .map(({ target }) => docs.find(({ name }) => name === target))
-        .filter(Boolean);
+      // Get fuzzy results if not exact match is found
+      const exactResult = docs.find(({ name }) => name === query);
+      const results = exactResult
+        ? [exactResult]
+        : fuzzysort
+            .go(
+              query,
+              docs.map(({ name }) => name)
+            )
+            .sort((a, b) => a - b)
+            .map(({ target }) => docs.find(({ name }) => name === target))
+            .filter(Boolean);
 
       switch (results.length) {
         case 0:
@@ -70,7 +73,7 @@ const Docs = {
 
           // Correct url if property found
           const url =
-            name !== property
+            name !== property && title !== property
               ? result.url.replace(name, `${name}.${property}`)
               : result.url;
 

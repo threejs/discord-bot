@@ -36,6 +36,17 @@ describe('commands/Docs', () => {
     expect(output.embed.description).toBeDefined();
   });
 
+  it('strict gets a specified class', async () => {
+    const msg = await sendMessage(client, `${config.prefix}docs Renderer`);
+
+    const [output] = msg.channel.messages;
+    expect(output.embed.title).toBe('WebGLRenderer Constants');
+    expect(output.embed.url).toBe(
+      `${config.docs.url}api/${config.locale}/constants/Renderer`
+    );
+    expect(output.embed.description).not.toBeDefined();
+  });
+
   it('gets a specified class method', async () => {
     const msg = await sendMessage(client, `${config.prefix}docs Vector3.set`);
 

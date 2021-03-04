@@ -144,6 +144,14 @@ describe('commands/Examples', () => {
     expect(output.embed.description.includes('Tags')).toBe(true);
   });
 
+  it('fuzzily gets a result by partial key', async () => {
+    const msg = await sendMessage(client, `${config.prefix}examples geometry_colors`);
+
+    const [output] = msg.channel.messages;
+    expect(output.embed.title).toBe('webgl_geometry_colors');
+    expect(output.embed.description.includes('Tags')).toBe(true);
+  });
+
   it('fuzzily gets a result by key', async () => {
     const msg = await sendMessage(
       client,

@@ -32,12 +32,16 @@ const Examples = {
       // Get tagged examples
       const examples = await getExamples();
 
-      // See if a specific example was specified
-      const result = examples.find(res => res.name === args.join('_').toLowerCase());
+      // Check for an example if key was specified
+      const targetKey = args.join('_').toLowerCase();
+      const target = examples.find(
+        ({ name }) =>
+          name === targetKey || args.every(arg => name.includes(arg.toLowerCase()))
+      );
 
       // Fuzzy search examples
       const results =
-        (result && [result]) ||
+        (target && [target]) ||
         examples
           .filter(({ tags }) => args.some(arg => tags.includes(arg.toLowerCase())))
           .sort((a, b) => a - b)

@@ -39,7 +39,7 @@ const Docs = {
       // Get localized docs
       const docs = await getDocs(config.locale);
 
-      // Get fuzzy results if not exact match is found
+      // Get fuzzy results if no exact match is found
       const exactResult = docs.find(({ name }) => name === query);
       const results = exactResult
         ? [exactResult]

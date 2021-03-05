@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Client, Collection } from 'discord.js';
 import { readdir } from 'fs';
-import { resolve, sep } from 'path';
+import { resolve, join } from 'path';
 import config from '../config';
 
 const DEFAULT_PATH = resolve(__dirname, '..');
@@ -21,11 +21,11 @@ class Bot extends Client {
   async loadEvents(path = DEFAULT_PATH) {
     return await Promise.resolve(
       new Promise((resolve, reject) => {
-        readdir(`${path}${sep}events`, (error, files) => {
+        readdir(join(path, 'events'), (error, files) => {
           if (error) return reject(error);
 
           files.forEach(file => {
-            const handler = require(`${path}${sep}events${sep}${file}`).default;
+            const handler = require(join(path, 'events', file)).default;
             const event = file.split('.').shift();
 
             this.events.set(event, handler);
@@ -49,11 +49,11 @@ class Bot extends Client {
   async loadCommands(path = DEFAULT_PATH) {
     return await Promise.resolve(
       new Promise((resolve, reject) => {
-        readdir(`${path}${sep}commands`, (error, files) => {
+        readdir(join(path, 'commands'), (error, files) => {
           if (error) return reject(error);
 
           files.forEach(file => {
-            const command = require(`${path}${sep}commands${sep}${file}`).default;
+            const command = require(join(path, 'commands', file)).default;
 
             this.commands.set(command.name, command);
           });

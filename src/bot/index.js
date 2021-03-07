@@ -17,6 +17,7 @@ class Bot extends Client {
   /**
    * Loads Discord events from the `event` folder
    * @param {string} [path] Optional root folder
+   * @return {Promise<Collection>} A collection of loaded bot events.
    */
   async loadEvents(path = DEFAULT_PATH) {
     return await Promise.resolve(
@@ -36,7 +37,7 @@ class Bot extends Client {
             console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
           }
 
-          resolve(true);
+          resolve(this.events);
         });
       })
     );
@@ -45,6 +46,7 @@ class Bot extends Client {
   /**
    * Loads Discord commands from the `commands` folder
    * @param {string} [path] Optional root folder
+   * @return {Promise<Collection>} A collection of loaded bot commands.
    */
   async loadCommands(path = DEFAULT_PATH) {
     return await Promise.resolve(
@@ -62,7 +64,7 @@ class Bot extends Client {
             console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
           }
 
-          resolve(true);
+          resolve(this.commands);
         });
       })
     );

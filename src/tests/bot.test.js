@@ -8,15 +8,15 @@ beforeAll(() => {
 
 describe('Bot', () => {
   it('loads events', async () => {
-    await client.loadEvents();
+    const events = await client.loadEvents();
 
-    expect(client.events.keys().length).not.toBe(0);
+    expect(events.keys().length).not.toBe(0);
   });
 
   it('loads commands', async () => {
-    await client.loadCommands();
+    const commands = await client.loadCommands();
 
-    expect(client.commands.keys().length).not.toBe(0);
+    expect(commands.keys().length).not.toBe(0);
   });
 });
 

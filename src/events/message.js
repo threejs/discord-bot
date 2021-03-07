@@ -19,6 +19,8 @@ const message = async (client, msg) => {
     if (!command) return;
 
     await command.execute({ client, msg, args });
+
+    return msg;
   } catch (error) {
     console.warn(chalk.yellow(`message >> ${error.message}`));
   }

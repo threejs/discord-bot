@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer';
 
 /**
  * Fetches and crawls a url, returning html
- * @param {string} url URL to fetch and crawl
+ * @param {String} url URL to fetch and crawl
  */
 export const crawl = async url => {
   if (!url) return null;
@@ -33,7 +33,7 @@ export const crawl = async url => {
       }
     });
 
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url);
 
     const html = await page.evaluate(
       () =>

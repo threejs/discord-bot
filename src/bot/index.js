@@ -16,7 +16,7 @@ class Bot extends Client {
 
   /**
    * Loads Discord events from the `event` folder
-   * @param {string} [path] Optional root folder
+   * @param {String} [path] Optional root folder
    * @return {Promise<Collection>} A collection of loaded bot events.
    */
   async loadEvents(path = DEFAULT_PATH) {
@@ -45,7 +45,7 @@ class Bot extends Client {
 
   /**
    * Loads Discord commands from the `commands` folder
-   * @param {string} [path] Optional root folder
+   * @param {String} [path] Optional root folder
    * @return {Promise<Collection>} A collection of loaded bot commands.
    */
   async loadCommands(path = DEFAULT_PATH) {

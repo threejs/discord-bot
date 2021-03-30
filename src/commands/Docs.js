@@ -65,11 +65,21 @@ const Docs = {
           // Handle single result
           const [{ name, ...result }] = results;
 
+          // Query result
           const html = await crawl(result.url);
-          const { title, property, description } = transformMarkdown(
-            html,
-            `${name}${properties}`
-          );
+          const markdown = transformMarkdown(html, `${name}${properties}`);
+
+          // Handle invalid query
+          if (!markdown)
+            return msg.channel.send(
+              embed({
+                title: `Documentation for "${args.join(' ')}" does not exist`,
+                description: `Discover an issue? You can report it [here](${config.github}).`,
+              })
+            );
+
+          // Destructure markdown
+          const { title, property, description } = markdown;
 
           // Correct url if property found
           const url =

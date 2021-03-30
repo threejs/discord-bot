@@ -11,7 +11,13 @@ export const crawl = async url => {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: [
+        '--ignore-certificate-errors',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+      ],
     });
     const page = await browser.newPage();
 
@@ -27,7 +33,7 @@ export const crawl = async url => {
       }
     });
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
     const html = await page.evaluate(
       () =>

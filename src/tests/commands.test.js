@@ -17,6 +17,18 @@ describe('commands/Docs', () => {
 
     const [output] = msg.channel.messages;
     expect(output.embed.title.includes('ThisDoesNotExist')).toBe(true);
+    expect(output.embed.description.length).not.toBe(0);
+  });
+
+  it('has fallback on failed query', async () => {
+    const msg = await sendMessage(
+      client,
+      `${config.prefix}docs Vector3.thisDoesNotExist`
+    );
+
+    const [output] = msg.channel.messages;
+    expect(output.embed.title.includes('Vector3.thisDoesNotExist')).toBe(true);
+    expect(output.embed.description.length).not.toBe(0);
   });
 
   it('fuzzy searches alternate docs', async () => {

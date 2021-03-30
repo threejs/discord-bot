@@ -1,14 +1,19 @@
 import chalk from 'chalk';
 import { JSDOM } from 'jsdom';
+import createDOMPurify from 'dompurify';
+
+// Shared sanitation context
+const { window } = new JSDOM('');
+const DOMPurify = createDOMPurify(window);
 
 /**
  * Sanitizes Discord syntax from command arguments
- * @param {string} message Discord message string to sanitize
+ * @param {String} message Discord message string to sanitize
  */
 export const sanitize = message => {
   if (!message) return;
 
-  return (
+  return DOMPurify.sanitize(
     message
       // Remove newline characters
       .replace(/\n/gm, ' ')
@@ -28,16 +33,19 @@ const META_DELIMITER = 'META';
 /**
  * Queries for an element and its properties
  * @param {HTMLDocument} document HTML document context to query
- * @param {string} query Query selector to query with
+ * @param {String} query Query selector to query with
  */
 export const getQueryElement = (document, query) => {
   try {
+    // Normalize query
+    const target = query?.toLowerCase();
+
     // Early return if we're not querying
     const elements = Array.from(document.body.children);
     const element = elements.find(
       node =>
         ['H1', 'H3'].includes(node.tagName) &&
-        node.outerHTML.toLowerCase().includes(query?.toLowerCase())
+        node.outerHTML.toLowerCase().includes(target)
     );
     if (!element) return;
 
@@ -73,15 +81,16 @@ export const getQueryElement = (document, query) => {
 
 /**
  * Parses HTML into Discord markdown
- * @param {string} html HTML markup string
- * @param {string} [query] Optional query string to select from parsed HTML
+ * @param {String} html HTML markup string
+ * @param {String} [query] Optional query string to select from parsed HTML
  */
 export const transformMarkdown = (html, query) => {
   try {
     const { document } = new JSDOM(html).window;
 
     // Find element by query if specified
-    const target = getQueryElement(document, query) || document.body.innerHTML;
+    const target = query ? getQueryElement(document, query) : document.body.innerHTML;
+    if (!target) return;
 
     // Convert HTML to markdown
     const markdown = target

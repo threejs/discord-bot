@@ -27,7 +27,7 @@ export const crawl = async url => {
       }
     });
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
     const html = await page.evaluate(
       () =>

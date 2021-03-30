@@ -33,7 +33,7 @@ export const crawl = async url => {
       }
     });
 
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url);
 
     const html = await page.evaluate(
       () =>

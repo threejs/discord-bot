@@ -16,7 +16,9 @@ const config = {
     tags: process.env.EXAMPLES_TAGS || 'https://threejs.org/examples/tags.json',
   },
   github: process.env.GITHUB || 'https://github.com/threejs/discord-bot',
-  icon: process.env.ICON || 'https://threejs.org/editor/images/icon.png',
+  icon:
+    process.env.ICON ||
+    'https://github.com/mrdoob/three.js/blob/master/icon.png?raw=true',
   color: process.env.COLOR || 0x049ef4,
   prefix: process.env.PREFIX || '!',
   locale: process.env.LOCALE || 'en',

@@ -1,6 +1,26 @@
 # Threejs Discord Bot
 
-Discord bot for the [three.js Discord server](https://discord.gg/HF4UdyF).
+<br />
+<p align="center">
+  <a href="https://threejs.org">
+    <img src="https://github.com/mrdoob/three.js/blob/master/icon.png?raw=true" alt="three.js Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">Three.js Helper</h3>
+
+  <p align="center">
+    Discord bot for the <a href="https://discord.gg/HF4UdyF">three.js Discord server</a>.
+    <br />
+    <a href="https://github.com/threejs/discord-bot/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/threejs/discord-bot/issues">Request Feature</a>
+    <br />
+    <br />
+    <a href="https://discord.gg/HF4UdyF">
+      <img src="https://img.shields.io/discord/740090768164651008?style=flat&colorA=FFFFFF&colorB=FFFFFF&label=Discord&logo=discord" alt="Discord" />
+    </a>
+  </p>
+</p>
 
 ## Table of contents
 

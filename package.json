@@ -31,7 +31,7 @@
   "scripts": {
     "start": "nodemon --exec babel-node src",
     "serve": "babel-node src",
-    "test": "npm run lint && jest src",
+    "test": "npm run lint && jest src --silent",
     "test-watch": "jest --watchAll --verbose --testTimeout=10000",
     "lint": "eslint src && prettier src --check",
     "lint-fix": "eslint src --fix && prettier src --write src"

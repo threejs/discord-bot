@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "chalk": "4.1.0",
-    "discord.js": "12.5.1",
+    "discord.js": "12.5.2",
     "dompurify": "^2.2.7",
     "dotenv": "8.2.0",
     "express": "^4.17.1",
@@ -38,6 +38,7 @@
     "start": "nodemon --exec babel-node src",
     "build": "npm run clean && babel -d build src",
     "clean": "rimraf build && mkdir build",
+    "sync": "node bin/sync",
     "serve": "node src",
     "test": "npm run lint && jest src --silent",
     "test-watch": "jest --watchAll --verbose --testTimeout=10000",

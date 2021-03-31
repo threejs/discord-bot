@@ -1,4 +1,7 @@
-import { sanitize, transformMarkdown, embed, crawl, getDocs, getExamples } from 'utils';
+import { sanitize, transformMarkdown } from 'utils/discord';
+import { embed } from 'utils/embed';
+import { crawl } from 'utils/puppeteer';
+import { getDocs, getExamples } from 'utils/three';
 import config from 'config';
 
 describe('utils/discord', () => {

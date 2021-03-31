@@ -1,7 +1,10 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
-import { COMMAND_OPTION_TYPES } from 'commands';
-import { embed as embedConfig, getDocs, crawl, transformMarkdown } from 'utils';
+import { COMMAND_OPTION_TYPES } from 'utils/interactions';
+import { embed as embedConfig } from 'utils/embed';
+import { getDocs } from 'utils/three';
+import { crawl } from 'utils/puppeteer';
+import { transformMarkdown } from 'utils/discord';
 import config from 'config';
 
 // Extend embed headers
@@ -26,34 +29,30 @@ const Docs = {
       required: true,
     },
   ],
-  async execute({ args, msg }) {
+  async execute({ query }) {
     try {
-      const [arg] = args;
-
       // Early return on empty query
-      if (!arg) {
-        return msg.channel.send(
-          embed({
-            title: 'Invalid usage',
-            description: `Usage: \`${config.prefix}docs <query or class>\``,
-          })
-        );
+      if (!query) {
+        return embed({
+          title: 'Invalid usage',
+          description: `Usage: \`/docs <query or class>\``,
+        });
       }
 
       // Separate methods and props from query
-      const [query, ...props] = arg.split(/[.#]+/);
+      const [object, ...props] = query.split(/[.#]+/);
       const properties = props.length ? `.${props.join('.')}` : '';
 
       // Get localized docs
       const docs = await getDocs(config.locale);
 
       // Get fuzzy results if no exact match is found
-      const exactResult = docs.find(({ name }) => name === query);
+      const exactResult = docs.find(({ name }) => name === object);
       const results = exactResult
         ? [exactResult]
         : fuzzysort
             .go(
-              query,
+              object,
               docs.map(({ name }) => name)
             )
             .sort((a, b) => a - b)
@@ -63,12 +62,10 @@ const Docs = {
       switch (results.length) {
         case 0:
           // Handle no results
-          return msg.channel.send(
-            embed({
-              title: `No documentation was found for "${args.join(' ')}"`,
-              description: `Discover an issue? You can report it [here](${config.github}).`,
-            })
-          );
+          return embed({
+            title: `No documentation was found for "${query}"`,
+            description: `Discover an issue? You can report it [here](${config.github}).`,
+          });
         case 1: {
           // Handle single result
           const [{ name, ...result }] = results;
@@ -79,12 +76,10 @@ const Docs = {
 
           // Handle invalid query
           if (!markdown)
-            return msg.channel.send(
-              embed({
-                title: `Documentation for "${args.join(' ')}" does not exist`,
-                description: `Discover an issue? You can report it [here](${config.github}).`,
-              })
-            );
+            return embed({
+              title: `Documentation for "${query}" does not exist`,
+              description: `Discover an issue? You can report it [here](${config.github}).`,
+            });
 
           // Destructure markdown
           const { title, property, description } = markdown;
@@ -96,30 +91,24 @@ const Docs = {
               : result.url;
 
           // Return auto-generated url and props
-          return msg.channel.send(
-            embed({
-              title,
-              url,
-              description,
-            })
-          );
+          return embed({
+            title,
+            url,
+            description,
+          });
         }
         default:
           // Handle multiple results
-          return msg.channel.send(
-            embed({
-              title: `Documentation for "${args.join(' ')}"`,
-              description: results
-                .filter((_, index) => index < 10)
-                .map(({ name, url }) => `**[${name}](${url})**`)
-                .join('\n'),
-            })
-          );
+          return embed({
+            title: `Documentation for "${query}"`,
+            description: results
+              .filter((_, index) => index < 10)
+              .map(({ name, url }) => `**[${name}](${url})**`)
+              .join('\n'),
+          });
       }
     } catch (error) {
-      console.error(
-        chalk.red(`${config.prefix}docs ${args.join(' ')} >> ${error.stack}`)
-      );
+      console.error(chalk.red(`/docs ${query} >> ${error.stack}`));
     }
   },
 };

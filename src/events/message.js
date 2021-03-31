@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import config from 'config';
-import { sanitize } from 'utils';
+import { sanitize } from 'utils/discord';
 
 /**
  * Handles Discord message events.
@@ -19,7 +19,11 @@ const message = async (client, msg) => {
     const command = client.commands.get(name);
     if (!command) return;
 
-    await command.execute({ client, msg, args });
+    const query = args.join(' ');
+    const options = { client, query };
+
+    const output = await command.execute(options);
+    await msg.channel.send(output);
 
     return msg;
   } catch (error) {

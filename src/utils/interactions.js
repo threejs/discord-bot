@@ -1,4 +1,6 @@
 import nacl from 'tweetnacl';
+import { readdirSync } from 'fs';
+import { join } from 'path';
 import config from 'config';
 
 /**
@@ -54,17 +56,63 @@ export const INTERACTION_RESPONSE_FLAGS = {
 };
 
 /**
- * @typedef InteractionOption
+ * Valid option `type` values.
+ *
+ * @readonly
+ * @enum {Number}
+ */
+export const COMMAND_OPTION_TYPES = {
+  SUB_COMMAND: 1,
+  SUB_COMMAND_GROUP: 2,
+  STRING: 3,
+  INTEGER: 4,
+  BOOLEAN: 5,
+  USER: 6,
+  CHANNEL: 7,
+  ROLE: 8,
+};
+
+/**
+ * @typedef Choice
  * @property {String} name
  * @property {String} value
  */
 
 /**
+ * @typedef Option
+ * @property {String} name
+ * @property {String} description
+ * @property {Number} type
+ * @property {Boolean} required
+ * @property {Choice[]} choices
+ */
+
+/**
+ * @typedef Command
+ * @property {String} id
+ * @property {String} name
+ * @property {String} description
+ * @property {Option[]} options
+ */
+
+/**
+ * Interaction option object.
+ *
+ * @typedef InteractionOption
+ * @property {String} name
+ * @property {String | Number} value
+ */
+
+/**
+ * Interaction payload object.
+ *
  * @typedef InteractionData
  * @property {String} id
  * @property {String} name
  * @property {InteractionOption[]} [options]
  */
+
+const COMMANDS_PATH = join(__dirname, '../commands');
 
 /**
  * Handles a ping or command interaction.
@@ -74,11 +122,27 @@ export const INTERACTION_RESPONSE_FLAGS = {
  */
 export const handleInteraction = async (type, data) => {
   switch (type) {
-    case INTERACTION_TYPE.PING: {
-      return data;
-    }
+    case INTERACTION_TYPE.PING:
+      return { type: 1 };
     case INTERACTION_TYPE.APPLICATION_COMMAND: {
-      return data;
+      const { name, options } = data;
+
+      // Find target command
+      const command = readdirSync(COMMANDS_PATH).reduce((target, file) => {
+        const command = require(join(COMMANDS_PATH, file)).default;
+        if (command?.name === name) target = command;
+
+        return target;
+      }, null);
+      if (!command) return;
+
+      const query = options?.[0].value;
+      const output = await command.execute({ query });
+
+      return {
+        type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: output?.embed ? { embeds: [output.embed] } : { content: output },
+      };
     }
   }
 };

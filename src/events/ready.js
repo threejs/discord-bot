@@ -11,9 +11,6 @@ const ready = client => {
     client.user.setActivity(`${config.prefix}help`, { type: 'LISTENING' });
     console.info(`${chalk.cyanBright('[Bot]')} connected as ${client.user.tag}`);
 
-    client.commands.sync();
-    client.events.sync();
-
     if (config.env === 'production') {
       client.user.setAvatar(config.icon);
     }

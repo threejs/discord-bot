@@ -1,5 +1,5 @@
 import Bot from 'bot';
-import { sendMessage } from 'utils';
+import { sendMessage } from 'utils/test';
 import config from 'config';
 
 const client = new Bot();
@@ -175,15 +175,6 @@ describe('commands/Help', () => {
 
     const [output] = msg.channel.messages;
     expect(output.embed.fields.length).toBe(Array.from(client.commands.keys()).length);
-  });
-});
-
-describe('commands/Uptime', () => {
-  it("displays this bot's uptime", async () => {
-    const msg = await sendMessage(client, `${config.prefix}uptime`);
-
-    const [output] = msg.channel.messages;
-    expect(output).toBeDefined();
   });
 });
 

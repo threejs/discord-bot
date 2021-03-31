@@ -29,7 +29,6 @@
   - [Docs](#docs)
   - [Examples](#examples)
   - [Help](#help)
-  - [Uptime](#uptime)
 
 ## Install & run
 
@@ -55,31 +54,24 @@ yarn test
 
 | Command   | Arguments        | Description                                                                                       |
 | --------- | ---------------- | ------------------------------------------------------------------------------------------------- |
-| !docs     | `query or class` | Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class.       |
-| !examples | `tags`           | Searches [https://threejs.org/examples](https://threejs.org/examples) for examples matching tags. |
-| !help     | _none_           | Displays this bot's commands.                                                                     |
-| !uptime   | _none_           | Responds with this bot's current uptime.                                                          |
+| /docs     | `query or class` | Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class.       |
+| /examples | `tags`           | Searches [https://threejs.org/examples](https://threejs.org/examples) for examples matching tags. |
+| /help     | _none_           | Displays this bot's commands.                                                                     |
 
-## !docs
+## /docs
 
 Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class.
 
-Usage: `!docs vector3#set`
+Usage: `/docs vector3#set`
 
-## !examples
+## /examples
 
 Searches [https://threejs.org/examples](https://threejs.org/examples) for examples matching tags.
 
-Usage: `!examples physics`
+Usage: `/examples physics`
 
-## !help
+## /help
 
 Displays this bot's commands.
 
-Usage: `!help`
-
-## !uptime
-
-Responds with this bot's current uptime.
-
-Usage: `!uptime`
+Usage: `/help`

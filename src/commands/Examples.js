@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import config from '../config';
-import { embed as embedConfig, getExamples } from '../utils';
+import config from 'config';
+import { embed as embedConfig, getExamples } from 'utils';
 
 // Extend embed headers
 const embed = props =>

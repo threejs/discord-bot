@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import config from '../config';
+import config from 'config';
 
 /**
  * Handles the bot's ready state

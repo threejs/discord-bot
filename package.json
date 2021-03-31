@@ -19,6 +19,7 @@
     "@babel/node": "^7.13.13",
     "@babel/plugin-transform-runtime": "^7.13.10",
     "@babel/preset-env": "^7.13.12",
+    "babel-plugin-module-resolver": "^4.1.0",
     "chalk": "4.1.0",
     "discord.js": "12.5.1",
     "dompurify": "^2.2.7",

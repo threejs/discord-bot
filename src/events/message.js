@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import config from '../config';
-import { sanitize } from '../utils';
+import config from 'config';
+import { sanitize } from 'utils';
 
 /**
  * Handles Discord message events

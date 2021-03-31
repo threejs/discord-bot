@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
 import config from '../config';
+import { CommandOptionTypes } from '.';
 import { embed as embedConfig, getDocs, crawl, transformMarkdown } from '../utils';
 
 // Extend embed headers
@@ -17,7 +18,14 @@ const embed = props =>
 const Docs = {
   name: 'docs',
   description: 'Searches https://threejs.org/docs for specified query or class.',
-  args: ['query or class'],
+  options: [
+    {
+      name: 'query or class',
+      description: 'A query or class to search related docs for',
+      type: CommandOptionTypes.STRING,
+      required: true,
+    },
+  ],
   async execute({ args, msg }) {
     try {
       const [arg] = args;

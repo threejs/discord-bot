@@ -1,22 +1,14 @@
 import Bot from '../bot';
 
-let client;
-
-beforeAll(() => {
-  client = new Bot();
-});
+const client = new Bot();
 
 describe('Bot', () => {
   it('loads events', async () => {
-    const events = await client.loadEvents();
-
-    expect(events.keys().length).not.toBe(0);
+    expect(client.events.keys().length).not.toBe(0);
   });
 
   it('loads commands', async () => {
-    const commands = await client.loadCommands();
-
-    expect(commands.keys().length).not.toBe(0);
+    expect(client.commands.keys().length).not.toBe(0);
   });
 });
 

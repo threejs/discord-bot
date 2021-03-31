@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import config from '../config';
+import { CommandOptionTypes } from '.';
 import { embed as embedConfig, getExamples } from '../utils';
 
 // Extend embed headers
@@ -16,7 +17,14 @@ const embed = props =>
 const Examples = {
   name: 'examples',
   description: 'Searches https://threejs.org/examples for examples matching tags.',
-  args: ['tags'],
+  options: [
+    {
+      name: 'tags',
+      description: 'Tags to search related examples for',
+      type: CommandOptionTypes.String,
+      required: true,
+    },
+  ],
   async execute({ args, msg }) {
     try {
       // Early return on empty query

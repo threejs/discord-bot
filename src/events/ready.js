@@ -5,12 +5,17 @@ import config from '../config';
  * Handles the bot's ready state
  * @param client Discord client context
  */
-const ready = async client => {
+const ready = client => {
   try {
     client.user.setActivity(`${config.prefix}help`, { type: 'LISTENING' });
     console.info(`${chalk.cyanBright('[Bot]')} connected as ${client.user.tag}`);
 
-    if (config.env === 'production') await client.user.setAvatar(config.icon);
+    if (config.env === 'production') {
+      client.commands.sync();
+      client.events.sync();
+
+      client.user.setAvatar(config.icon);
+    }
   } catch (error) {
     console.warn(chalk.yellow(`ready >> ${error.message}`));
   }

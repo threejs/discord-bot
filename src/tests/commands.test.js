@@ -2,14 +2,7 @@ import Bot from '../bot';
 import { sendMessage } from '../utils';
 import config from '../config';
 
-let client;
-
-beforeAll(async () => {
-  client = new Bot();
-
-  await client.loadEvents();
-  await client.loadCommands();
-});
+const client = new Bot();
 
 describe('commands/Docs', () => {
   it('has fallback on no result', async () => {

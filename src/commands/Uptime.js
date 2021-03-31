@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import config from '../config';
-import { embed } from '../utils';
+import config from 'config';
+import { embed } from 'utils';
 
 const Uptime = {
   name: 'uptime',

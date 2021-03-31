@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
-import config from '../config';
-import { embed as embedConfig, getDocs, crawl, transformMarkdown } from '../utils';
+import config from 'config';
+import { embed as embedConfig, getDocs, crawl, transformMarkdown } from 'utils';
 
 // Extend embed headers
 const embed = props =>

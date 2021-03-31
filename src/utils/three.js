@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
-import config from '../config';
+import config from 'config';
 
 /**
  * Returns a list of the three.js docs in an optional locale

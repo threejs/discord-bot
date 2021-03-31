@@ -1,7 +1,7 @@
 import chalk from 'chalk';
-import config from 'config';
-import { CommandOptionTypes } from '.';
+import { COMMAND_OPTION_TYPES } from 'commands';
 import { embed as embedConfig, getExamples } from 'utils';
+import config from 'config';
 
 // Extend embed headers
 const embed = props =>
@@ -21,7 +21,7 @@ const Examples = {
     {
       name: 'tags',
       description: 'Tags to search related examples for',
-      type: CommandOptionTypes.STRING,
+      type: COMMAND_OPTION_TYPES.STRING,
       required: true,
     },
   ],

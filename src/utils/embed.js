@@ -10,8 +10,9 @@ const MAX_FIELD_NAME_LENGTH = 256;
 const MAX_FIELD_VALUE_LENGTH = 1024;
 
 /**
- * Generates an embed with default properties
- * @param {MessageEmbed} props Overloaded embed properties
+ * Generates an embed with default properties.
+ *
+ * @param {MessageEmbed} props Overloaded embed properties.
  * @returns {MessageEmbed}
  */
 const validateProps = props => {

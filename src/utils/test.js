@@ -1,9 +1,10 @@
 import chalk from 'chalk';
 
 /**
- * Triggers a message event, returning message context
- * @param client Discord client context
- * @param {String} content Initial Discord message content
+ * Triggers a message event, returning message context.
+ *
+ * @param client Discord client context.
+ * @param {String} content Initial Discord message content.
  */
 export const sendMessage = async (client, content) => {
   try {

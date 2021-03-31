@@ -3,9 +3,10 @@ import config from 'config';
 import { sanitize } from 'utils';
 
 /**
- * Handles Discord message events
- * @param client Discord client context
- * @param msg Discord message context
+ * Handles Discord message events.
+ *
+ * @param client Discord client context.
+ * @param msg Discord message context.
  */
 const message = async (client, msg) => {
   try {

@@ -4,11 +4,12 @@ import { readdirSync } from 'fs';
 import { join } from 'path';
 
 /**
- * Valid option `type` values
+ * Valid option `type` values.
+ *
  * @readonly
  * @enum {Number}
  */
-export const CommandOptionTypes = {
+export const COMMAND_OPTION_TYPES = {
   SUB_COMMAND: 1,
   SUB_COMMAND_GROUP: 2,
   STRING: 3,
@@ -44,8 +45,9 @@ export const CommandOptionTypes = {
 
 class CommandManager extends Collection {
   /**
-   * Loads bot commands from the `commands` folder
-   * @param {String} [path] Target command folder
+   * Loads bot commands from the `commands` folder.
+   *
+   * @param {String} [path] Target command folder.
    */
   constructor(path = __dirname) {
     super();
@@ -64,8 +66,9 @@ class CommandManager extends Collection {
   }
 
   /**
-   * Syncs local and remote commands
-   * @param client Current client context
+   * Syncs local and remote commands.
+   *
+   * @param client Current client context.
    */
   async sync(client) {
     // Auth remote application
@@ -94,8 +97,9 @@ class CommandManager extends Collection {
   }
 
   /**
-   * Registers or updates a command
-   * @param {Command} command Command payload object
+   * Registers or updates a command.
+   *
+   * @param {Command} command Command payload object.
    */
   async update(command) {
     const { id, title, description, options } = command;
@@ -114,8 +118,9 @@ class CommandManager extends Collection {
   }
 
   /**
-   * Deletes a command by ID
-   * @param {Command} command Target command ID
+   * Deletes a command by ID.
+   *
+   * @param {Command} command Target command ID.
    */
   async delete(command) {
     await this.commands(command.id).delete();

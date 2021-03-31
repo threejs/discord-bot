@@ -5,8 +5,9 @@ import { join } from 'path';
 
 class EventManager extends Collection {
   /**
-   * Loads bot events from the `events` folder
-   * @param {String} [path] Target event folder
+   * Loads bot events from the `events` folder.
+   *
+   * @param {String} [path] Target event folder.
    */
   constructor(path = __dirname) {
     super();
@@ -24,8 +25,9 @@ class EventManager extends Collection {
   }
 
   /**
-   * Syncs and binds bot events
-   * @param client Current client context
+   * Syncs and binds bot events.
+   *
+   * @param client Current client context.
    */
   sync(client) {
     this.keys().forEach(event => {

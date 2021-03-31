@@ -22,6 +22,8 @@ const config = {
   color: process.env.COLOR || 0x049ef4,
   prefix: process.env.PREFIX || '!',
   locale: process.env.LOCALE || 'en',
+  port: process.env.PORT || 8080,
+  key: process.env.KEY,
   token: process.env.TOKEN,
   env: process.env.NODE_ENV,
 };

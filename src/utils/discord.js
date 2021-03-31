@@ -7,14 +7,16 @@ const { window } = new JSDOM('');
 const DOMPurify = createDOMPurify(window);
 
 /**
- * Normalizes and cleans up unsafe strings, eval
- * @param {String} string Target string
+ * Normalizes and cleans up unsafe strings, eval.
+ *
+ * @param {String} string Target string.
  */
 export const normalize = string => DOMPurify.sanitize(string);
 
 /**
- * Sanitizes Discord syntax from command arguments
- * @param {String} message Discord message string to sanitize
+ * Sanitizes Discord syntax from command arguments.
+ *
+ * @param {String} message Discord message string to sanitize.
  */
 export const sanitize = message => {
   if (!message) return;
@@ -37,9 +39,10 @@ export const sanitize = message => {
 const META_DELIMITER = 'META';
 
 /**
- * Queries for an element and its properties
- * @param {HTMLDocument} document HTML document context to query
- * @param {String} query Query selector to query with
+ * Queries for an element and its properties.
+ *
+ * @param {HTMLDocument} document HTML document context to query.
+ * @param {String} query Query selector to query with.
  */
 export const getQueryElement = (document, query) => {
   try {
@@ -86,9 +89,10 @@ export const getQueryElement = (document, query) => {
 };
 
 /**
- * Parses HTML into Discord markdown
- * @param {String} html HTML markup string
- * @param {String} [query] Optional query string to select from parsed HTML
+ * Parses HTML into Discord markdown.
+ *
+ * @param {String} html HTML markup string.
+ * @param {String} [query] Optional query string to select from parsed HTML.
  */
 export const transformMarkdown = (html, query) => {
   try {

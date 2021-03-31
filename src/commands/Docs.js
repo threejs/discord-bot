@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
-import config from 'config';
-import { CommandOptionTypes } from '.';
+import { COMMAND_OPTION_TYPES } from 'commands';
 import { embed as embedConfig, getDocs, crawl, transformMarkdown } from 'utils';
+import config from 'config';
 
 // Extend embed headers
 const embed = props =>
@@ -22,7 +22,7 @@ const Docs = {
     {
       name: 'query or class',
       description: 'A query or class to search related docs for',
-      type: CommandOptionTypes.STRING,
+      type: COMMAND_OPTION_TYPES.STRING,
       required: true,
     },
   ],

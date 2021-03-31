@@ -2,8 +2,9 @@ import chalk from 'chalk';
 import puppeteer from 'puppeteer';
 
 /**
- * Fetches and crawls a url, returning html
- * @param {String} url URL to fetch and crawl
+ * Fetches and crawls a url, returning html.
+ *
+ * @param {String} url URL to fetch and crawl.
  */
 export const crawl = async url => {
   if (!url) return null;

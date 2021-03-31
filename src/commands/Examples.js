@@ -21,7 +21,7 @@ const Examples = {
     {
       name: 'tags',
       description: 'Tags to search related examples for',
-      type: CommandOptionTypes.String,
+      type: CommandOptionTypes.STRING,
       required: true,
     },
   ],

@@ -54,7 +54,9 @@ class CommandManager extends Collection {
       if (!file.startsWith('index')) {
         const command = require(join(path, file)).default;
 
-        this.set(command.name, command);
+        if (command?.name) {
+          this.set(command.name, command);
+        }
       }
     });
 

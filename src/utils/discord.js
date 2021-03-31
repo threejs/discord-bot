@@ -7,13 +7,19 @@ const { window } = new JSDOM('');
 const DOMPurify = createDOMPurify(window);
 
 /**
+ * Normalizes and cleans up unsafe strings, eval
+ * @param {String} string Target string
+ */
+export const normalize = string => DOMPurify.sanitize(string);
+
+/**
  * Sanitizes Discord syntax from command arguments
  * @param {String} message Discord message string to sanitize
  */
 export const sanitize = message => {
   if (!message) return;
 
-  return DOMPurify.sanitize(
+  return normalize(
     message
       // Remove newline characters
       .replace(/\n/gm, ' ')

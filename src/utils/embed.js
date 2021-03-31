@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { MessageEmbed } from 'discord.js';
-import config from '../config';
+import config from 'config';
 
 const MAX_TITLE_LENGTH = 256;
 const MAX_DESC_LENGTH = 2048;

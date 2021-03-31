@@ -1,6 +1,6 @@
-import Bot from '../bot';
-import { sendMessage } from '../utils';
-import config from '../config';
+import Bot from 'bot';
+import { sendMessage } from 'utils';
+import config from 'config';
 
 const client = new Bot();
 

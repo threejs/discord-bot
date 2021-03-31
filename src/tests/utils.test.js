@@ -1,12 +1,5 @@
-import {
-  sanitize,
-  transformMarkdown,
-  embed,
-  crawl,
-  getDocs,
-  getExamples,
-} from '../utils';
-import config from '../config';
+import { sanitize, transformMarkdown, embed, crawl, getDocs, getExamples } from 'utils';
+import config from 'config';
 
 describe('utils/discord', () => {
   it('sanitizes Discord mentions', () => {

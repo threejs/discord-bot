@@ -1,4 +1,4 @@
-import Bot from '../bot';
+import Bot from 'bot';
 
 const client = new Bot();
 

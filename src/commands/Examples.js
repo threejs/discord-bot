@@ -1,7 +1,7 @@
 import chalk from 'chalk';
-import config from '../config';
+import config from 'config';
 import { CommandOptionTypes } from '.';
-import { embed as embedConfig, getExamples } from '../utils';
+import { embed as embedConfig, getExamples } from 'utils';
 
 // Extend embed headers
 const embed = props =>

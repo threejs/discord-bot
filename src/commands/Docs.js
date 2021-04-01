@@ -20,10 +20,10 @@ const embed = props =>
 
 const Docs = {
   name: 'docs',
-  description: 'Searches https://threejs.org/docs for specified query or class.',
+  description: 'Searches https://threejs.org/docs for docs matching query.',
   options: [
     {
-      name: 'query or class',
+      name: 'query',
       description: 'A query or class to search related docs for',
       type: COMMAND_OPTION_TYPES.STRING,
       required: true,
@@ -31,14 +31,6 @@ const Docs = {
   ],
   async execute({ query }) {
     try {
-      // Early return on empty query
-      if (!query) {
-        return embed({
-          title: 'Invalid usage',
-          description: `Usage: \`/docs <query or class>\``,
-        });
-      }
-
       // Separate methods and props from query
       const [object, ...props] = query.split(/[.#]+/);
       const properties = props.length ? `.${props.join('.')}` : '';

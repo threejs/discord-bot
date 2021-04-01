@@ -17,25 +17,17 @@ const embed = props =>
 
 const Examples = {
   name: 'examples',
-  description: 'Searches https://threejs.org/examples for examples matching tags.',
+  description: 'Searches https://threejs.org/examples for examples matching query.',
   options: [
     {
-      name: 'tags',
-      description: 'Tags to search related examples for',
+      name: 'query',
+      description: 'Query to search related examples for',
       type: COMMAND_OPTION_TYPES.STRING,
       required: true,
     },
   ],
   async execute({ query }) {
     try {
-      // Early return on empty query
-      if (!query) {
-        return embed({
-          title: 'Invalid usage',
-          description: `Usage: \`/examples <tags>\``,
-        });
-      }
-
       // Get tagged examples
       const examples = await getExamples();
 

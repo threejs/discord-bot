@@ -24,6 +24,7 @@ const config = {
   locale: process.env.LOCALE || 'en',
   port: process.env.PORT || 8080,
   key: process.env.KEY,
+  token: process.env.TOKEN,
   env: process.env.NODE_ENV,
 };
 

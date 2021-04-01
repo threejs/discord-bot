@@ -22,14 +22,6 @@
   </p>
 </p>
 
-## Table of contents
-
-- [Install and Run](#install--run)
-- [Commands](#commands)
-  - [Docs](#docs)
-  - [Examples](#examples)
-  - [Help](#help)
-
 ## Install & run
 
 Make sure you have nodejs and yarn installed. Install dependencies with:
@@ -50,28 +42,37 @@ To run tests:
 yarn test
 ```
 
-## Commands
+## Configure Credentials
 
-| Command   | Arguments        | Description                                                                                       |
-| --------- | ---------------- | ------------------------------------------------------------------------------------------------- |
-| /docs     | `query or class` | Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class.       |
-| /examples | `tags`           | Searches [https://threejs.org/examples](https://threejs.org/examples) for examples matching tags. |
-| /help     | _none_           | Displays this bot's commands.                                                                     |
+Discord requires authentication in order to use bot/interaction features.
 
-## /docs
+To setup a bot for local/production use, you will need to specify credentials in a file.
 
-Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class.
+**.env** (do not commit)
 
-Usage: `/docs vector3#set`
+```yaml
+# Used for invocation via interaction webhook
+KEY="public app key"
 
-## /examples
+# Used for authentication with Discord
+TOKEN="bot token"
 
-Searches [https://threejs.org/examples](https://threejs.org/examples) for examples matching tags.
+# Optional guild (used to update slash commands at the guild-level)
+GUILD="test guild"
+```
 
-Usage: `/examples physics`
+## Setup Slash Commands
 
-## /help
+Discord has built-in intellisense for [slash commands](https://discord.com/developers/docs/interactions/slash-commands). These are updated by the bot by authenticating with Discord servers and sending command meta.
 
-Displays this bot's commands.
+To update remote commands:
 
-Usage: `/help`
+```bash
+yarn sync
+```
+
+You can also clear remote commands by specifying the `--clear` flag:
+
+```bash
+yarn sync --clear
+```

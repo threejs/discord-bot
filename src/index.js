@@ -6,10 +6,6 @@ import Bot from 'bot';
 import { middleware } from 'utils/interactions';
 import config from 'config';
 
-// Init bot
-const bot = new Bot();
-bot.login(config.token);
-
 // Init app
 const app = express();
 app.use(express.json());
@@ -20,16 +16,23 @@ routes.forEach(route => {
   const endpoint = route.replace(/\..*/, '');
   const handler = require(join(__dirname, 'api', route)).default;
 
-  app.use(`/${endpoint}`, middleware, handler);
+  if (config.env === 'test') {
+    app.use(`/${endpoint}`, handler);
+  } else {
+    app.use(`/${endpoint}`, middleware, handler);
+  }
 });
 
-// Start server
+// Init server & bot
 if (config.env !== 'test') {
   app.listen(config.port, () =>
     console.info(
       `${chalk.cyanBright('[Bot]')} listening on port ${chalk.whiteBright(config.port)}`
     )
   );
+
+  const bot = new Bot();
+  bot.login(config.token);
 }
 
 export default app;

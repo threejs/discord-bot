@@ -7,7 +7,7 @@ const Help = {
   description: "Displays this bot's commands.",
   execute({ client }) {
     try {
-      const commands = client.commands || Bot.loadCommands();
+      const commands = client?.commands || Bot.prototype.loadCommands();
 
       return embed({
         title: 'Commands',

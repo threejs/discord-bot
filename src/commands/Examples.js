@@ -35,8 +35,7 @@ const Examples = {
       const targetKey = query.replace(/\s+/g, '_').toLowerCase();
       const target = examples.find(
         ({ name }) =>
-          name === targetKey ||
-          query.split(' ').every(tag => name.includes(tag.toLowerCase()))
+          name === targetKey || name.split('_').every(frag => targetKey.includes(frag))
       );
 
       // Fuzzy search examples

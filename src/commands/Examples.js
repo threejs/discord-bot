@@ -36,7 +36,7 @@ const Examples = {
       const targetKey = args.join('_').toLowerCase();
       const target = examples.find(
         ({ name }) =>
-          name === targetKey || args.every(arg => name.includes(arg.toLowerCase()))
+          name === targetKey || name.split('_').every(frag => targetKey.includes(frag))
       );
 
       // Fuzzy search examples

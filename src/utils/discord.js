@@ -1,6 +1,11 @@
 import chalk from 'chalk';
+import fetch from 'node-fetch';
+// eslint-disable-next-line no-unused-vars
+import { MessageEmbed } from 'discord.js';
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
+import { DISCORD_URL, EMBED_DEFAULTS } from 'constants';
+import config from 'config';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -33,6 +38,63 @@ export const sanitize = message => {
       .replace(/\s+/g, ' ')
       .trim()
   );
+};
+
+/**
+ * Authenticates and makes a request to Discord's API. Useful for anything external like registering commands.
+ *
+ * @param {String} path Discord endpoint to target with request.
+ * @param {'GET' | 'POST' | 'PATCH' | 'DELETE'} method HTTP method to use in request.
+ * @param {Object} body Request payload.
+ */
+export const makeAPIRequest = async (path, method, body) =>
+  new Promise((resolve, reject) => {
+    fetch(`${DISCORD_URL}${path}`, {
+      method,
+      body: JSON.stringify(body),
+      headers: {
+        Authorization: `Bot ${config.token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(resolve)
+      .catch(reject);
+  });
+
+const MAX_TITLE_LENGTH = 256;
+const MAX_DESC_LENGTH = 2048;
+
+const MAX_FIELD_LENGTH = 25;
+const MAX_FIELD_NAME_LENGTH = 256;
+const MAX_FIELD_VALUE_LENGTH = 1024;
+
+/**
+ * Generates an embed with default properties.
+ *
+ * @param {MessageEmbed} props Overloaded embed properties.
+ * @returns {MessageEmbed}
+ */
+export const validateEmbed = props => {
+  const { title, description, fields, ...rest } = props;
+
+  return {
+    ...EMBED_DEFAULTS,
+    title: title?.slice(0, MAX_TITLE_LENGTH),
+    description: description?.slice(0, MAX_DESC_LENGTH),
+    fields: fields?.reduce((fields, field, index) => {
+      if (index <= MAX_FIELD_LENGTH) {
+        const { name, value } = field;
+
+        fields.push({
+          name: name.slice(0, MAX_FIELD_NAME_LENGTH),
+          value: value.slice(0, MAX_FIELD_VALUE_LENGTH),
+        });
+      }
+
+      return fields;
+    }, []),
+    ...rest,
+  };
 };
 
 // Delimiter used to separate stringified meta HTML

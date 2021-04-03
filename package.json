@@ -19,36 +19,29 @@
     "jest": "26.6.3",
     "nodemon": "2.0.7",
     "prettier": "^2.2.1",
-    "rimraf": "^3.0.2",
-    "supertest": "^6.1.3"
+    "rimraf": "^3.0.2"
   },
   "dependencies": {
     "chalk": "4.1.0",
-    "discord.js": "12.5.2",
+    "discord.js": "12.5.3",
     "dompurify": "^2.2.7",
     "dotenv": "8.2.0",
-    "express": "^4.17.1",
     "fuzzysort": "^1.1.4",
     "jsdom": "^16.5.2",
     "node-fetch": "^2.6.1",
-    "puppeteer": "^8.0.0",
-    "tweetnacl": "^1.0.3"
+    "puppeteer": "^8.0.0"
   },
   "scripts": {
     "start": "nodemon --exec babel-node src",
     "build": "npm run clean && babel -d build src",
     "clean": "rimraf build && mkdir build",
-    "sync": "babel-node bin/sync",
-    "serve": "npm run sync && node src",
+    "serve": "node src",
     "test": "npm run lint && jest src --silent",
     "test-watch": "jest --watchAll --verbose --testTimeout=10000",
     "lint": "eslint src && prettier src --check",
     "lint-fix": "eslint src --fix && prettier src --write src"
   },
   "jest": {
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "src/utils/test.js"
-    ]
+    "testEnvironment": "node"
   }
 }

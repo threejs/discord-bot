@@ -1,22 +1,10 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
-import { COMMAND_OPTION_TYPES } from 'utils/interactions';
-import { embed as embedConfig } from 'utils/embed';
 import { getDocs } from 'utils/three';
 import { crawl } from 'utils/puppeteer';
 import { transformMarkdown } from 'utils/discord';
+import { COMMAND_OPTION_TYPES } from 'constants';
 import config from 'config';
-
-// Extend embed headers
-const embed = props =>
-  embedConfig({
-    author: {
-      name: 'Three.js Docs',
-      icon_url: config.icon,
-      url: `${config.docs.url}manual/en/introduction/Creating-a-scene`,
-    },
-    ...props,
-  });
 
 const Docs = {
   name: 'docs',
@@ -29,14 +17,14 @@ const Docs = {
       required: true,
     },
   ],
-  async execute({ query }) {
+  async execute({ args }) {
     try {
       // Separate methods and props from query
-      const [object, ...props] = query.split(/[.#]+/);
+      const [object, ...props] = args.join(' ').split(/[.#]+/);
       const properties = props.length ? `.${props.join('.')}` : '';
 
       // Get localized docs
-      const docs = await getDocs(config.locale);
+      const docs = await getDocs();
 
       // Get fuzzy results if no exact match is found
       const exactResult = docs.find(({ name }) => name === object);
@@ -54,10 +42,10 @@ const Docs = {
       switch (results.length) {
         case 0:
           // Handle no results
-          return embed({
-            title: `No documentation was found for "${query}"`,
+          return {
+            title: `No documentation was found for "${args.join(' ')}"`,
             description: `Discover an issue? You can report it [here](${config.github}).`,
-          });
+          };
         case 1: {
           // Handle single result
           const [{ name, ...result }] = results;
@@ -68,10 +56,10 @@ const Docs = {
 
           // Handle invalid query
           if (!markdown)
-            return embed({
-              title: `Documentation for "${query}" does not exist`,
+            return {
+              title: `Documentation for "${args.join(' ')}" does not exist`,
               description: `Discover an issue? You can report it [here](${config.github}).`,
-            });
+            };
 
           // Destructure markdown
           const { title, property, description } = markdown;
@@ -83,24 +71,25 @@ const Docs = {
               : result.url;
 
           // Return auto-generated url and props
-          return embed({
+          return {
             title,
             url,
             description,
-          });
+          };
         }
         default:
           // Handle multiple results
-          return embed({
-            title: `Documentation for "${query}"`,
-            description: results
-              .filter((_, index) => index < 10)
-              .map(({ name, url }) => `**[${name}](${url})**`)
-              .join('\n'),
-          });
+          return {
+            title: `Documentation for "${args.join(' ')}"`,
+            description: results.reduce((message, { name, url }, index) => {
+              if (index < 10) message += `**[${name}](${url})**`;
+
+              return message;
+            }, ''),
+          };
       }
     } catch (error) {
-      console.error(chalk.red(`/docs ${query} >> ${error.stack}`));
+      console.error(chalk.red(`/docs ${args.join(' ')} >> ${error.stack}`));
     }
   },
 };

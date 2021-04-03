@@ -1,5 +1,4 @@
 import { sanitize, transformMarkdown } from 'utils/discord';
-import { embed } from 'utils/embed';
 import { crawl } from 'utils/puppeteer';
 import { getDocs, getExamples } from 'utils/three';
 import config from 'config';
@@ -64,16 +63,6 @@ describe('utils/discord', () => {
   });
 });
 
-describe('utils/embed', () => {
-  it('generates an embed template', () => {
-    const output = embed({ title: 'title', description: 'description' });
-
-    expect(output.embed.title).toBe('title');
-    expect(output.embed.description).toBe('description');
-    expect(output.embed.color).toBe(config.color);
-  });
-});
-
 describe('utils/puppeteer', () => {
   it('crawls a webpage and callsback', async () => {
     const output = await crawl('about:blank');
@@ -85,12 +74,6 @@ describe('utils/puppeteer', () => {
 describe('utils/three', () => {
   it('gets three.js docs', async () => {
     const output = await getDocs();
-
-    expect(output.length).not.toBe(0);
-  });
-
-  it('gets localized three.js docs', async () => {
-    const output = await getDocs(config.locale);
 
     expect(output.length).not.toBe(0);
   });

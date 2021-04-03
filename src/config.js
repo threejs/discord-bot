@@ -15,15 +15,14 @@ const config = {
     list: process.env.EXAMPLES_LIST || 'https://threejs.org/examples/files.json',
     tags: process.env.EXAMPLES_TAGS || 'https://threejs.org/examples/tags.json',
   },
-  github: process.env.GITHUB || 'https://github.com/threejs/discord-bot',
   icon:
     process.env.ICON ||
     'https://github.com/mrdoob/three.js/blob/master/icon.png?raw=true',
-  color: process.env.COLOR || 0x049ef4,
-  prefix: process.env.PREFIX || '!',
+  github: process.env.GITHUB || 'https://github.com/threejs/discord-bot',
   locale: process.env.LOCALE || 'en',
-  port: process.env.PORT || 8080,
-  key: process.env.KEY,
+  prefix: process.env.PREFIX || '!',
+  guild: process.env.GUILD,
+  clientID: process.env.CLIENTID,
   token: process.env.TOKEN,
   env: process.env.NODE_ENV,
 };

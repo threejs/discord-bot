@@ -1,8 +1,0 @@
-{
-  "github": {
-    "silent": true
-  },
-  "functions": {
-    "includeFiles": "src/api/*.js"
-  }
-}

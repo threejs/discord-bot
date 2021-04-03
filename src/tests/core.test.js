@@ -1,8 +1,15 @@
-import Bot from 'bot';
+import Core from 'core';
 
-const client = new Bot();
+let client;
 
-describe('Bot', () => {
+beforeAll(async () => {
+  client = new Core();
+
+  client.loadEvents();
+  await client.loadCommands();
+});
+
+describe('Core', () => {
   it('loads events', async () => {
     expect(client.events.keys().length).not.toBe(0);
   });

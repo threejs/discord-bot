@@ -4,10 +4,8 @@ import config from 'config';
 
 /**
  * Returns a list of the three.js docs in an optional locale.
- *
- * @param {string} [locale] Optional docs locale to read from.
  */
-export const getDocs = async locale => {
+export const getDocs = async () => {
   try {
     const json = await fetch(config.docs.list).then(res => res.json());
 
@@ -19,7 +17,7 @@ export const getDocs = async locale => {
             typeof o[k] === 'object' ? _flatten(o[k]) : { [k]: o[k] }
           )
         );
-      })(locale ? json[locale] : json)
+      })(json[config.locale])
     );
 
     const docs = Object.keys(endpoints).map(key => ({

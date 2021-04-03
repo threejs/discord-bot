@@ -48,31 +48,15 @@ Discord requires authentication in order to use bot/interaction features.
 
 To setup a bot for local/production use, you will need to specify credentials in a file.
 
+**Note**: you will have to add the bot to a server with the `applications.commands` scope for slash commands.
+
 **.env** (do not commit)
 
 ```yaml
-# Used for invocation via interaction webhook
-KEY="public app key"
-
 # Used for authentication with Discord
 TOKEN="bot token"
+CLIENTID="application ID"
 
-# Optional guild (used to update slash commands at the guild-level)
-GUILD="test guild"
-```
-
-## Setup Slash Commands
-
-Discord has built-in intellisense for [slash commands](https://discord.com/developers/docs/interactions/slash-commands). These are updated by the bot by authenticating with Discord servers and sending command meta.
-
-To update remote commands:
-
-```bash
-yarn sync
-```
-
-You can also clear remote commands by specifying the `--clear` flag:
-
-```bash
-yarn sync --clear
+# Used for local testing of slash commands
+GUILD="guild ID"
 ```

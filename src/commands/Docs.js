@@ -20,7 +20,7 @@ const Docs = {
   async execute({ args }) {
     try {
       // Separate methods and props from query
-      const [object, ...props] = args.join(' ').split(/[.#]+/);
+      const [object, ...props] = args.join(' ').split(/\.|#/);
       const properties = props.length ? `.${props.join('.')}` : '';
 
       // Get localized docs
@@ -81,11 +81,10 @@ const Docs = {
           // Handle multiple results
           return {
             title: `Documentation for "${args.join(' ')}"`,
-            description: results.reduce((message, { name, url }, index) => {
-              if (index < 10) message += `**[${name}](${url})**`;
-
-              return message;
-            }, ''),
+            description: results
+              .filter((_, index) => index < 10)
+              .map(({ name, url }) => `**[${name}](${url})**`)
+              .join('\n'),
           };
       }
     } catch (error) {

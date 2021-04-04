@@ -21,14 +21,12 @@ class Core extends Client {
    *
    * @param interaction Remote Discord interaction object.
    * @param {String | APIMessage} content Stringified or pre-processed response.
-   * @param [options] Overloaded message options or alternative input.
    */
-  async createAPIMessage(interaction, content, options) {
+  async createAPIMessage(interaction, content) {
     if (!(content instanceof APIMessage)) {
       content = APIMessage.create(
         this.channels.resolve(interaction.channel_id),
-        typeof content === 'object' ? { embed: validateEmbed(content) } : content,
-        options
+        typeof content === 'object' ? { embed: validateEmbed(content) } : content
       );
     }
 
@@ -39,11 +37,10 @@ class Core extends Client {
    * Sends a message over an interaction endpoint.
    *
    * @param interaction Remote Discord interaction object.
-   * @param {String | APIResponse} content Stringified or pre-processed response.
-   * @param [options] Overloaded message options or alternative input.
+   * @param {String | APIMessage} content Stringified or pre-processed response.
    */
-  async send(interaction, content, options) {
-    const { data } = await this.createAPIMessage(interaction, content, options);
+  async send(interaction, content) {
+    const { data } = await this.createAPIMessage(interaction, content);
 
     const response = await makeAPIRequest(
       `/interactions/${interaction.id}/${interaction.token}/callback`,
@@ -103,10 +100,10 @@ class Core extends Client {
    * @param {String} token Discord bot token.
    */
   async init(token) {
-    if (token) await this.login(token);
-
-    this.loadCommands();
+    await this.loadCommands();
     this.loadEvents();
+
+    await this.login(token);
   }
 }
 

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import config from 'config';
-import { sanitize } from 'utils/discord';
+import { sanitize, validateEmbed } from 'utils/discord';
 
 /**
  * Handles Discord message events.
@@ -20,6 +20,8 @@ const MessageEvent = {
 
       const output = await command.execute({ client, args });
       if (!output) return;
+
+      if (output.embed) output.embed = validateEmbed(output.embed);
 
       return msg.channel.send(output);
     } catch (error) {

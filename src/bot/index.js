@@ -86,23 +86,44 @@ class Bot extends Client {
   }
 
   /**
-   * Registers slash commands with Discord.
+   * Updates slash commands with Discord.
    */
-  async registerCommands() {
+  async updateCommands() {
+    // Get remote target
+    const remote = () =>
+      config.guild
+        ? this.api.applications(this.user.id).guilds(config.guild)
+        : this.api.applications(this.user.id);
+
+    // Get remote cache
+    const cache = await remote().commands.get();
+
+    // Update remote
     for (const command in this.commands.map()) {
+      // Get command props
       const data = {
         name: command.name,
         description: command.description,
         options: command?.options,
       };
 
-      if (config.guild) {
-        await this.api
-          .applications(this.user.id)
-          .guilds(config.guild)
-          .commands.post({ data });
+      // Check for cache
+      const cached = cache?.find(({ name }) => name === command.name);
+
+      // Update or create command
+      if (cached?.id) {
+        await remote().commands(cached.id).patch({ data });
       } else {
-        await this.api.applications(this.user.id).commands.post({ data });
+        await remote().commands.post({ data });
+      }
+    }
+
+    // Cleanup cache
+    for (const command in cache) {
+      const exists = this.commands.get(command.name);
+
+      if (!exists) {
+        await remote().commands(command.id).delete();
       }
     }
   }
@@ -114,7 +135,7 @@ class Bot extends Client {
     this.loadEvents();
     this.loadCommands();
 
-    await this.registerCommands();
+    await this.updateCommands();
     await this.login(config.token);
   }
 }

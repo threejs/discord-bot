@@ -48,7 +48,7 @@ Discord requires authentication in order to use bot/interaction features.
 
 To setup a bot for local/production use, you will need to specify credentials in a file.
 
-**Note**: you will have to add the bot to a server with the `applications.commands` scope for slash commands.
+**Note**: you will have to add the bot to a server with the `applications.commands` scope to invoke slash commands.
 
 **.env** (do not commit)
 

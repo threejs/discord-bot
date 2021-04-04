@@ -1,14 +1,15 @@
+import chalk from 'chalk';
 import { Client, Collection, APIMessage } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import { makeAPIRequest, validateEmbed } from 'utils/discord';
-import { INTERACTION_RESPONSE_TYPE } from './constants';
+import { INTERACTION_RESPONSE_TYPE } from 'constants';
 import config from 'config';
 
 /**
  * An extended `Client` to support slash-command interactions and events.
  */
-class Core extends Client {
+class Bot extends Client {
   constructor(options) {
     super(options);
 
@@ -55,14 +56,42 @@ class Core extends Client {
   }
 
   /**
-   * Loads and registers interaction commands from the commands folder
+   * Loads and registers `Client` events from the events folder
    */
-  async loadCommands() {
-    const files = readdirSync(resolve(__dirname, 'commands'));
+  loadEvents() {
+    const files = readdirSync(resolve(__dirname, '../events'));
 
     for (const file of files) {
-      const command = require(resolve(__dirname, 'commands', file)).default;
+      const event = require(resolve(__dirname, '../events', file)).default;
 
+      this.on(event.name, (...args) => event.execute(this, ...args));
+
+      this.events.set(event.name, event);
+    }
+
+    console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
+  }
+
+  /**
+   * Loads and registers interaction commands from the commands folder
+   */
+  loadCommands() {
+    const files = readdirSync(resolve(__dirname, '../commands'));
+
+    for (const file of files) {
+      const command = require(resolve(__dirname, '../commands', file)).default;
+
+      this.commands.set(command.name, command);
+    }
+
+    console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
+  }
+
+  /**
+   * Registers slash commands with Discord.
+   */
+  async registerCommands() {
+    for (const command of this.commands.map()) {
       await makeAPIRequest(
         `/applications/${config.clientID}${
           config.guild ? `/guilds/${config.guild}` : ''
@@ -74,37 +103,20 @@ class Core extends Client {
           options: command?.options,
         }
       );
-
-      this.commands.set(command.name, command);
     }
   }
 
   /**
-   * Loads and registers `Client` events from the events folder
+   * Loads and starts up the bot.
    */
-  loadEvents() {
-    const files = readdirSync(resolve(__dirname, 'events'));
-
-    for (const file of files) {
-      const event = require(resolve(__dirname, 'events', file)).default;
-
-      this.on(event.name, (...args) => event.execute(this, ...args));
-
-      this.events.set(event.name, event);
-    }
-  }
-
-  /**
-   * Authenticates, loads, and registers bot commands and events.
-   *
-   * @param {String} token Discord bot token.
-   */
-  async init(token) {
-    await this.loadCommands();
+  async start() {
     this.loadEvents();
 
-    await this.login(token);
+    this.loadCommands();
+    await this.registerCommands();
+
+    await this.login(config.token);
   }
 }
 
-export default Core;
+export default Bot;

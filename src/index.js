@@ -1,5 +1,4 @@
-import Core from 'core';
-import config from 'config';
+import Bot from 'bot';
 
-const bot = new Core();
-bot.init(config.token);
+const bot = new Bot();
+bot.start();

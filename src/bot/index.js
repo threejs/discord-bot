@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Client, Collection, APIMessage } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import { validateEmbed } from 'utils/discord';
+import { validateMessage } from 'utils/discord';
 import { INTERACTION_RESPONSE_TYPE } from 'constants';
 import config from 'config';
 
@@ -27,7 +27,7 @@ class Bot extends Client {
     if (!(content instanceof APIMessage)) {
       content = APIMessage.create(
         this.channels.resolve(interaction.channel_id),
-        typeof content === 'object' ? { embed: validateEmbed(content) } : content
+        validateMessage(content)
       );
     }
 

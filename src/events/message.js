@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import config from 'config';
-import { sanitize, validateEmbed } from 'utils/discord';
+import { sanitize, validateMessage } from 'utils/discord';
 
 /**
  * Handles Discord message events.
@@ -21,9 +21,7 @@ const MessageEvent = {
       const output = await command.execute({ client, args });
       if (!output) return;
 
-      if (output.embed) output.embed = validateEmbed(output.embed);
-
-      return msg.channel.send(output);
+      return msg.channel.send(validateMessage(output));
     } catch (error) {
       console.error(chalk.red(`message >> ${error.stack}`));
     }

@@ -74,6 +74,18 @@ export const validateEmbed = props => {
   };
 };
 
+const MAX_MESSAGE_LENGTH = 2000;
+
+/**
+ * Validates a message response and its embed if available
+ *
+ * @param {String | MessageEmbed} message Discord message response.
+ */
+export const validateMessage = message =>
+  typeof message === 'object'
+    ? { embed: validateEmbed(message) }
+    : message.slice(0, MAX_MESSAGE_LENGTH);
+
 // Delimiter used to separate stringified meta HTML
 const META_DELIMITER = 'META';
 

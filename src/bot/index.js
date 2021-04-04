@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Client, Collection, APIMessage } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import { makeAPIRequest, validateEmbed } from 'utils/discord';
+import { validateEmbed } from 'utils/discord';
 import { INTERACTION_RESPONSE_TYPE } from 'constants';
 import config from 'config';
 
@@ -41,16 +41,16 @@ class Bot extends Client {
    * @param {String | APIMessage} content Stringified or pre-processed response.
    */
   async send(interaction, content) {
-    const { data } = await this.createAPIMessage(interaction, content);
+    const message = await this.createAPIMessage(interaction, content);
 
-    const response = await makeAPIRequest(
-      `/interactions/${interaction.id}/${interaction.token}/callback`,
-      'POST',
-      {
-        type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
-        data,
-      }
-    );
+    const response = await this.api
+      .interactions(interaction.id, interaction.token)
+      .callback.post({
+        data: {
+          type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
+          ...message.data,
+        },
+      });
 
     return response;
   }
@@ -91,18 +91,21 @@ class Bot extends Client {
    * Registers slash commands with Discord.
    */
   async registerCommands() {
-    for (const command of this.commands.map()) {
-      await makeAPIRequest(
-        `/applications/${config.clientID}${
-          config.guild ? `/guilds/${config.guild}` : ''
-        }/commands`,
-        'POST',
-        {
-          name: command.name,
-          description: command.description,
-          options: command?.options,
-        }
-      );
+    for (const command in this.commands.map()) {
+      const data = {
+        name: command.name,
+        description: command.description,
+        options: command?.options,
+      };
+
+      if (config.guild) {
+        await this.api
+          .applications(this.user.id)
+          .guilds(config.guild)
+          .commands.post({ data });
+      } else {
+        await this.api.applications(this.user.id).commands.post({ data });
+      }
     }
   }
 
@@ -111,10 +114,9 @@ class Bot extends Client {
    */
   async start() {
     this.loadEvents();
-
     this.loadCommands();
-    await this.registerCommands();
 
+    await this.registerCommands();
     await this.login(config.token);
   }
 }

@@ -1,9 +1,4 @@
 /**
- * Root Discord API url.
- */
-export const DISCORD_URL = 'https://discord.com/api/v8';
-
-/**
  * Embed default properties.
  */
 export const EMBED_DEFAULTS = {

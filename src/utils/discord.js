@@ -1,11 +1,9 @@
 import chalk from 'chalk';
-import fetch from 'node-fetch';
 // eslint-disable-next-line no-unused-vars
 import { MessageEmbed } from 'discord.js';
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
-import { DISCORD_URL, EMBED_DEFAULTS } from 'constants';
-import config from 'config';
+import { EMBED_DEFAULTS } from 'constants';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -39,27 +37,6 @@ export const sanitize = message => {
       .trim()
   );
 };
-
-/**
- * Authenticates and makes a request to Discord's API. Useful for anything external like registering commands.
- *
- * @param {String} path Discord endpoint to target with request.
- * @param {'GET' | 'POST' | 'PATCH' | 'DELETE'} method HTTP method to use in request.
- * @param {Object} body Request payload.
- */
-export const makeAPIRequest = async (path, method, body) =>
-  new Promise((resolve, reject) => {
-    fetch(`${DISCORD_URL}${path}`, {
-      method,
-      body: JSON.stringify(body),
-      headers: {
-        Authorization: `Bot ${config.token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(resolve)
-      .catch(reject);
-  });
 
 const MAX_TITLE_LENGTH = 256;
 const MAX_DESC_LENGTH = 2048;

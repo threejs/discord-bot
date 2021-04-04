@@ -22,7 +22,6 @@ const config = {
   locale: process.env.LOCALE || 'en',
   prefix: process.env.PREFIX || '!',
   guild: process.env.GUILD,
-  clientID: process.env.CLIENTID,
   token: process.env.TOKEN,
   env: process.env.NODE_ENV,
 };

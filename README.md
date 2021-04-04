@@ -55,7 +55,6 @@ To setup a bot for local/production use, you will need to specify credentials in
 ```yaml
 # Used for authentication with Discord
 TOKEN="bot token"
-CLIENTID="application ID"
 
 # Used for local testing of slash commands
 GUILD="guild ID"

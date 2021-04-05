@@ -12,6 +12,12 @@
         "root": ["src"],
         "extensions": [".js"]
       }
+    ],
+    [
+      "transform-runtime",
+      {
+        "regenerator": true
+      }
     ]
   ]
 }

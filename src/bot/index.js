@@ -99,7 +99,7 @@ class Bot extends Client {
     const cache = await remote().commands.get();
 
     // Update remote
-    for (const command in this.commands.map()) {
+    for (const command in this.commands.values()) {
       // Get command props
       const data = {
         name: command.name,
@@ -126,6 +126,8 @@ class Bot extends Client {
         await remote().commands(command.id).delete();
       }
     }
+
+    console.info(`${chalk.cyanBright('[Bot]')} updated slash commands`);
   }
 
   /**
@@ -135,8 +137,8 @@ class Bot extends Client {
     this.loadEvents();
     this.loadCommands();
 
-    await this.updateCommands();
     await this.login(config.token);
+    await this.updateCommands();
   }
 }
 

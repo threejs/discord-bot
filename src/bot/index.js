@@ -46,8 +46,10 @@ class Bot extends Client {
     const response = await this.api
       .interactions(interaction.id, interaction.token)
       .callback.post({
-        type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
-        data,
+        data: {
+          type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
+          data,
+        },
       });
 
     return response;
@@ -99,33 +101,37 @@ class Bot extends Client {
     const cache = await remote().commands.get();
 
     // Update remote
-    for (const command in this.commands.values()) {
-      // Get command props
-      const data = {
-        name: command.name,
-        description: command.description,
-        options: command?.options,
-      };
+    await Promise.all(
+      this.commands.map(async command => {
+        // Get command props
+        const data = {
+          name: command.name,
+          description: command.description,
+          options: command?.options,
+        };
 
-      // Check for cache
-      const cached = cache?.find(({ name }) => name === command.name);
+        // Check for cache
+        const cached = cache?.find(({ name }) => name === command.name);
 
-      // Update or create command
-      if (cached?.id) {
-        await remote().commands(cached.id).patch({ data });
-      } else {
-        await remote().commands.post({ data });
-      }
-    }
+        // Update or create command
+        if (cached?.id) {
+          await remote().commands(cached.id).patch({ data });
+        } else {
+          await remote().commands.post({ data });
+        }
+      })
+    );
 
     // Cleanup cache
-    for (const command in cache) {
-      const exists = this.commands.get(command.name);
+    await Promise.all(
+      cache.map(async command => {
+        const exists = this.commands.get(command.name);
 
-      if (!exists) {
-        await remote().commands(command.id).delete();
-      }
-    }
+        if (!exists) {
+          await remote().commands(command.id).delete();
+        }
+      })
+    );
 
     console.info(`${chalk.cyanBright('[Bot]')} updated slash commands`);
   }

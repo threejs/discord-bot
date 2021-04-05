@@ -35,7 +35,7 @@
     "start": "nodemon --exec babel-node src",
     "build": "npm run clean && babel -d build src",
     "clean": "rimraf build && mkdir build",
-    "serve": "node src",
+    "serve": "node build",
     "test": "npm run lint && jest src --silent",
     "test-watch": "jest --watchAll --verbose --testTimeout=10000",
     "lint": "eslint src && prettier src --check",

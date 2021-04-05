@@ -9,12 +9,10 @@
   "main": "src/config.js",
   "private": true,
   "devDependencies": {
-    "@babel/cli": "^7.13.14",
     "@babel/core": "^7.13.14",
     "@babel/node": "^7.13.13",
     "@babel/plugin-transform-runtime": "^7.13.10",
     "@babel/preset-env": "^7.13.12",
-    "@babel/runtime": "^7.13.10",
     "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^7.23.0",
     "jest": "26.6.3",
@@ -34,9 +32,7 @@
   },
   "scripts": {
     "start": "nodemon --exec babel-node src",
-    "build": "npm run clean && npx babel src --out-dir build --ignore 'src/**/*.test.js'",
-    "clean": "rimraf build && mkdir build",
-    "serve": "node build",
+    "serve": "babel-node src",
     "test": "npm run lint && jest src --silent",
     "test-watch": "jest --watchAll --verbose --testTimeout=10000",
     "lint": "eslint src && prettier src --check",

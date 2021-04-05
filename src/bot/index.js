@@ -140,11 +140,15 @@ class Bot extends Client {
    * Loads and starts up the bot.
    */
   async start() {
-    this.loadEvents();
-    this.loadCommands();
+    try {
+      this.loadEvents();
+      this.loadCommands();
 
-    await this.login(config.token);
-    await this.updateCommands();
+      await this.login(config.token);
+      await this.updateCommands();
+    } catch (error) {
+      console.error(chalk.red(`Bot#start >> ${error.message}`));
+    }
   }
 }
 

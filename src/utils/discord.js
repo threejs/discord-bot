@@ -1,19 +1,30 @@
 import chalk from 'chalk';
+// eslint-disable-next-line no-unused-vars
+import { MessageEmbed } from 'discord.js';
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
+import { EMBED_DEFAULTS } from 'constants';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
 const DOMPurify = createDOMPurify(window);
 
 /**
- * Sanitizes Discord syntax from command arguments
- * @param {String} message Discord message string to sanitize
+ * Normalizes and cleans up unsafe strings, eval.
+ *
+ * @param {String} string Target string.
+ */
+export const normalize = string => DOMPurify.sanitize(string);
+
+/**
+ * Sanitizes Discord syntax from command arguments.
+ *
+ * @param {String} message Discord message string to sanitize.
  */
 export const sanitize = message => {
   if (!message) return;
 
-  return DOMPurify.sanitize(
+  return normalize(
     message
       // Remove newline characters
       .replace(/\n/gm, ' ')
@@ -27,13 +38,62 @@ export const sanitize = message => {
   );
 };
 
+const MAX_TITLE_LENGTH = 256;
+const MAX_DESC_LENGTH = 2048;
+
+const MAX_FIELD_LENGTH = 25;
+const MAX_FIELD_NAME_LENGTH = 256;
+const MAX_FIELD_VALUE_LENGTH = 1024;
+
+/**
+ * Generates an embed with default properties.
+ *
+ * @param {MessageEmbed} props Overloaded embed properties.
+ * @returns {MessageEmbed}
+ */
+export const validateEmbed = props => {
+  const { title, description, fields, ...rest } = props;
+
+  return {
+    ...EMBED_DEFAULTS,
+    title: title?.slice(0, MAX_TITLE_LENGTH),
+    description: description?.slice(0, MAX_DESC_LENGTH),
+    fields: fields?.reduce((fields, field, index) => {
+      if (index <= MAX_FIELD_LENGTH) {
+        const { name, value } = field;
+
+        fields.push({
+          name: name.slice(0, MAX_FIELD_NAME_LENGTH),
+          value: value.slice(0, MAX_FIELD_VALUE_LENGTH),
+        });
+      }
+
+      return fields;
+    }, []),
+    ...rest,
+  };
+};
+
+const MAX_MESSAGE_LENGTH = 2000;
+
+/**
+ * Validates a message response and its embed if available
+ *
+ * @param {String | MessageEmbed} message Discord message response.
+ */
+export const validateMessage = message =>
+  typeof message === 'object'
+    ? { embed: validateEmbed(message) }
+    : message.slice(0, MAX_MESSAGE_LENGTH);
+
 // Delimiter used to separate stringified meta HTML
 const META_DELIMITER = 'META';
 
 /**
- * Queries for an element and its properties
- * @param {HTMLDocument} document HTML document context to query
- * @param {String} query Query selector to query with
+ * Queries for an element and its properties.
+ *
+ * @param {HTMLDocument} document HTML document context to query.
+ * @param {String} query Query selector to query with.
  */
 export const getQueryElement = (document, query) => {
   try {
@@ -80,9 +140,10 @@ export const getQueryElement = (document, query) => {
 };
 
 /**
- * Parses HTML into Discord markdown
- * @param {String} html HTML markup string
- * @param {String} [query] Optional query string to select from parsed HTML
+ * Parses HTML into Discord markdown.
+ *
+ * @param {String} html HTML markup string.
+ * @param {String} [query] Optional query string to select from parsed HTML.
  */
 export const transformMarkdown = (html, query) => {
   try {

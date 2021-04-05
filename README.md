@@ -22,15 +22,6 @@
   </p>
 </p>
 
-## Table of contents
-
-- [Install and Run](#install--run)
-- [Commands](#commands)
-  - [Docs](#docs)
-  - [Examples](#examples)
-  - [Help](#help)
-  - [Uptime](#uptime)
-
 ## Install & run
 
 Make sure you have nodejs and yarn installed. Install dependencies with:
@@ -51,35 +42,20 @@ To run tests:
 yarn test
 ```
 
-## Commands
+## Configure Credentials
 
-| Command   | Arguments        | Description                                                                                       |
-| --------- | ---------------- | ------------------------------------------------------------------------------------------------- |
-| !docs     | `query or class` | Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class.       |
-| !examples | `tags`           | Searches [https://threejs.org/examples](https://threejs.org/examples) for examples matching tags. |
-| !help     | _none_           | Displays this bot's commands.                                                                     |
-| !uptime   | _none_           | Responds with this bot's current uptime.                                                          |
+Discord requires authentication in order to use bot/interaction features.
 
-## !docs
+To setup a bot for local/production use, you will need to specify credentials in a file.
 
-Searches [https://threejs.org/docs](https://threejs.org/docs) for specified query or class.
+**Note**: you will have to add the bot to a server with the `applications.commands` scope to invoke slash commands.
 
-Usage: `!docs vector3#set`
+**.env** (do not commit)
 
-## !examples
+```yaml
+# Used for authentication with Discord
+TOKEN="bot token"
 
-Searches [https://threejs.org/examples](https://threejs.org/examples) for examples matching tags.
-
-Usage: `!examples physics`
-
-## !help
-
-Displays this bot's commands.
-
-Usage: `!help`
-
-## !uptime
-
-Responds with this bot's current uptime.
-
-Usage: `!uptime`
+# Used for local testing of slash commands
+GUILD="guild ID"
+```

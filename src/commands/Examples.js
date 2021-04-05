@@ -1,34 +1,21 @@
 import chalk from 'chalk';
+import { getExamples } from 'utils/three';
+import { COMMAND_OPTION_TYPES } from 'constants';
 import config from 'config';
-import { embed as embedConfig, getExamples } from 'utils';
-
-// Extend embed headers
-const embed = props =>
-  embedConfig({
-    author: {
-      name: 'Three.js Examples',
-      icon_url: config.icon,
-      url: config.examples.url,
-    },
-    ...props,
-  });
 
 const Examples = {
   name: 'examples',
-  description: 'Searches https://threejs.org/examples for examples matching tags.',
-  args: ['tags'],
-  async execute({ args, msg }) {
+  description: 'Searches https://threejs.org/examples for examples matching query.',
+  options: [
+    {
+      name: 'query',
+      description: 'Query to search related examples for',
+      type: COMMAND_OPTION_TYPES.STRING,
+      required: true,
+    },
+  ],
+  async execute({ args }) {
     try {
-      // Early return on empty query
-      if (!args.length) {
-        return msg.channel.send(
-          embed({
-            title: 'Invalid usage',
-            description: `Usage: \`${config.prefix}examples <tags>\``,
-          })
-        );
-      }
-
       // Get tagged examples
       const examples = await getExamples();
 
@@ -43,19 +30,17 @@ const Examples = {
       const results =
         (target && [target]) ||
         examples
-          .filter(({ tags }) => args.some(arg => tags.includes(arg.toLowerCase())))
+          .filter(({ tags }) => args.some(tag => tags.includes(tag.toLowerCase())))
           .sort((a, b) => a - b)
           .filter(Boolean);
 
       switch (results.length) {
         case 0:
           // Handle no results
-          return msg.channel.send(
-            embed({
-              title: `No examples were found for "${args.join(' ')}"`,
-              description: `Discover an issue? You can report it [here](${config.github}).`,
-            })
-          );
+          return {
+            title: `No examples were found for "${args.join(' ')}"`,
+            description: `Discover an issue? You can report it [here](${config.github}).`,
+          };
         case 1: {
           // Handle single result
           const [{ tags, name: title, ...rest }] = results;
@@ -65,30 +50,24 @@ const Examples = {
             .map(tag => `[${tag}](${config.examples.url}?q=${tag})`)
             .join(', ')}`;
 
-          return msg.channel.send(
-            embed({
-              title,
-              description,
-              ...rest,
-            })
-          );
+          return {
+            title,
+            description,
+            ...rest,
+          };
         }
         default:
           // Handle multiple results
-          return msg.channel.send(
-            embed({
-              title: `Examples for "${args.join(' ')}"`,
-              description: results
-                .filter((_, index) => index < 10)
-                .map(({ name, url }) => `**[${name}](${url})**`)
-                .join('\n'),
-            })
-          );
+          return {
+            title: `Examples for "${args.join(' ')}"`,
+            description: results
+              .filter((_, index) => index < 10)
+              .map(({ name, url }) => `**[${name}](${url})**`)
+              .join('\n'),
+          };
       }
     } catch (error) {
-      console.error(
-        chalk.red(`${config.prefix}examples ${args.join(' ')} >> ${error.stack}`)
-      );
+      console.error(chalk.red(`/examples ${args.join(' ')} >> ${error.stack}`));
     }
   },
 };

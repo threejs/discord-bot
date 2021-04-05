@@ -1,23 +1,19 @@
 import chalk from 'chalk';
-import config from 'config';
-import { embed } from 'utils';
 
 const Help = {
   name: 'help',
   description: "Displays this bot's commands.",
-  execute({ client, msg }) {
+  execute({ client }) {
     try {
-      return msg.channel.send(
-        embed({
-          title: 'Commands',
-          fields: client.commands.map(({ name, args, description }) => ({
-            name: `${config.prefix}${name}${args ? args.map(arg => ` \`${arg}\``) : ''}`,
-            value: description,
-          })),
-        })
-      );
+      return {
+        title: 'Commands',
+        fields: client.commands.map(({ name, options, description }) => ({
+          name: `/${name}${options?.map(({ name }) => ` \`${name}\``) || ''}`,
+          value: description,
+        })),
+      };
     } catch (error) {
-      console.error(chalk.red(`${config.prefix}help >> ${error.stack}`));
+      console.error(chalk.red(`/help >> ${error.stack}`));
     }
   },
 };

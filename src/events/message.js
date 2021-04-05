@@ -1,29 +1,31 @@
 import chalk from 'chalk';
 import config from 'config';
-import { sanitize } from 'utils';
+import { sanitize, validateMessage } from 'utils/discord';
 
 /**
- * Handles Discord message events
- * @param client Discord client context
- * @param msg Discord message context
+ * Handles Discord message events.
  */
-const message = async (client, msg) => {
-  try {
-    if (msg.author.bot || !msg.content.startsWith(config.prefix)) return;
+const MessageEvent = {
+  name: 'message',
+  async execute(client, msg) {
+    try {
+      if (msg.author.bot || !msg.content.startsWith(config.prefix)) return;
 
-    const input = sanitize(msg.content);
+      const input = sanitize(msg.content);
 
-    const args = input.substring(config.prefix.length).split(' ');
-    const name = args.shift().toLowerCase();
-    const command = client.commands.get(name);
-    if (!command) return;
+      const args = input.substring(config.prefix.length).split(' ');
+      const name = args.shift().toLowerCase();
+      const command = client.commands.get(name);
+      if (!command) return;
 
-    await command.execute({ client, msg, args });
+      const output = await command.execute({ client, args });
+      if (!output) return;
 
-    return msg;
-  } catch (error) {
-    console.warn(chalk.yellow(`message >> ${error.message}`));
-  }
+      return msg.channel.send(validateMessage(output));
+    } catch (error) {
+      console.error(chalk.red(`message >> ${error.stack}`));
+    }
+  },
 };
 
-export default message;
+export default MessageEvent;

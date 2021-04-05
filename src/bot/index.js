@@ -1,68 +1,150 @@
 import chalk from 'chalk';
-import { Client, Collection } from 'discord.js';
-import { readdir } from 'fs';
-import { resolve, join } from 'path';
+import { Client, Collection, APIMessage } from 'discord.js';
+import { readdirSync } from 'fs';
+import { resolve } from 'path';
+import { validateMessage } from 'utils/discord';
+import { INTERACTION_RESPONSE_TYPE } from 'constants';
+import config from 'config';
 
-const DEFAULT_PATH = resolve(__dirname, '..');
-
+/**
+ * An extended `Client` to support slash-command interactions and events.
+ */
 class Bot extends Client {
   constructor(options) {
     super(options);
 
-    this.events = new Collection();
     this.commands = new Collection();
+    this.events = new Collection();
   }
 
   /**
-   * Loads Discord events from the `event` folder
-   * @param {String} [path] Optional root folder
-   * @return {Promise<Collection>} A collection of loaded bot events.
+   * Formats an interaction response into an `APIMessage`.
+   *
+   * @param interaction Remote Discord interaction object.
+   * @param {String | APIMessage} content Stringified or pre-processed response.
    */
-  async loadEvents(path = DEFAULT_PATH) {
-    return await Promise.resolve(
-      new Promise((resolve, reject) => {
-        readdir(join(path, 'events'), (error, files) => {
-          if (error) return reject(error);
+  async createAPIMessage(interaction, content) {
+    if (!(content instanceof APIMessage)) {
+      content = APIMessage.create(
+        this.channels.resolve(interaction.channel_id),
+        validateMessage(content)
+      );
+    }
 
-          files.forEach(file => {
-            const handler = require(join(path, 'events', file)).default;
-            const event = file.split('.').shift();
-
-            this.events.set(event, handler);
-            this.on(event, (...args) => handler(this, ...args));
-          });
-
-          console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
-
-          resolve(this.events);
-        });
-      })
-    );
+    return content.resolveData();
   }
 
   /**
-   * Loads Discord commands from the `commands` folder
-   * @param {String} [path] Optional root folder
-   * @return {Promise<Collection>} A collection of loaded bot commands.
+   * Sends a message over an interaction endpoint.
+   *
+   * @param interaction Remote Discord interaction object.
+   * @param {String | APIMessage} content Stringified or pre-processed response.
    */
-  async loadCommands(path = DEFAULT_PATH) {
-    return await Promise.resolve(
-      new Promise((resolve, reject) => {
-        readdir(join(path, 'commands'), (error, files) => {
-          if (error) return reject(error);
+  async send(interaction, content) {
+    const { data } = await this.createAPIMessage(interaction, content);
 
-          files.forEach(file => {
-            const command = require(join(path, 'commands', file)).default;
+    const response = await this.api
+      .interactions(interaction.id, interaction.token)
+      .callback.post({
+        data: {
+          type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
+          data,
+        },
+      });
 
-            this.commands.set(command.name, command);
-          });
+    return response;
+  }
 
-          console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
+  /**
+   * Loads and registers `Client` events from the events folder
+   */
+  loadEvents() {
+    const files = readdirSync(resolve(__dirname, '../events'));
 
-          resolve(this.commands);
-        });
+    for (const file of files) {
+      const event = require(resolve(__dirname, '../events', file)).default;
+
+      this.on(event.name, (...args) => event.execute(this, ...args));
+
+      this.events.set(event.name, event);
+    }
+
+    console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
+  }
+
+  /**
+   * Loads and registers interaction commands from the commands folder
+   */
+  loadCommands() {
+    const files = readdirSync(resolve(__dirname, '../commands'));
+
+    for (const file of files) {
+      const command = require(resolve(__dirname, '../commands', file)).default;
+
+      this.commands.set(command.name, command);
+    }
+
+    console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
+  }
+
+  /**
+   * Updates slash commands with Discord.
+   */
+  async updateCommands() {
+    // Get remote target
+    const remote = () =>
+      config.guild
+        ? this.api.applications(this.user.id).guilds(config.guild)
+        : this.api.applications(this.user.id);
+
+    // Get remote cache
+    const cache = await remote().commands.get();
+
+    // Update remote
+    await Promise.all(
+      this.commands.map(async command => {
+        // Get command props
+        const data = {
+          name: command.name,
+          description: command.description,
+          options: command?.options,
+        };
+
+        // Check for cache
+        const cached = cache?.find(({ name }) => name === command.name);
+
+        // Update or create command
+        if (cached?.id) {
+          await remote().commands(cached.id).patch({ data });
+        } else {
+          await remote().commands.post({ data });
+        }
       })
     );
+
+    // Cleanup cache
+    await Promise.all(
+      cache.map(async command => {
+        const exists = this.commands.get(command.name);
+
+        if (!exists) {
+          await remote().commands(command.id).delete();
+        }
+      })
+    );
+
+    console.info(`${chalk.cyanBright('[Bot]')} updated slash commands`);
+  }
+
+  /**
+   * Loads and starts up the bot.
+   */
+  async start() {
+    this.loadEvents();
+    this.loadCommands();
+
+    await this.login(config.token);
+    await this.updateCommands();
   }
 }
 

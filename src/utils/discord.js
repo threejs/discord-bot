@@ -1,6 +1,4 @@
 import chalk from 'chalk';
-// eslint-disable-next-line no-unused-vars
-import { MessageEmbed } from 'discord.js';
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
 import { EMBED_DEFAULTS } from 'constants';
@@ -48,8 +46,7 @@ const MAX_FIELD_VALUE_LENGTH = 1024;
 /**
  * Generates an embed with default properties.
  *
- * @param {MessageEmbed} props Overloaded embed properties.
- * @returns {MessageEmbed}
+ * @param {{ title: String, description: String, fields?: any[] }} props Overloaded embed properties.
  */
 export const validateEmbed = props => {
   const { title, description, fields, ...rest } = props;
@@ -79,7 +76,7 @@ const MAX_MESSAGE_LENGTH = 2000;
 /**
  * Validates a message response and its embed if available
  *
- * @param {String | MessageEmbed} message Discord message response.
+ * @param {String | Object} message Discord message response.
  */
 export const validateMessage = message =>
   typeof message === 'object'

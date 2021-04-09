@@ -7,9 +7,6 @@ export const EMBED_DEFAULTS = {
 
 /**
  * The type of interaction this request is.
- *
- * @readonly
- * @enum {Number}
  */
 export const INTERACTION_TYPE = {
   /**
@@ -24,9 +21,6 @@ export const INTERACTION_TYPE = {
 
 /**
  * The type of response that is being sent.
- *
- * @readonly
- * @enum {Number}
  */
 export const INTERACTION_RESPONSE_TYPE = {
   /**
@@ -45,23 +39,17 @@ export const INTERACTION_RESPONSE_TYPE = {
 
 /**
  * Flags that can be included in an Interaction Response.
- *
- * @readonly
- * @enum {Number}
  */
 export const INTERACTION_RESPONSE_FLAGS = {
   /**
    * Show the message only to the user that performed the interaction. Message
    * does not persist between sessions.
    */
-  EPHEMERAL: 1 << 6,
+  EPHEMERAL: 64, // 1 << 6
 };
 
 /**
  * Valid option `type` values.
- *
- * @readonly
- * @enum {Number}
  */
 export const COMMAND_OPTION_TYPES = {
   SUB_COMMAND: 1,

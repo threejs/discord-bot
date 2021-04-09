@@ -1,5 +1,8 @@
 import chalk from 'chalk';
 
+/**
+ * Handles websocket events.
+ */
 const RawEvent = {
   name: 'raw',
   async execute(client, packet) {

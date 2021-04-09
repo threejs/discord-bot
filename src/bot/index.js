@@ -10,13 +10,6 @@ import config from 'config';
  * An extended `Client` to support slash-command interactions and events.
  */
 class Bot extends Client {
-  constructor(options) {
-    super(options);
-
-    this.commands = new Collection();
-    this.events = new Collection();
-  }
-
   /**
    * Formats an interaction response into an `APIMessage`.
    *
@@ -59,6 +52,8 @@ class Bot extends Client {
    * Loads and registers `Client` events from the events folder
    */
   loadEvents() {
+    if (!this.events) this.events = new Collection();
+
     const files = readdirSync(resolve(__dirname, '../events'));
 
     for (const file of files) {
@@ -70,12 +65,16 @@ class Bot extends Client {
     }
 
     console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
+
+    return this.events;
   }
 
   /**
    * Loads and registers interaction commands from the commands folder
    */
   loadCommands() {
+    if (!this.commands) this.commands = new Collection();
+
     const files = readdirSync(resolve(__dirname, '../commands'));
 
     for (const file of files) {
@@ -85,6 +84,8 @@ class Bot extends Client {
     }
 
     console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
+
+    return this.commands;
   }
 
   /**

@@ -16,8 +16,8 @@ const Docs = {
       required: true,
     },
   ],
-  async execute({ args }) {
-    const query = args.join(' ');
+  async execute({ options }) {
+    const query = options.join(' ');
 
     try {
       // Separate methods and props from query

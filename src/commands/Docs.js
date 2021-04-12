@@ -3,7 +3,7 @@ import fuzzysort from 'fuzzysort';
 import { getDocs } from 'utils/three';
 import { crawl } from 'utils/puppeteer';
 import { transformMarkdown } from 'utils/discord';
-import { COMMAND_OPTION_TYPES, THREE } from 'constants';
+import { THREE } from 'constants';
 
 const Docs = {
   name: 'docs',
@@ -12,7 +12,7 @@ const Docs = {
     {
       name: 'query',
       description: 'A query or class to search related docs for',
-      type: COMMAND_OPTION_TYPES.STRING,
+      type: 'string',
       required: true,
     },
   ],

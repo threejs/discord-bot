@@ -40,7 +40,7 @@ const Examples = {
           // Handle no results
           return {
             title: `No examples were found for "${query}"`,
-            description: `Discover an issue? You can report it [here](${THREE.GITHUB}).`,
+            description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
           };
         case 1: {
           // Handle single result

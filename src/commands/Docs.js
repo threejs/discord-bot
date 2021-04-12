@@ -45,7 +45,7 @@ const Docs = {
           // Handle no results
           return {
             title: `No documentation was found for "${query}"`,
-            description: `Discover an issue? You can report it [here](${THREE.GITHUB}).`,
+            description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
           };
         case 1: {
           // Handle single result
@@ -59,7 +59,7 @@ const Docs = {
           if (!markdown)
             return {
               title: `Documentation for "${query}" does not exist`,
-              description: `Discover an issue? You can report it [here](${THREE.GITHUB}).`,
+              description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
             };
 
           // Destructure markdown

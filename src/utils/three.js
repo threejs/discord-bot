@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
+import { THREE } from 'constants';
 import config from 'config';
 
 /**
@@ -7,7 +8,7 @@ import config from 'config';
  */
 export const getDocs = async () => {
   try {
-    const json = await fetch(config.docs.list).then(res => res.json());
+    const json = await fetch(THREE.DOCS_LIST).then(res => res.json());
 
     const endpoints = Object.assign(
       {},
@@ -22,7 +23,7 @@ export const getDocs = async () => {
 
     const docs = Object.keys(endpoints).map(key => ({
       name: key,
-      url: `${config.docs.url}${endpoints[key]}`,
+      url: `${THREE.DOCS_URL}${endpoints[key]}`,
     }));
 
     return docs;
@@ -36,18 +37,18 @@ export const getDocs = async () => {
  */
 export const getExamples = async () => {
   try {
-    const json = await fetch(config.examples.list).then(res => res.json());
-    const tags = await fetch(config.examples.tags).then(res => res.json());
+    const json = await fetch(THREE.EXAMPLES_LIST).then(res => res.json());
+    const tags = await fetch(THREE.EXAMPLES_TAGS).then(res => res.json());
 
     const docs = Object.keys(json)
       .map(key => json[key])
       .flat()
       .map(key => ({
         name: key,
-        url: `${config.examples.url}#${key}`,
+        url: `${THREE.EXAMPLES_URL}#${key}`,
         tags: Array.from(new Set([key.split('_'), tags[key]].filter(Boolean))).flat(),
         thumbnail: {
-          url: `${config.examples.url}screenshots/${key}.jpg`,
+          url: `${THREE.EXAMPLES_URL}screenshots/${key}.jpg`,
         },
       }));
 

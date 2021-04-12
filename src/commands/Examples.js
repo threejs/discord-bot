@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { getExamples } from 'utils/three';
-import { COMMAND_OPTION_TYPES } from 'constants';
+import { COMMAND_OPTION_TYPES, THREE } from 'constants';
 import config from 'config';
 
 const Examples = {
@@ -49,7 +49,7 @@ const Examples = {
 
           // List tags in result
           const description = `Tags: ${tags
-            .map(tag => `[${tag}](${config.examples.url}?q=${tag})`)
+            .map(tag => `[${tag}](${THREE.EXAMPLES_URL}?q=${tag})`)
             .join(', ')}`;
 
           return {

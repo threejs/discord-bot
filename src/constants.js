@@ -1,4 +1,15 @@
 /**
+ * Three.js endpoints and data files.
+ */
+export const THREE = {
+  DOCS_URL: 'https://threejs.org/docs/index.html#',
+  DOCS_LIST: 'https://threejs.org/docs/list.json',
+  EXAMPLES_URL: 'https://threejs.org/examples/',
+  EXAMPLES_LIST: 'https://threejs.org/examples/files.json',
+  EXAMPLES_TAGS: 'https://threejs.org/examples/tags.json',
+};
+
+/**
  * Embed default properties.
  */
 export const EMBED_DEFAULTS = {

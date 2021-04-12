@@ -6,15 +6,6 @@ dotenv.config();
  * Bot config vars
  */
 const config = {
-  docs: {
-    url: process.env.DOCS_URL || 'https://threejs.org/docs/index.html#',
-    list: process.env.DOCS_LIST || 'https://threejs.org/docs/list.json',
-  },
-  examples: {
-    url: process.env.EXAMPLES_URL || 'https://threejs.org/examples/',
-    list: process.env.EXAMPLES_LIST || 'https://threejs.org/examples/files.json',
-    tags: process.env.EXAMPLES_TAGS || 'https://threejs.org/examples/tags.json',
-  },
   icon:
     process.env.ICON ||
     'https://github.com/mrdoob/three.js/blob/master/icon.png?raw=true',

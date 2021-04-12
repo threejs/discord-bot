@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { getExamples } from 'utils/three';
-import { COMMAND_OPTION_TYPES, THREE } from 'constants';
+import { THREE } from 'constants';
 
 const Examples = {
   name: 'examples',
@@ -9,7 +9,7 @@ const Examples = {
     {
       name: 'query',
       description: 'Query to search related examples for',
-      type: COMMAND_OPTION_TYPES.STRING,
+      type: 'string',
       required: true,
     },
   ],

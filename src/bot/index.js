@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Client, Collection, APIMessage } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import { validateMessage } from 'utils/discord';
+import { validateMessage, validateCommand } from 'utils/discord';
 import { INTERACTION_RESPONSE_TYPE } from 'constants';
 import config from 'config';
 
@@ -104,12 +104,8 @@ class Bot extends Client {
     // Update remote
     await Promise.all(
       this.commands.map(async command => {
-        // Get command props
-        const data = {
-          name: command.name,
-          description: command.description,
-          options: command?.options,
-        };
+        // Validate command props
+        const data = validateCommand(command);
 
         // Check for cache
         const cached = cache?.find(({ name }) => name === command.name);
@@ -148,7 +144,7 @@ class Bot extends Client {
       await this.login(config.token);
       await this.updateCommands();
     } catch (error) {
-      console.error(chalk.red(`start >> ${error.message}`));
+      console.error(chalk.red(`bot#start >> ${error.message}`));
     }
   }
 }

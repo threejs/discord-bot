@@ -15,8 +15,10 @@ const RawEvent = {
       const command = client.commands.get(name);
       if (!command) return;
 
-      const args = options?.map(({ value }) => value);
-      const output = await command.execute({ client, args });
+      const output = await command.execute({
+        client,
+        options: options?.map(({ value }) => value),
+      });
       if (!output) return;
 
       return client.send(interaction, output);

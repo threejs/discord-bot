@@ -13,15 +13,15 @@ const Examples = {
       required: true,
     },
   ],
-  async execute({ args }) {
-    const query = args.join(' ');
+  async execute({ options }) {
+    const query = options.join(' ');
 
     try {
       // Get tagged examples
       const examples = await getExamples();
 
       // Check for an example if key was specified
-      const targetKey = args.join('_').toLowerCase();
+      const targetKey = options.join('_').toLowerCase();
       const target = examples.find(
         ({ name }) =>
           name === targetKey || name.split('_').every(frag => targetKey.includes(frag))
@@ -31,7 +31,7 @@ const Examples = {
       const results =
         (target && [target]) ||
         examples
-          .filter(({ tags }) => args.some(tag => tags.includes(tag.toLowerCase())))
+          .filter(({ tags }) => options.some(tag => tags.includes(tag.toLowerCase())))
           .sort((a, b) => a - b)
           .filter(Boolean);
 

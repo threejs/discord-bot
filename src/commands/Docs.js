@@ -3,8 +3,7 @@ import fuzzysort from 'fuzzysort';
 import { getDocs } from 'utils/three';
 import { crawl } from 'utils/puppeteer';
 import { transformMarkdown } from 'utils/discord';
-import { COMMAND_OPTION_TYPES } from 'constants';
-import config from 'config';
+import { COMMAND_OPTION_TYPES, THREE } from 'constants';
 
 const Docs = {
   name: 'docs',
@@ -46,7 +45,7 @@ const Docs = {
           // Handle no results
           return {
             title: `No documentation was found for "${query}"`,
-            description: `Discover an issue? You can report it [here](${config.github}).`,
+            description: `Discover an issue? You can report it [here](${THREE.GITHUB}).`,
           };
         case 1: {
           // Handle single result
@@ -60,7 +59,7 @@ const Docs = {
           if (!markdown)
             return {
               title: `Documentation for "${query}" does not exist`,
-              description: `Discover an issue? You can report it [here](${config.github}).`,
+              description: `Discover an issue? You can report it [here](${THREE.GITHUB}).`,
             };
 
           // Destructure markdown

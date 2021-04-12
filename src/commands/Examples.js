@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import { getExamples } from 'utils/three';
 import { COMMAND_OPTION_TYPES, THREE } from 'constants';
-import config from 'config';
 
 const Examples = {
   name: 'examples',
@@ -41,7 +40,7 @@ const Examples = {
           // Handle no results
           return {
             title: `No examples were found for "${query}"`,
-            description: `Discover an issue? You can report it [here](${config.github}).`,
+            description: `Discover an issue? You can report it [here](${THREE.GITHUB}).`,
           };
         case 1: {
           // Handle single result

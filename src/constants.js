@@ -1,7 +1,9 @@
 /**
- * Three.js endpoints and data files.
+ * Three.js settings, links, endpoints, and data files.
  */
 export const THREE = {
+  LOCALE: 'en', // en, ar, zh, ko, ja
+  REPO: 'https://github.com/threejs/discord-bot',
   DOCS_URL: 'https://threejs.org/docs/index.html#',
   DOCS_LIST: 'https://threejs.org/docs/list.json',
   EXAMPLES_URL: 'https://threejs.org/examples/',

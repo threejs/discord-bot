@@ -148,7 +148,7 @@ class Bot extends Client {
       await this.login(config.token);
       await this.updateCommands();
     } catch (error) {
-      console.error(chalk.red(`Bot#start >> ${error.message}`));
+      console.error(chalk.red(`start >> ${error.message}`));
     }
   }
 }

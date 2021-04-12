@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
 import { THREE } from 'constants';
-import config from 'config';
 
 /**
  * Returns a list of the three.js docs in an optional locale.
@@ -18,7 +17,7 @@ export const getDocs = async () => {
             typeof o[k] === 'object' ? _flatten(o[k]) : { [k]: o[k] }
           )
         );
-      })(json[config.locale])
+      })(json[THREE.LOCALE])
     );
 
     const docs = Object.keys(endpoints).map(key => ({

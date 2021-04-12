@@ -89,7 +89,7 @@ const Command = {
   ],
   // Execution function to run whenever a user invokes the command
   execute({
-    // Current bot client context (exposes client#send method below)
+    // Current bot client context
     client,
     // An array of stringified user-specified options
     options,
@@ -97,17 +97,17 @@ const Command = {
     // Get message type from user input
     const [messageType] = options;
 
-    // If specified, send an embed object
+    // If specified, send an embed object response
     if (messageType === 'embed') {
-      return client.send({
+      return {
         url: 'http://example.com',
         title: 'Embed Title',
         description: 'Embed description.',
-      });
+      };
     }
 
-    // Otherwise, send a message string
-    return client.send('Default response.');
+    // Otherwise, send a string response
+    return 'Default response.';
   },
 };
 

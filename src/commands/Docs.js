@@ -18,9 +18,11 @@ const Docs = {
     },
   ],
   async execute({ args }) {
+    const query = args.join(' ');
+
     try {
       // Separate methods and props from query
-      const [object, ...props] = args.join(' ').split(/\.|#/);
+      const [object, ...props] = query.split(/\.|#/);
       const properties = props.length ? `.${props.join('.')}` : '';
 
       // Get localized docs
@@ -43,7 +45,7 @@ const Docs = {
         case 0:
           // Handle no results
           return {
-            title: `No documentation was found for "${args.join(' ')}"`,
+            title: `No documentation was found for "${query}"`,
             description: `Discover an issue? You can report it [here](${config.github}).`,
           };
         case 1: {
@@ -57,7 +59,7 @@ const Docs = {
           // Handle invalid query
           if (!markdown)
             return {
-              title: `Documentation for "${args.join(' ')}" does not exist`,
+              title: `Documentation for "${query}" does not exist`,
               description: `Discover an issue? You can report it [here](${config.github}).`,
             };
 
@@ -80,15 +82,16 @@ const Docs = {
         default:
           // Handle multiple results
           return {
-            title: `Documentation for "${args.join(' ')}"`,
-            description: results
-              .filter((_, index) => index < 10)
-              .map(({ name, url }) => `**[${name}](${url})**`)
-              .join('\n'),
+            title: `Documentation for "${query}"`,
+            description: results.reduce((message, { name, url }, index) => {
+              if (index < 10) message += `**[${name}](${url})**\n`;
+
+              return message;
+            }, ''),
           };
       }
     } catch (error) {
-      console.error(chalk.red(`/docs ${args.join(' ')} >> ${error.stack}`));
+      console.error(chalk.red(`/docs ${query} >> ${error.stack}`));
     }
   },
 };

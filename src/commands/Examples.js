@@ -15,6 +15,8 @@ const Examples = {
     },
   ],
   async execute({ args }) {
+    const query = args.join(' ');
+
     try {
       // Get tagged examples
       const examples = await getExamples();
@@ -38,7 +40,7 @@ const Examples = {
         case 0:
           // Handle no results
           return {
-            title: `No examples were found for "${args.join(' ')}"`,
+            title: `No examples were found for "${query}"`,
             description: `Discover an issue? You can report it [here](${config.github}).`,
           };
         case 1: {
@@ -59,15 +61,16 @@ const Examples = {
         default:
           // Handle multiple results
           return {
-            title: `Examples for "${args.join(' ')}"`,
-            description: results
-              .filter((_, index) => index < 10)
-              .map(({ name, url }) => `**[${name}](${url})**`)
-              .join('\n'),
+            title: `Examples for "${query}"`,
+            description: results.reduce((message, { name, url }, index) => {
+              if (index < 10) message += `**[${name}](${url})**\n`;
+
+              return message;
+            }, ''),
           };
       }
     } catch (error) {
-      console.error(chalk.red(`/examples ${args.join(' ')} >> ${error.stack}`));
+      console.error(chalk.red(`/examples ${query} >> ${error.stack}`));
     }
   },
 };

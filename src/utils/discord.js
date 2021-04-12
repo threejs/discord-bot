@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
-import { EMBED_DEFAULTS, COMMAND_OPTION_TYPES } from 'constants';
+import { EMBED_DEFAULTS } from 'constants';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -82,18 +82,6 @@ export const validateMessage = message =>
   typeof message === 'object'
     ? { embed: validateEmbed(message) }
     : message.slice(0, MAX_MESSAGE_LENGTH);
-
-/**
- * Validates human-readable command meta into a Discord-ready object.
- */
-export const validateCommand = ({ name, description, options }) => ({
-  name,
-  description,
-  options: options?.map(({ type, ...rest }) => ({
-    type: COMMAND_OPTION_TYPES[type.toUpperCase()],
-    ...rest,
-  })),
-});
 
 // Delimiter used to separate stringified meta HTML
 const META_DELIMITER = 'META';

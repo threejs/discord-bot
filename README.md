@@ -81,8 +81,8 @@ const Command = {
       name: 'type',
       // option hint text to describe modified behavior
       description: 'Type of message to respond with',
-      // Type of option (case-insensitive, see COMMAND_OPTION_TYPES in src/constants.js)
-      type: 'string',
+      // Type of option (see [TODO - link])
+      type: 'STRING',
       // Whether to require a value to invoke
       required: true,
     },

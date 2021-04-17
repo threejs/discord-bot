@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { Client, Collection, APIMessage } from 'discord.js';
+import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import { validateMessage, validateCommand } from 'utils/discord';
@@ -11,41 +11,29 @@ import config from 'config';
  */
 class Bot extends Client {
   /**
-   * Formats an interaction response into an `APIMessage`.
-   *
-   * @param interaction Remote Discord interaction object.
-   * @param {String | APIMessage} content Stringified or pre-processed response.
-   */
-  async createAPIMessage(interaction, content) {
-    if (!(content instanceof APIMessage)) {
-      content = APIMessage.create(
-        this.channels.resolve(interaction.channel_id),
-        validateMessage(content)
-      );
-    }
-
-    return content.resolveData();
-  }
-
-  /**
    * Sends a message over an interaction endpoint.
    *
    * @param interaction Remote Discord interaction object.
-   * @param {String | APIMessage} content Stringified or pre-processed response.
+   * @param message Stringified or pre-processed message response.
    */
-  async send(interaction, content) {
-    const { data } = await this.createAPIMessage(interaction, content);
+  async send(interaction, message) {
+    try {
+      const response = await this.api
+        .interactions(interaction.id, interaction.token)
+        .callback.post({
+          data: {
+            type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: validateMessage(message),
+          },
+        });
 
-    const response = await this.api
-      .interactions(interaction.id, interaction.token)
-      .callback.post({
-        data: {
-          type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
-          data,
-        },
-      });
+      return response;
+    } catch (error) {
+      const { name, options } = interaction.data;
+      const args = ` ${options?.map(({ value }) => value)}` ?? '';
 
-    return response;
+      console.warn(chalk.yellow(`client#send ${name}${args} >> ${error.message}`));
+    }
   }
 
   /**

@@ -1,7 +1,24 @@
 import chalk from 'chalk';
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
-import { EMBED_DEFAULTS, COMMAND_OPTION_TYPES } from 'constants';
+import {
+  EMBED_DEFAULTS,
+  MESSAGE_LIMITS,
+  INTERACTION_RESPONSE_FLAGS,
+  COMMAND_OPTION_TYPES,
+} from 'constants';
+import { APIMessage } from 'discord.js';
+
+/**
+ * Converts a vanilla or camelCase string to SNAKE_CASE.
+ *
+ * @param {String} string Target string.
+ */
+export const snakeCase = string =>
+  string
+    .replace(/[A-Z]/g, char => `_${char}`)
+    .replace(/\s+|_+/g, '_')
+    .toUpperCase();
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -36,32 +53,26 @@ export const sanitize = message => {
   );
 };
 
-const MAX_TITLE_LENGTH = 256;
-const MAX_DESC_LENGTH = 2048;
-
-const MAX_FIELD_LENGTH = 25;
-const MAX_FIELD_NAME_LENGTH = 256;
-const MAX_FIELD_VALUE_LENGTH = 1024;
-
 /**
  * Generates an embed with default properties.
  *
- * @param {{ title: String, description: String, fields?: any[] }} props Overloaded embed properties.
+ * @param {APIMessage} embed Overloaded embed properties.
  */
-export const validateEmbed = props => {
-  const { title, description, fields, ...rest } = props;
+export const validateEmbed = embed => {
+  const { title, description, fields, ...rest } = embed;
 
   return {
     ...EMBED_DEFAULTS,
-    title: title?.slice(0, MAX_TITLE_LENGTH),
-    description: description?.slice(0, MAX_DESC_LENGTH),
+    title: title?.slice(0, MESSAGE_LIMITS.TITLE_LENGTH),
+    description: description?.slice(0, MESSAGE_LIMITS.DESC_LENGTH),
     fields: fields?.reduce((fields, field, index) => {
-      if (index <= MAX_FIELD_LENGTH) {
-        const { name, value } = field;
+      if (index < MESSAGE_LIMITS.FIELD_LENGTH) {
+        const { name, value, inline } = field;
 
         fields.push({
-          name: name.slice(0, MAX_FIELD_NAME_LENGTH),
-          value: value.slice(0, MAX_FIELD_VALUE_LENGTH),
+          name: name.slice(0, MESSAGE_LIMITS.FIELD_NAME_LENGTH),
+          value: value.slice(0, MESSAGE_LIMITS.FIELD_VALUE_LENGTH),
+          inline: Boolean(inline),
         });
       }
 
@@ -71,17 +82,38 @@ export const validateEmbed = props => {
   };
 };
 
-const MAX_MESSAGE_LENGTH = 2000;
+/**
+ * Parses and validates an interaction flags object.
+ *
+ * @param {INTERACTION_RESPONSE_FLAGS} flags
+ */
+export const validateFlags = flags =>
+  Object.keys(flags).reduce(
+    (previous, flag) => INTERACTION_RESPONSE_FLAGS[snakeCase(flag)] || previous,
+    null
+  );
 
 /**
- * Validates a message response and its embed if available
+ * Validates a message object or response and its flags.
  *
- * @param {String | Object} message Discord message response.
+ * @param {APIMessage} message Discord message response.
  */
-export const validateMessage = message =>
-  typeof message === 'object'
-    ? { embed: validateEmbed(message) }
-    : message.slice(0, MAX_MESSAGE_LENGTH);
+export const validateMessage = message => {
+  // No-op on empty or pre-processed message
+  if (!message || message instanceof APIMessage) return message;
+
+  // Early return if evaluating message string
+  if (typeof message === 'string')
+    return { content: message.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) };
+
+  // Handle message object and inline specifiers
+  return {
+    tts: Boolean(message.tts),
+    flags: validateFlags(message.flags || message),
+    content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
+    embed: validateEmbed(message),
+  };
+};
 
 /**
  * Validates human-readable command meta into a Discord-ready object.
@@ -90,7 +122,7 @@ export const validateCommand = ({ name, description, options }) => ({
   name,
   description,
   options: options?.map(({ type, ...rest }) => ({
-    type: COMMAND_OPTION_TYPES[type.toUpperCase()],
+    type: COMMAND_OPTION_TYPES[snakeCase(type)],
     ...rest,
   })),
 });

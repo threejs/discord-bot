@@ -19,6 +19,18 @@ export const EMBED_DEFAULTS = {
 };
 
 /**
+ * Discord-enforced message character and size limits.
+ */
+export const MESSAGE_LIMITS = {
+  CONTENT_LENGTH: 2000,
+  TITLE_LENGTH: 256,
+  DESC_LENGTH: 2048,
+  FIELD_LENGTH: 25,
+  FIELD_NAME_LENGTH: 256,
+  FIELD_VALUE_LENGTH: 1024,
+};
+
+/**
  * The type of interaction this request is.
  */
 export const INTERACTION_TYPE = {

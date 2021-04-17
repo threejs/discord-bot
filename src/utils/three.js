@@ -39,7 +39,7 @@ export const getExamples = async () => {
     const json = await fetch(THREE.EXAMPLES_LIST).then(res => res.json());
     const tags = await fetch(THREE.EXAMPLES_TAGS).then(res => res.json());
 
-    const docs = Object.keys(json)
+    const examples = Object.keys(json)
       .map(key => json[key])
       .flat()
       .map(key => ({
@@ -51,7 +51,7 @@ export const getExamples = async () => {
         },
       }));
 
-    return docs;
+    return examples;
   } catch (error) {
     console.error(chalk.red(`three/getExamples >> ${error.stack}`));
   }

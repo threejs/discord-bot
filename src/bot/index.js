@@ -2,8 +2,9 @@ import chalk from 'chalk';
 import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
+import fetch from 'node-fetch';
 import { validateMessage, validateCommand } from 'utils/discord';
-import { INTERACTION_RESPONSE_TYPE } from 'constants';
+import { INTERACTION_RESPONSE_TYPE, THREE } from 'constants';
 import config from 'config';
 
 /**
@@ -122,12 +123,78 @@ class Bot extends Client {
   }
 
   /**
+   * Fetches and loads three.js documentation.
+   */
+  async loadDocs() {
+    try {
+      const json = await fetch(THREE.DOCS_LIST).then(res => res.json());
+
+      const endpoints = Object.assign(
+        {},
+        ...(function _flatten(root) {
+          return [].concat(
+            ...Object.keys(root).map(key =>
+              typeof root[key] === 'object' ? _flatten(root[key]) : { [key]: root[key] }
+            )
+          );
+        })(json[THREE.LOCALE])
+      );
+      const docs = Object.keys(endpoints).map(key => ({
+        name: key,
+        url: `${THREE.DOCS_URL}${endpoints[key]}`,
+      }));
+
+      console.info(`${chalk.cyanBright('[Bot]')} ${docs.length} docs loaded`);
+
+      return (this.docs = docs);
+    } catch (error) {
+      console.error(chalk.red(`bot/loadDocs >> ${error.stack}`));
+    }
+  }
+
+  /**
+   * Fetches and loads three.js examples.
+   */
+  async loadExamples() {
+    try {
+      const json = await fetch(THREE.EXAMPLES_LIST).then(res => res.json());
+      const tags = await fetch(THREE.EXAMPLES_TAGS).then(res => res.json());
+
+      const examples = Object.keys(json).reduce((results, group) => {
+        const items = json[group].map(key => ({
+          name: key,
+          url: `${THREE.EXAMPLES_URL}#${key}`,
+          tags: tags[key]
+            ? Array.from(new Set([...key.split('_'), ...tags[key]]))
+            : key.split('_'),
+          thumbnail: {
+            url: `${THREE.EXAMPLES_URL}screenshots/${key}.jpg`,
+          },
+        }));
+
+        results.push(...items);
+
+        return results;
+      }, []);
+
+      console.info(`${chalk.cyanBright('[Bot]')} ${examples.length} examples loaded`);
+
+      return (this.examples = examples);
+    } catch (error) {
+      console.error(chalk.red(`bot/LoadExamples >> ${error.stack}`));
+    }
+  }
+
+  /**
    * Loads and starts up the bot.
    */
   async start() {
     try {
       this.loadEvents();
       this.loadCommands();
+
+      await this.loadDocs();
+      await this.loadExamples();
 
       await this.login(config.token);
       await this.updateCommands();

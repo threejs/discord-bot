@@ -4,9 +4,7 @@ import {
   validateEmbed,
   validateMessage,
   sanitizeHTML,
-  sanitizeHTMLMeta,
 } from 'utils/discord';
-import { getDocs, getExamples } from 'utils/three';
 import { INTERACTION_RESPONSE_FLAGS, MESSAGE_LIMITS } from 'constants';
 import config from 'config';
 
@@ -85,30 +83,5 @@ describe('utils/discord', () => {
     );
 
     expect(output).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
-  });
-
-  it('transforms HTML meta to markdown', () => {
-    const html =
-      '<a href="#">Link</a><h1>Header</h1><strong>Bold</strong><b>Bold</b><italic>Italic</italic><i>Italic</i>';
-    const meta = { key1: html, key2: html };
-    const output = sanitizeHTMLMeta(meta);
-
-    expect(output.key1).toBe(output.key2);
-    expect(output.key1).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
-  });
-});
-
-describe('utils/three', () => {
-  it('gets three.js docs', async () => {
-    const output = await getDocs();
-
-    expect(output.length).not.toBe(0);
-  });
-
-  it('gets tagged three.js examples', async () => {
-    const output = await getExamples();
-
-    expect(output[0].tags.length).not.toBe(0);
-    expect(output.length).not.toBe(0);
   });
 });

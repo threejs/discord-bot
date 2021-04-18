@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
-import { getDocs, getElement } from 'utils/three';
+import { getElement } from 'utils/three';
 import { THREE } from 'constants';
 
 const Docs = {
@@ -14,27 +14,24 @@ const Docs = {
       required: true,
     },
   ],
-  async execute({ options }) {
+  async execute({ options, client }) {
     const query = options.join(' ');
 
     try {
       // Separate property/method from base class
       const [object, property] = query.split(/\.|#/);
 
-      // Get localized docs
-      const docs = await getDocs();
-
       // Get fuzzy results if no exact match is found
-      const exactResult = docs.find(({ name }) => name === object);
+      const exactResult = client.docs.find(({ name }) => name === object);
       const results = exactResult
         ? [exactResult]
         : fuzzysort
             .go(
               object,
-              docs.map(({ name }) => name)
+              client.docs.map(({ name }) => name)
             )
             .sort((a, b) => a - b)
-            .map(({ target }) => docs.find(({ name }) => name === target))
+            .map(({ target }) => client.docs.find(({ name }) => name === target))
             .filter(Boolean);
 
       switch (results.length) {

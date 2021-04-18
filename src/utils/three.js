@@ -1,76 +1,56 @@
 import chalk from 'chalk';
-import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
-import { THREE } from 'constants';
 import { crawl } from 'utils/scraper';
-import { sanitizeHTMLMeta } from 'utils/discord';
+import { sanitizeHTML } from 'utils/discord';
 
 /**
- * Flattens a deeply nested object to root-level.
+ * Sanitizes a three meta item.
  *
- * @param {Object} object Deep-nested object to flatten.
+ * @param {String} key Meta item key.
+ * @param {String} value Meta item value.
  */
-export const flatten = object =>
+export const sanitizeMetaItem = (key, value) => {
+  if (!value) return;
+
+  switch (key) {
+    case 'url':
+      return (
+        value
+          // Cleanup line ending
+          .replace(/(\/\w+\.)\[\w+:\w+\s([^\]]+).*/, '$1$2')
+      );
+    case 'title':
+      return (
+        value
+          // Remove labels from bracket syntax
+          .replace(/\[\w+:(\w+)\s(\w+)\]/g, '$2: $1')
+          // Remove method return type to end
+          .replace(/^(\w+\.\w+)(: \w+)(.*)/, '$1$3$2')
+      );
+    case 'description':
+      return (
+        value
+          // Transform bracket syntax
+          .replace(/\[[^:]+:[^\s]+\s(\w+)\]/g, '$1')
+          .replace(/\[[^:]+:([^\s]+)\]/g, '$1')
+      );
+    default:
+      return value;
+  }
+};
+
+/**
+ * Sanitizes a three meta object containing HTML to markdown.
+ *
+ * @param {Object} meta HTML meta object to sanitize.
+ */
+export const sanitizeMeta = meta =>
   Object.assign(
     {},
-    ...(function _flatten(root) {
-      return [].concat(
-        ...Object.keys(root).map(key =>
-          typeof root[key] === 'object' ? _flatten(root[key]) : { [key]: root[key] }
-        )
-      );
-    })(object)
+    ...Object.entries(meta).map(([key, value]) => ({
+      [key]: sanitizeHTML(sanitizeMetaItem(key, value)),
+    }))
   );
-
-/**
- * Returns a list of three.js docs in an optional locale.
- */
-export const getDocs = async () => {
-  try {
-    const json = await fetch(THREE.DOCS_LIST).then(res => res.json());
-
-    const endpoints = flatten(json[THREE.LOCALE]);
-    const docs = Object.keys(endpoints).map(key => ({
-      name: key,
-      url: `${THREE.DOCS_URL}${endpoints[key]}`,
-    }));
-
-    return docs;
-  } catch (error) {
-    console.error(chalk.red(`three/getDocs >> ${error.stack}`));
-  }
-};
-
-/**
- * Returns a list of three.js examples.
- */
-export const getExamples = async () => {
-  try {
-    const json = await fetch(THREE.EXAMPLES_LIST).then(res => res.json());
-    const tags = await fetch(THREE.EXAMPLES_TAGS).then(res => res.json());
-
-    const examples = Object.keys(json).reduce((results, group) => {
-      const items = json[group].map(key => ({
-        name: key,
-        url: `${THREE.EXAMPLES_URL}#${key}`,
-        tags: tags[key]
-          ? Array.from(new Set([...key.split('_'), ...tags[key]]))
-          : key.split('_'),
-        thumbnail: {
-          url: `${THREE.EXAMPLES_URL}screenshots/${key}.jpg`,
-        },
-      }));
-
-      results.push(...items);
-
-      return results;
-    }, []);
-
-    return examples;
-  } catch (error) {
-    console.error(chalk.red(`three/getExamples >> ${error.stack}`));
-  }
-};
 
 /**
  * Gets a three.js element's meta in Discord markdown.
@@ -80,11 +60,12 @@ export const getExamples = async () => {
  */
 export const getElement = async (element, property) => {
   try {
-    // Fetch and evaluate url
-    const html = await crawl(element.url);
+    // Fetch and cleanup markup
+    const response = await crawl(element.url);
+    const html = response.replace(/(:)this|\[name\]/g, `$1${element.name}`);
 
     // Create context, get page elements
-    const { document } = new JSDOM(html.replace(/\[name\]/g, element.name)).window;
+    const { document } = new JSDOM(html).window;
     const pageElements = Array.from(document.body.children);
 
     // Constructor meta
@@ -93,12 +74,12 @@ export const getElement = async (element, property) => {
     );
     const constructorTitle = (
       constructorElement?.nextElementSibling || document.querySelector('h1')
-    ).innerHTML.replace(/\[\w+:(\w+)\s(\w+)\]/g, '$2: $1');
+    ).textContent;
     const constructorDesc = document.querySelector('.desc')?.innerHTML;
 
     // Early return with constructor meta if no property specified
     if (!property)
-      return sanitizeHTMLMeta({
+      return sanitizeMeta({
         title: constructorTitle,
         description: constructorDesc,
         url: element.url,
@@ -111,7 +92,7 @@ export const getElement = async (element, property) => {
         if (!target) return match;
 
         // Check property name for exact match, else get partial
-        const content = element.innerHTML.replace(/^\[(property|method):\w+\s|\].*/g, '');
+        const content = element.textContent.replace(/^\[\w+:\w+\s|\].*/g, '');
         if (
           (!match && content.includes(target)) ||
           (match !== target && content === target)
@@ -127,25 +108,15 @@ export const getElement = async (element, property) => {
     if (!propertyElement) return;
 
     // Property meta
-    const propertyTitle = `${element.name}.${propertyElement.innerHTML
-      // Remove labels from bracket syntax
-      .replace(/\[\w+:(\w+)\s(\w+)\]/g, '$2: $1')
-      // Remove method return type to end
-      .replace(/(: \w+)(.*)/g, '$2$1')
-      // Fix self-references
-      .replace(': this', `: ${element.name}`)}`;
+    const propertyTitle = `${element.name}.${propertyElement.textContent}`;
     const propertyDesc =
-      propertyElement.nextElementSibling?.tagName === 'P'
-        ? propertyElement.nextElementSibling.innerHTML
-        : undefined;
+      propertyElement.nextElementSibling?.tagName === 'P' &&
+      propertyElement.nextElementSibling.innerHTML;
 
     // Add property to url
-    const propertyURL = element.url.replace(
-      element.name,
-      propertyTitle.replace(/(\w+\.\w+)(.*)/, '$1')
-    );
+    const propertyURL = element.url.replace(element.name, propertyTitle);
 
-    return sanitizeHTMLMeta({
+    return sanitizeMeta({
       title: propertyTitle,
       description: propertyDesc,
       url: propertyURL,

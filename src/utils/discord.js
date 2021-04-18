@@ -146,9 +146,6 @@ export const sanitizeHTML = html => {
         .replace(/<\/?(italic|i|em)>/gi, '*')
         // Transform anchors
         .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
-        // Transform bracket syntax
-        .replace(/\[[^:]+:[^\s]+\s(\w+)\]/g, '$1')
-        .replace(/\[[^:]+:([^\s]+)\]/g, '$1')
         // Trim spaces
         .replace(/\s+/g, ' ')
         // Transform newlines
@@ -162,14 +159,3 @@ export const sanitizeHTML = html => {
     console.error(chalk.red(`discord/sanitizeHTML >> ${error.stack}`));
   }
 };
-
-/**
- * Sanitizes a meta object containing HTML to markdown.
- *
- * @param {Object} meta HTML meta object to sanitize.
- */
-export const sanitizeHTMLMeta = meta =>
-  Object.assign(
-    {},
-    ...Object.entries(meta).map(([key, html]) => ({ [key]: sanitizeHTML(html) }))
-  );

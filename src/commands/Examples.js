@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import { getExamples } from 'utils/three';
 import { THREE } from 'constants';
 
 const Examples = {
@@ -13,16 +12,13 @@ const Examples = {
       required: true,
     },
   ],
-  async execute({ options }) {
+  async execute({ options, client }) {
     const query = options.join(' ');
 
     try {
-      // Get tagged examples
-      const examples = await getExamples();
-
       // Check for an example if key was specified
       const targetKey = options.join('_').toLowerCase();
-      const target = examples.find(
+      const target = client.examples.find(
         ({ name }) =>
           name === targetKey || name.split('_').every(frag => targetKey.includes(frag))
       );
@@ -30,7 +26,7 @@ const Examples = {
       // Fuzzy search examples
       const results =
         (target && [target]) ||
-        examples
+        client.examples
           .filter(({ tags }) => options.some(tag => tags.includes(tag.toLowerCase())))
           .sort((a, b) => a - b)
           .filter(Boolean);

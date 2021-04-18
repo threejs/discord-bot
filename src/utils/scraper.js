@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
-import { JSDOM } from 'jsdom';
 
 // Re-usable results cache.
 const cachedResults = {};
@@ -21,10 +20,9 @@ export const crawl = async url => {
 
     // Parse and cache response
     const html = await response.text();
-    const { document } = new JSDOM(html).window;
-    cachedResults[url] = document.body.innerHTML;
+    cachedResults[url] = html;
 
-    return document.body.innerHTML;
+    return html;
   } catch (error) {
     console.error(chalk.red(`scraper/crawl >> ${error.stack}`));
   }

@@ -44,7 +44,7 @@ describe('commands/Docs', () => {
   it('gets a specified class', async () => {
     const output = await Docs.execute({ options: ['Vector3'] });
 
-    expect(output.title).toBe('Vector3( x : Float, y : Float, z : Float )');
+    expect(output.title).toBe('Vector3( x: Float, y: Float, z: Float )');
     expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3`);
     expect(output.description).toBeDefined();
   });
@@ -60,7 +60,7 @@ describe('commands/Docs', () => {
   it('gets a specified class method', async () => {
     const output = await Docs.execute({ options: ['Vector3.set'] });
 
-    expect(output.title).toBe('Vector3.set ( x : Float, y : Float, z : Float ) : this');
+    expect(output.title).toBe('Vector3.set( x: Float, y: Float, z: Float ): Vector3');
     expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.set`);
     expect(output.description).toBeDefined();
   });
@@ -68,7 +68,7 @@ describe('commands/Docs', () => {
   it('gets a shorthand class method', async () => {
     const output = await Docs.execute({ options: ['Vector3.get'] });
 
-    expect(output.title).toBe('Vector3.getComponent ( index : Integer ) : Float');
+    expect(output.title).toBe('Vector3.getComponent( index: Integer ): Float');
     expect(output.url).toBe(
       `${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.getComponent`
     );
@@ -78,7 +78,7 @@ describe('commands/Docs', () => {
   it('gets a class property', async () => {
     const output = await Docs.execute({ options: ['Vector3.x'] });
 
-    expect(output.title).toBe('Vector3.x : Float');
+    expect(output.title).toBe('Vector3.x: Float');
     expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.x`);
     expect(output.description).not.toBeDefined();
   });
@@ -86,7 +86,7 @@ describe('commands/Docs', () => {
   it('fuzzily gets a specified class', async () => {
     const output = await Docs.execute({ options: ['Vectr3'] });
 
-    expect(output.title).toBe('Vector3( x : Float, y : Float, z : Float )');
+    expect(output.title).toBe('Vector3( x: Float, y: Float, z: Float )');
     expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3`);
     expect(output.description).toBeDefined();
   });
@@ -94,7 +94,7 @@ describe('commands/Docs', () => {
   it('fuzzily gets a specified class method', async () => {
     const output = await Docs.execute({ options: ['Vectr3.set'] });
 
-    expect(output.title).toBe('Vector3.set ( x : Float, y : Float, z : Float ) : this');
+    expect(output.title).toBe('Vector3.set( x: Float, y: Float, z: Float ): Vector3');
     expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.set`);
     expect(output.description).toBeDefined();
   });
@@ -102,7 +102,7 @@ describe('commands/Docs', () => {
   it('fuzzily gets a class property', async () => {
     const output = await Docs.execute({ options: ['Vectr3.x'] });
 
-    expect(output.title).toBe('Vector3.x : Float');
+    expect(output.title).toBe('Vector3.x: Float');
     expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.x`);
     expect(output.description).not.toBeDefined();
   });

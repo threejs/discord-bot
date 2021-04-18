@@ -14,7 +14,7 @@ class Bot extends Client {
    * Sends a message over an interaction endpoint.
    *
    * @param interaction Remote Discord interaction object.
-   * @param message Stringified or pre-processed message response.
+   * @param message Inline or pre-processed message response.
    */
   async send(interaction, message) {
     try {
@@ -32,12 +32,12 @@ class Bot extends Client {
       const { name, options } = interaction.data;
       const args = ` ${options?.map(({ value }) => value)}` ?? '';
 
-      console.warn(chalk.yellow(`client#send ${name}${args} >> ${error.message}`));
+      console.warn(chalk.yellow(`bot/send ${name}${args} >> ${error.stack}`));
     }
   }
 
   /**
-   * Loads and registers `Client` events from the events folder
+   * Loads and registers `Client` events from the events folder.
    */
   loadEvents() {
     if (!this.events) this.events = new Collection();
@@ -58,7 +58,7 @@ class Bot extends Client {
   }
 
   /**
-   * Loads and registers interaction commands from the commands folder
+   * Loads and registers interaction commands from the commands folder.
    */
   loadCommands() {
     if (!this.commands) this.commands = new Collection();
@@ -132,7 +132,7 @@ class Bot extends Client {
       await this.login(config.token);
       await this.updateCommands();
     } catch (error) {
-      console.error(chalk.red(`bot#start >> ${error.message}`));
+      console.error(chalk.red(`bot/start >> ${error.message}`));
     }
   }
 }

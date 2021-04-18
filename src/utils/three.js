@@ -3,23 +3,30 @@ import fetch from 'node-fetch';
 import { THREE } from 'constants';
 
 /**
- * Returns a list of the three.js docs in an optional locale.
+ * Flattens a deeply nested object to root-level.
+ *
+ * @param {Object} object Deep-nested object to flatten.
+ */
+export const flatten = object =>
+  Object.assign(
+    {},
+    ...(function _flatten(root) {
+      return [].concat(
+        ...Object.keys(root).map(key =>
+          typeof root[key] === 'object' ? _flatten(root[key]) : { [key]: root[key] }
+        )
+      );
+    })(object)
+  );
+
+/**
+ * Returns a list of three.js docs in an optional locale.
  */
 export const getDocs = async () => {
   try {
     const json = await fetch(THREE.DOCS_LIST).then(res => res.json());
 
-    const endpoints = Object.assign(
-      {},
-      ...(function _flatten(o) {
-        return [].concat(
-          ...Object.keys(o).map(k =>
-            typeof o[k] === 'object' ? _flatten(o[k]) : { [k]: o[k] }
-          )
-        );
-      })(json[THREE.LOCALE])
-    );
-
+    const endpoints = flatten(json[THREE.LOCALE]);
     const docs = Object.keys(endpoints).map(key => ({
       name: key,
       url: `${THREE.DOCS_URL}${endpoints[key]}`,
@@ -32,24 +39,29 @@ export const getDocs = async () => {
 };
 
 /**
- * Returns a list of the three.js examples.
+ * Returns a list of three.js examples.
  */
 export const getExamples = async () => {
   try {
     const json = await fetch(THREE.EXAMPLES_LIST).then(res => res.json());
     const tags = await fetch(THREE.EXAMPLES_TAGS).then(res => res.json());
 
-    const examples = Object.keys(json)
-      .map(key => json[key])
-      .flat()
-      .map(key => ({
+    const examples = Object.keys(json).reduce((results, group) => {
+      const items = json[group].map(key => ({
         name: key,
         url: `${THREE.EXAMPLES_URL}#${key}`,
-        tags: Array.from(new Set([key.split('_'), tags[key]].filter(Boolean))).flat(),
+        tags: tags[key]
+          ? Array.from(new Set([...key.split('_'), ...tags[key]]))
+          : key.split('_'),
         thumbnail: {
           url: `${THREE.EXAMPLES_URL}screenshots/${key}.jpg`,
         },
       }));
+
+      results.push(...items);
+
+      return results;
+    }, []);
 
     return examples;
   } catch (error) {

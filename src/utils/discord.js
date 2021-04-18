@@ -12,7 +12,7 @@ import { APIMessage } from 'discord.js';
 /**
  * Converts a vanilla or camelCase string to SNAKE_CASE.
  *
- * @param {String} string Target string.
+ * @param {String} string Target string to convert.
  */
 export const snakeCase = string =>
   string
@@ -27,7 +27,7 @@ const DOMPurify = createDOMPurify(window);
 /**
  * Normalizes and cleans up unsafe strings, eval.
  *
- * @param {String} string Target string.
+ * @param {String} string Target string to normalize.
  */
 export const normalize = string => DOMPurify.sanitize(string);
 
@@ -56,7 +56,7 @@ export const sanitize = message => {
 /**
  * Generates an embed with default properties.
  *
- * @param {APIMessage} embed Overloaded embed properties.
+ * @param embed Inline embed properties.
  */
 export const validateEmbed = embed => {
   const { title, description, fields, ...rest } = embed;
@@ -85,7 +85,7 @@ export const validateEmbed = embed => {
 /**
  * Parses and validates an interaction flags object.
  *
- * @param {INTERACTION_RESPONSE_FLAGS} flags
+ * @param flags An object with interaction flags, denoted as keys.
  */
 export const validateFlags = flags =>
   Object.keys(flags).reduce(

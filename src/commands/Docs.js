@@ -1,8 +1,6 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
-import { getDocs } from 'utils/three';
-import { crawl } from 'utils/puppeteer';
-import { transformMarkdown } from 'utils/discord';
+import { getDocs, getElement } from 'utils/three';
 import { THREE } from 'constants';
 
 const Docs = {
@@ -20,9 +18,8 @@ const Docs = {
     const query = options.join(' ');
 
     try {
-      // Separate methods and props from query
-      const [object, ...props] = query.split(/\.|#/);
-      const properties = props.length ? `.${props.join('.')}` : '';
+      // Separate property/method from base class
+      const [object, property] = query.split(/\.|#/);
 
       // Get localized docs
       const docs = await getDocs();
@@ -49,34 +46,17 @@ const Docs = {
           };
         case 1: {
           // Handle single result
-          const [{ name, ...result }] = results;
+          const [result] = results;
+          const element = await getElement(result, property);
 
-          // Query result
-          const html = await crawl(result.url);
-          const markdown = transformMarkdown(html, `${name}${properties}`);
-
-          // Handle invalid query
-          if (!markdown)
+          // Handle unknown props
+          if (!element)
             return {
               title: `Documentation for "${query}" does not exist`,
               description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
             };
 
-          // Destructure markdown
-          const { title, property, description } = markdown;
-
-          // Correct url if property found
-          const url =
-            name !== property && title !== property
-              ? result.url.replace(name, `${name}.${property}`)
-              : result.url;
-
-          // Return auto-generated url and props
-          return {
-            title,
-            url,
-            description,
-          };
+          return element;
         }
         default:
           // Handle multiple results

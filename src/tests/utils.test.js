@@ -3,9 +3,9 @@ import {
   validateFlags,
   validateEmbed,
   validateMessage,
-  transformMarkdown,
+  sanitizeHTML,
+  sanitizeHTMLMeta,
 } from 'utils/discord';
-import { crawl } from 'utils/puppeteer';
 import { getDocs, getExamples } from 'utils/three';
 import { INTERACTION_RESPONSE_FLAGS, MESSAGE_LIMITS } from 'constants';
 import config from 'config';
@@ -80,39 +80,21 @@ describe('utils/discord', () => {
   });
 
   it('transforms HTML to markdown', () => {
-    const output = transformMarkdown(
+    const output = sanitizeHTML(
       '<a href="#">Link</a><h1>Header</h1><strong>Bold</strong><b>Bold</b><italic>Italic</italic><i>Italic</i>'
     );
 
     expect(output).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
   });
 
-  it('transforms HTML meta to markdown meta', () => {
-    const { title, description } = transformMarkdown(
-      '<h1>Class</h1><p class="desc">Class description.</p><h2>Constructor</h2><h3>Class()</h3>',
-      'class'
-    );
+  it('transforms HTML meta to markdown', () => {
+    const html =
+      '<a href="#">Link</a><h1>Header</h1><strong>Bold</strong><b>Bold</b><italic>Italic</italic><i>Italic</i>';
+    const meta = { key1: html, key2: html };
+    const output = sanitizeHTMLMeta(meta);
 
-    expect(title).toBe('Class()');
-    expect(description).toBe('Class description.');
-  });
-
-  it('shows a trail if HTML meta is trimmed', () => {
-    const { title, description } = transformMarkdown(
-      '<h1>Class</h1><p class="desc">Class description.</p><p>More stuff.</p><h2>Constructor</h2><h3>Class()</h3>',
-      'class'
-    );
-
-    expect(title).toBe('Class()');
-    expect(description).toBe('Class description....');
-  });
-});
-
-describe('utils/puppeteer', () => {
-  it('crawls a webpage and callsback', async () => {
-    const output = await crawl('about:blank');
-
-    expect(output).toBe('');
+    expect(output.key1).toBe(output.key2);
+    expect(output.key1).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
   });
 });
 

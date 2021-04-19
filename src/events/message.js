@@ -2,6 +2,9 @@ import chalk from 'chalk';
 import config from 'config';
 import { sanitize, validateMessage } from 'utils/discord';
 
+// Duration to persist ephemeral messages.
+const EPHEMERAL_DURATION = 6000;
+
 /**
  * Handles Discord message events.
  */
@@ -21,7 +24,12 @@ const MessageEvent = {
       const output = await command.execute({ ...client, options });
       if (!output) return;
 
-      return msg.channel.send(validateMessage(output));
+      const message = await msg.channel.send(validateMessage(output));
+
+      // Expire ephemeral responses
+      if (output?.ephemeral) message.delete({ timeout: EPHEMERAL_DURATION });
+
+      return message;
     } catch (error) {
       console.error(chalk.red(`message >> ${error.stack}`));
     }

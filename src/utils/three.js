@@ -30,7 +30,9 @@ export const sanitizeMetaItem = (key, value) => {
     case 'description':
       return (
         value
-          // Transform bracket syntax
+          // Transform custom links
+          .replace(/\[link:([^\s]+)\s([^\]]+)\]/g, '[$2]($1)')
+          // Cleanup inline links
           .replace(/\[[^:]+:[^\s]+\s(\w+)\]/g, '$1')
           .replace(/\[[^:]+:([^\s]+)\]/g, '$1')
       );

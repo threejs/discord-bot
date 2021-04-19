@@ -12,6 +12,12 @@
         "root": ["src"],
         "extensions": [".js"]
       }
+    ],
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true
+      }
     ]
   ]
 }

@@ -55,14 +55,14 @@ const Examples = {
         }
         default: {
           // Handle multiple results
-          const searchItems = results.reduce((message, { name, url }, index) => {
-            if (index < 10) message += `\n• **[${name}](${url})**`;
+          const relatedExamples = results.reduce((message, { name, url }) => {
+            message += `\n• **[${name}](${url})**`;
 
             return message;
           }, '');
 
           return {
-            content: `No examples were found for \`${query}\`. Related: ${searchItems}`,
+            content: `No examples were found for \`${query}\`.\n\nRelated examples: ${relatedExamples}`,
             ephemeral: true,
           };
         }

@@ -56,14 +56,14 @@ const Docs = {
         }
         default: {
           // Handle multiple results
-          const searchItems = results.reduce((message, { name, url }, index) => {
-            if (index < 10) message += `\n• **[${name}](${url})**`;
+          const relatedDocs = results.reduce((message, { name, url }) => {
+            message += `\n• **[${name}](${url})**`;
 
             return message;
           }, '');
 
           return {
-            content: `No documentation was found for \`${query}\`. Related: ${searchItems}`,
+            content: `No documentation was found for \`${query}\`.\n\nRelated docs: ${relatedDocs}`,
             ephemeral: true,
           };
         }

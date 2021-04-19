@@ -5,12 +5,17 @@ const Help = {
   description: "Displays this bot's commands.",
   execute({ commands }) {
     try {
+      const commandList = commands.reduce((list, { name, options, description }) => {
+        const args = options?.map(({ name }) => ` \`${name}\``) || '';
+
+        list += `\n**/${name}**${args} - ${description}`;
+
+        return list;
+      }, '');
+
       return {
-        title: 'Commands',
-        fields: commands.map(({ name, options, description }) => ({
-          name: `/${name}${options?.map(({ name }) => ` \`${name}\``) || ''}`,
-          value: description,
-        })),
+        content: `**Commands**:\n${commandList}`,
+        ephemeral: true,
       };
     } catch (error) {
       console.error(chalk.red(`/help >> ${error.stack}`));

@@ -23,7 +23,8 @@ describe('/help', () => {
   it("displays this bot's commands", async () => {
     const output = await test('/help');
 
-    expect(output.fields.length).not.toBe(0);
+    expect(output.content.length).not.toBe(0);
+    expect(output.ephemeral).toBe(true);
   });
 });
 

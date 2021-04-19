@@ -16,31 +16,28 @@ export const snakeCase = string =>
     .toUpperCase();
 
 /**
- * Generates an embed with default properties.
+ * Validates embed fields.
  */
-export const validateEmbed = embed => {
-  const { title, description, fields, ...rest } = embed;
+export const validateFields = fields =>
+  fields?.reduce((fields, { name, value }, index) => {
+    if (index < MESSAGE_LIMITS.FIELD_LENGTH)
+      fields.push({
+        name: name.slice(0, MESSAGE_LIMITS.FIELD_NAME_LENGTH),
+        value: value.slice(0, MESSAGE_LIMITS.FIELD_VALUE_LENGTH),
+      });
 
-  return {
-    ...EMBED_DEFAULTS,
-    title: title?.slice(0, MESSAGE_LIMITS.TITLE_LENGTH),
-    description: description?.slice(0, MESSAGE_LIMITS.DESC_LENGTH),
-    fields: fields?.reduce((fields, field, index) => {
-      if (index < MESSAGE_LIMITS.FIELD_LENGTH) {
-        const { name, value, inline } = field;
+    return fields;
+  }, []);
 
-        fields.push({
-          name: name.slice(0, MESSAGE_LIMITS.FIELD_NAME_LENGTH),
-          value: value.slice(0, MESSAGE_LIMITS.FIELD_VALUE_LENGTH),
-          inline: Boolean(inline),
-        });
-      }
-
-      return fields;
-    }, []),
-    ...rest,
-  };
-};
+/**
+ * Validates and generates an embed with default properties.
+ */
+export const validateEmbed = ({ title, description, fields }) => ({
+  ...EMBED_DEFAULTS,
+  title: title?.slice(0, MESSAGE_LIMITS.TITLE_LENGTH),
+  description: description?.slice(0, MESSAGE_LIMITS.DESC_LENGTH),
+  fields: validateFields(fields),
+});
 
 /**
  * Parses and validates an interaction flags object.

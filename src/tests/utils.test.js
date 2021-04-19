@@ -31,7 +31,6 @@ describe('utils/discord', () => {
       fields: new Array(MESSAGE_LIMITS.FIELD_LENGTH + 1).fill({
         name: ' '.repeat(MESSAGE_LIMITS.FIELD_NAME_LENGTH + 1),
         value: ' '.repeat(MESSAGE_LIMITS.FIELD_VALUE_LENGTH + 1),
-        inline: 'yes',
       }),
     };
 
@@ -42,7 +41,6 @@ describe('utils/discord', () => {
     expect(output.fields.length).toBe(MESSAGE_LIMITS.FIELD_LENGTH);
     expect(output.fields[0].name.length).toBe(MESSAGE_LIMITS.FIELD_NAME_LENGTH);
     expect(output.fields[0].value.length).toBe(MESSAGE_LIMITS.FIELD_VALUE_LENGTH);
-    expect(output.fields[0].inline).toBe(true);
   });
 
   it('transforms HTML to markdown', () => {

@@ -3,7 +3,6 @@
  */
 export const THREE = {
   LOCALE: 'en', // en, ar, zh, ko, ja
-  REPO: 'https://github.com/threejs/discord-bot',
   DOCS_URL: 'https://threejs.org/docs/',
   DOCS_LIST: 'https://threejs.org/docs/list.json',
   EXAMPLES_URL: 'https://threejs.org/examples/',

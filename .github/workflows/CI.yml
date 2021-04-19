@@ -6,13 +6,16 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
         run: yarn install
+
+      - name: Check build health
+        run: yarn build
 
       - name: Run tests
         run: yarn test

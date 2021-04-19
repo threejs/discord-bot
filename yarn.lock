@@ -2384,11 +2384,6 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-dompurify@^2.2.7:
-  version "2.2.7"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.2.7.tgz#a5f055a2a471638680e779bd08fc334962d11fd8"
-  integrity sha512-jdtDffdGNY+C76jvodNTu9jt5yYj59vuTUyx+wXdzcSwAGTYZDAQkQ7Iwx9zcGrA4ixC1syU4H3RZROqRxokxg==
-
 dot-prop@^5.2.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/dot-prop/-/dot-prop-5.3.0.tgz#90ccce708cd9cd82cc4dc8c3ddd9abdd55b20e88"
@@ -2892,11 +2887,6 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
-
-fuzzysort@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/fuzzysort/-/fuzzysort-1.1.4.tgz#a0510206ed44532cbb52cf797bf5a3cb12acd4ba"
-  integrity sha512-JzK/lHjVZ6joAg3OnCjylwYXYVjRiwTY6Yb25LvfpJHK8bjisfnZJ5bY8aVWwTwCXgxPNgLAtmHL+Hs5q1ddLQ==
 
 gensync@^1.0.0-beta.1, gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"

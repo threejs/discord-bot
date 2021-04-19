@@ -1,30 +1,13 @@
-import chalk from 'chalk';
-import config from 'config';
-import { sanitize, validateMessage } from 'utils/discord';
-
 /**
  * Handles Discord message events.
  */
 const MessageEvent = {
   name: 'message',
-  async execute(client, msg) {
-    try {
-      if (msg.author.bot || !msg.content.startsWith(config.prefix)) return;
+  execute(_, msg) {
+    const isCommand = /^!(help|doc|example)s?/i.test(msg.content);
+    if (msg.author.bot || !isCommand) return;
 
-      const input = sanitize(msg.content);
-
-      const options = input.substring(config.prefix.length).split(' ');
-      const name = options.shift().toLowerCase();
-      const command = client.commands.get(name);
-      if (!command) return;
-
-      const output = await command.execute({ ...client, options });
-      if (!output) return;
-
-      return msg.channel.send(validateMessage(output));
-    } catch (error) {
-      console.error(chalk.red(`message >> ${error.stack}`));
-    }
+    return msg.channel.send('Try running a command with `/command`.');
   },
 };
 

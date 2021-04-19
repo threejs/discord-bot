@@ -1,7 +1,5 @@
 import chalk from 'chalk';
-import fuzzysort from 'fuzzysort';
 import { getElement } from 'utils/three';
-import { THREE } from 'constants';
 
 const Docs = {
   name: 'docs',
@@ -15,7 +13,7 @@ const Docs = {
     },
   ],
   async execute({ options, docs }) {
-    const query = options.join(' ');
+    const [query] = options;
 
     try {
       // Separate property/method from base class
@@ -23,23 +21,22 @@ const Docs = {
 
       // Get fuzzy results if no exact match is found
       const exactResult = docs.find(({ name }) => name === object);
-      const results = exactResult
-        ? [exactResult]
-        : fuzzysort
-            .go(
-              object,
-              docs.map(({ name }) => name)
-            )
-            .sort((a, b) => a - b)
-            .map(({ target }) => docs.find(({ name }) => name === target))
-            .filter(Boolean);
+      const results = docs.reduce((matches, match) => {
+        if (exactResult) return [exactResult];
+
+        const fuzzySearch = new RegExp(`.*${object.split('').join('.*')}.*`, 'i');
+        const isMatch = fuzzySearch.test(match.name);
+        if (isMatch) matches.push(match);
+
+        return matches;
+      }, []);
 
       switch (results.length) {
         case 0:
           // Handle no results
           return {
-            title: `No documentation was found for "${query}"`,
-            description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
+            content: `No documentation was found for \`${query}\`.`,
+            ephemeral: true,
           };
         case 1: {
           // Handle single result
@@ -49,22 +46,27 @@ const Docs = {
           // Handle unknown props
           if (!element)
             return {
-              title: `Documentation for "${query}" does not exist`,
-              description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
+              content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
+              ephemeral: true,
             };
 
           return element;
         }
-        default:
+        default: {
           // Handle multiple results
-          return {
-            title: `Documentation for "${query}"`,
-            description: results.reduce((message, { name, url }, index) => {
-              if (index < 10) message += `**[${name}](${url})**\n`;
+          const relatedDocs = results
+            .sort((a, b) => a - b)
+            .reduce((message, { name, url }) => {
+              message += `\n• **[${name}](${url})**`;
 
               return message;
-            }, ''),
+            }, '');
+
+          return {
+            content: `No documentation was found for \`${query}\`.\n\nRelated docs: ${relatedDocs}`,
+            ephemeral: true,
           };
+        }
       }
     } catch (error) {
       console.error(chalk.red(`/docs ${query} >> ${error.stack}`));

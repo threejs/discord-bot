@@ -35,8 +35,8 @@ const Examples = {
         case 0:
           // Handle no results
           return {
-            title: `No examples were found for "${query}"`,
-            description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
+            content: `No examples were found for \`${query}\`.`,
+            ephemeral: true,
           };
         case 1: {
           // Handle single result
@@ -53,16 +53,19 @@ const Examples = {
             ...rest,
           };
         }
-        default:
+        default: {
           // Handle multiple results
-          return {
-            title: `Examples for "${query}"`,
-            description: results.reduce((message, { name, url }, index) => {
-              if (index < 10) message += `**[${name}](${url})**\n`;
+          const searchItems = results.reduce((message, { name, url }, index) => {
+            if (index < 10) message += `\n• **[${name}](${url})**`;
 
-              return message;
-            }, ''),
+            return message;
+          }, '');
+
+          return {
+            content: `No examples were found for \`${query}\`. Related: ${searchItems}`,
+            ephemeral: true,
           };
+        }
       }
     } catch (error) {
       console.error(chalk.red(`/examples ${query} >> ${error.stack}`));

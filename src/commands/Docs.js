@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import fuzzysort from 'fuzzysort';
 import { getElement } from 'utils/three';
-import { THREE } from 'constants';
 
 const Docs = {
   name: 'docs',
@@ -38,8 +37,8 @@ const Docs = {
         case 0:
           // Handle no results
           return {
-            title: `No documentation was found for "${query}"`,
-            description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
+            content: `No documentation was found for \`${query}\`.`,
+            ephemeral: true,
           };
         case 1: {
           // Handle single result
@@ -49,22 +48,25 @@ const Docs = {
           // Handle unknown props
           if (!element)
             return {
-              title: `Documentation for "${query}" does not exist`,
-              description: `Discover an issue? You can report it [here](${THREE.REPO}).`,
+              content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
+              ephemeral: true,
             };
 
           return element;
         }
-        default:
+        default: {
           // Handle multiple results
-          return {
-            title: `Documentation for "${query}"`,
-            description: results.reduce((message, { name, url }, index) => {
-              if (index < 10) message += `**[${name}](${url})**\n`;
+          const searchItems = results.reduce((message, { name, url }, index) => {
+            if (index < 10) message += `\n• **[${name}](${url})**`;
 
-              return message;
-            }, ''),
+            return message;
+          }, '');
+
+          return {
+            content: `No documentation was found for \`${query}\`. Related: ${searchItems}`,
+            ephemeral: true,
           };
+        }
       }
     } catch (error) {
       console.error(chalk.red(`/docs ${query} >> ${error.stack}`));

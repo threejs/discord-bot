@@ -31,22 +31,23 @@ describe('/docs', () => {
   it('has fallback on no result', async () => {
     const output = await test('/docs ThisDoesNotExist');
 
-    expect(output.title.includes('ThisDoesNotExist')).toBe(true);
-    expect(output.description.length).not.toBe(0);
+    expect(output.content.includes('ThisDoesNotExist')).toBe(true);
+    expect(output.ephemeral).toBe(true);
   });
 
-  it('has fallback on failed query', async () => {
+  it('has fallback for unknown properties', async () => {
     const output = await test('/docs Vector3.thisDoesNotExist');
 
-    expect(output.title.includes('Vector3.thisDoesNotExist')).toBe(true);
-    expect(output.description.length).not.toBe(0);
+    expect(output.content.includes('thisDoesNotExist')).toBe(true);
+    expect(output.content.includes('Vector3')).toBe(true);
+    expect(output.ephemeral).toBe(true);
   });
 
   it('fuzzy searches alternate docs', async () => {
     const output = await test('/docs vector');
 
-    expect(output.title.includes('vector')).toBe(true);
-    expect(output.description.length).not.toBe(0);
+    expect(output.content.includes('vector')).toBe(true);
+    expect(output.ephemeral).toBe(true);
   });
 
   it('gets a specified class', async () => {
@@ -120,15 +121,15 @@ describe('/examples', () => {
   it('has fallback on no result', async () => {
     const output = await test('/examples ThisDoesNotExist');
 
-    expect(output.title.includes('ThisDoesNotExist')).toBe(true);
-    expect(output.description).toBeDefined();
+    expect(output.content.includes('ThisDoesNotExist')).toBe(true);
+    expect(output.ephemeral).toBe(true);
   });
 
   it('gets multiple results', async () => {
     const output = await test('/examples webgl');
 
-    expect(output.title.includes('webgl')).toBe(true);
-    expect(output.description).toBeDefined();
+    expect(output.content.includes('webgl')).toBe(true);
+    expect(output.ephemeral).toBe(true);
   });
 
   it('gets a result by key', async () => {

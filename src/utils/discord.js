@@ -110,8 +110,8 @@ export const validateMessage = message => {
     tts: Boolean(message.tts),
     flags: validateFlags(message.flags || message),
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
-    embed: validateEmbed(message),
-    embeds: message.embeds?.map(validateEmbed) || [validateEmbed(message)],
+    embed: message.content ? null : validateEmbed(message),
+    embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };
 };
 

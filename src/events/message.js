@@ -27,7 +27,7 @@ const MessageEvent = {
       const message = await msg.channel.send(validateMessage(output));
 
       // Expire ephemeral responses
-      if (output?.ephemeral) message.delete({ timeout: EPHEMERAL_DURATION });
+      if (output?.ephemeral) await message.delete({ timeout: EPHEMERAL_DURATION });
 
       return message;
     } catch (error) {

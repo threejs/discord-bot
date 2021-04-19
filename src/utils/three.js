@@ -5,9 +5,6 @@ import { sanitizeHTML } from 'utils/discord';
 
 /**
  * Sanitizes a three meta item.
- *
- * @param {String} key Meta item key.
- * @param {String} value Meta item value.
  */
 export const sanitizeMetaItem = (key, value) => {
   if (!value) return;
@@ -43,8 +40,6 @@ export const sanitizeMetaItem = (key, value) => {
 
 /**
  * Sanitizes a three meta object containing HTML to markdown.
- *
- * @param {Object} meta HTML meta object to sanitize.
  */
 export const sanitizeMeta = meta =>
   Object.assign(
@@ -56,9 +51,6 @@ export const sanitizeMeta = meta =>
 
 /**
  * Gets a three.js element's meta in Discord markdown.
- *
- * @param {{ url: String, name: String }} element Target element.
- * @param {String} [property] Optional element property.
  */
 export const getElement = async (element, property) => {
   try {

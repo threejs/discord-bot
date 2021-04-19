@@ -89,25 +89,56 @@ const Command = {
   ],
   // Execution function to run whenever a user invokes the command
   execute({
-    // Current bot client context
-    client,
+    // Bot run-time variables
+    events,
+    commands,
+    // Three.js variables
+    docs,
+    examples,
     // An array of stringified user-specified options
     options,
   }) {
     // Get message type from user input
     const [messageType] = options;
 
-    // If specified, send an embed object response
     if (messageType === 'embed') {
+      // Send a message with a single embed (inline)
       return {
-        url: 'http://example.com',
         title: 'Embed Title',
         description: 'Embed description.',
       };
+    } else if (messageType === 'embeds') {
+      // Send a message with multiple embeds
+      return {
+        embeds: [
+          {
+            title: 'Embed1 Title',
+            description: 'Embed1 description.',
+          },
+          {
+            title: 'Embed2 Title',
+            description: 'Embed2 description.',
+          },
+        ],
+      };
+    } else if (messageType === 'ephemeral') {
+      // Send an ephemeral message (supports markdown)
+      return {
+        content: 'Ephemeral response.',
+        // Support for inline flags, or via flags: Integer (see INTERACTION_RESPONSE_FLAGS in src/constants.js)
+        ephemeral: true,
+      };
+    } else if (messageType === 'tts') {
+      // Send a TTS (text-to-speech) message
+      return {
+        content: 'TTS response.',
+        // Support for overloaded message options
+        tts: true,
+      };
     }
 
-    // Otherwise, send a string response
-    return 'Default response.';
+    // Send a basic response
+    return 'Basic response.';
   },
 };
 

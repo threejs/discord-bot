@@ -6,8 +6,6 @@ const cachedResults = {};
 
 /**
  * Fetches a url, returning its HTML markup.
- *
- * @param {String} url URL to fetch.
  */
 export const crawl = async url => {
   // Early return if already fetched

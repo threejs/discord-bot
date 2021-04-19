@@ -13,9 +13,6 @@ import config from 'config';
 class Bot extends Client {
   /**
    * Sends a message over an interaction endpoint.
-   *
-   * @param interaction Remote Discord interaction object.
-   * @param message Inline or pre-processed message response.
    */
   async send(interaction, message) {
     const { name, options } = interaction.data;

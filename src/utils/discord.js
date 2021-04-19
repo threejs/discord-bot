@@ -8,8 +8,6 @@ import { APIMessage } from 'discord.js';
 
 /**
  * Converts a vanilla or camelCase string to SNAKE_CASE.
- *
- * @param {String} string Target string to convert.
  */
 export const snakeCase = string =>
   string
@@ -19,8 +17,6 @@ export const snakeCase = string =>
 
 /**
  * Generates an embed with default properties.
- *
- * @param embed Inline embed properties.
  */
 export const validateEmbed = embed => {
   const { title, description, fields, ...rest } = embed;
@@ -48,8 +44,6 @@ export const validateEmbed = embed => {
 
 /**
  * Parses and validates an interaction flags object.
- *
- * @param flags An object with interaction flags, denoted as keys.
  */
 export const validateFlags = flags =>
   Object.keys(flags).reduce(
@@ -59,8 +53,6 @@ export const validateFlags = flags =>
 
 /**
  * Validates a message object or response and its flags.
- *
- * @param {APIMessage} message Discord message response.
  */
 export const validateMessage = message => {
   // No-op on empty or pre-processed message
@@ -94,8 +86,6 @@ export const validateCommand = ({ name, description, options }) => ({
 
 /**
  * Parses HTML into Discord markdown.
- *
- * @param {String} html HTML markup string.
  */
 export const sanitizeHTML = html =>
   html &&

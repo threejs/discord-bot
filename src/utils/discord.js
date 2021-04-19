@@ -1,5 +1,3 @@
-import { JSDOM } from 'jsdom';
-import createDOMPurify from 'dompurify';
 import {
   EMBED_DEFAULTS,
   MESSAGE_LIMITS,
@@ -18,39 +16,6 @@ export const snakeCase = string =>
     .replace(/[A-Z]/g, char => `_${char}`)
     .replace(/\s+|_+/g, '_')
     .toUpperCase();
-
-// Shared sanitation context
-const { window } = new JSDOM('');
-const DOMPurify = createDOMPurify(window);
-
-/**
- * Normalizes and cleans up unsafe strings, eval.
- *
- * @param {String} string Target string to normalize.
- */
-export const normalize = string => DOMPurify.sanitize(string);
-
-/**
- * Sanitizes Discord syntax from command arguments.
- *
- * @param {String} message Discord message string to sanitize.
- */
-export const sanitize = message => {
-  if (!message) return;
-
-  return normalize(
-    message
-      // Remove newline characters
-      .replace(/\n/gm, ' ')
-      // Remove mentions
-      .replace(/<@!\d*>/g, '')
-      // Remove formatting
-      .replace(/(\*|`|:)*/g, '')
-      // Trim inline spaces
-      .replace(/\s+/g, ' ')
-      .trim()
-  );
-};
 
 /**
  * Generates an embed with default properties.

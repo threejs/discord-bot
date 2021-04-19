@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import fuzzysort from 'fuzzysort';
 import { getElement } from 'utils/three';
 
 const Docs = {
@@ -14,7 +13,7 @@ const Docs = {
     },
   ],
   async execute({ options, docs }) {
-    const query = options.join(' ');
+    const [query] = options;
 
     try {
       // Separate property/method from base class
@@ -22,16 +21,15 @@ const Docs = {
 
       // Get fuzzy results if no exact match is found
       const exactResult = docs.find(({ name }) => name === object);
-      const results = exactResult
-        ? [exactResult]
-        : fuzzysort
-            .go(
-              object,
-              docs.map(({ name }) => name)
-            )
-            .sort((a, b) => a - b)
-            .map(({ target }) => docs.find(({ name }) => name === target))
-            .filter(Boolean);
+      const results = docs.reduce((matches, match) => {
+        if (exactResult) return [exactResult];
+
+        const fuzzySearch = new RegExp(`.*${object.split('').join('.*')}.*`, 'i');
+        const isMatch = fuzzySearch.test(match.name);
+        if (isMatch) matches.push(match);
+
+        return matches;
+      }, []);
 
       switch (results.length) {
         case 0:
@@ -56,11 +54,13 @@ const Docs = {
         }
         default: {
           // Handle multiple results
-          const relatedDocs = results.reduce((message, { name, url }) => {
-            message += `\n• **[${name}](${url})**`;
+          const relatedDocs = results
+            .sort((a, b) => a - b)
+            .reduce((message, { name, url }) => {
+              message += `\n• **[${name}](${url})**`;
 
-            return message;
-          }, '');
+              return message;
+            }, '');
 
           return {
             content: `No documentation was found for \`${query}\`.\n\nRelated docs: ${relatedDocs}`,

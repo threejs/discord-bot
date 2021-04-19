@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 /**
- * Handles websocket events.
+ * Handles interaction events.
  */
 const RawEvent = {
   name: 'raw',

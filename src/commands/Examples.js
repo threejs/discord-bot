@@ -13,23 +13,27 @@ const Examples = {
     },
   ],
   async execute({ options, examples }) {
-    const query = options.join(' ');
+    const [query] = options;
 
     try {
       // Check for an example if key was specified
-      const targetKey = options.join('_').toLowerCase();
+      const targetKey = query.replace(/\s/g, '_').toLowerCase();
       const target = examples.find(
         ({ name }) =>
           name === targetKey || name.split('_').every(frag => targetKey.includes(frag))
       );
 
       // Fuzzy search examples
-      const results =
-        (target && [target]) ||
-        examples
-          .filter(({ tags }) => options.some(tag => tags.includes(tag.toLowerCase())))
-          .sort((a, b) => a - b)
-          .filter(Boolean);
+      const results = examples.reduce((matches, match) => {
+        if (target) return [target];
+
+        const isMatch = query
+          .split(/\s|_/)
+          .some(frag => match?.tags.includes(frag.toLowerCase()));
+        if (isMatch) matches.push(match);
+
+        return matches;
+      }, []);
 
       switch (results.length) {
         case 0:
@@ -55,11 +59,13 @@ const Examples = {
         }
         default: {
           // Handle multiple results
-          const relatedExamples = results.reduce((message, { name, url }) => {
-            message += `\n• **[${name}](${url})**`;
+          const relatedExamples = results
+            .sort((a, b) => a - b)
+            .reduce((message, { name, url }) => {
+              message += `\n• **[${name}](${url})**`;
 
-            return message;
-          }, '');
+              return message;
+            }, '');
 
           return {
             content: `No examples were found for \`${query}\`.\n\nRelated examples: ${relatedExamples}`,

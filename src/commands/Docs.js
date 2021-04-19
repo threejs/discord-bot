@@ -14,7 +14,7 @@ const Docs = {
       required: true,
     },
   ],
-  async execute({ options, client }) {
+  async execute({ options, docs }) {
     const query = options.join(' ');
 
     try {
@@ -22,16 +22,16 @@ const Docs = {
       const [object, property] = query.split(/\.|#/);
 
       // Get fuzzy results if no exact match is found
-      const exactResult = client.docs.find(({ name }) => name === object);
+      const exactResult = docs.find(({ name }) => name === object);
       const results = exactResult
         ? [exactResult]
         : fuzzysort
             .go(
               object,
-              client.docs.map(({ name }) => name)
+              docs.map(({ name }) => name)
             )
             .sort((a, b) => a - b)
-            .map(({ target }) => client.docs.find(({ name }) => name === target))
+            .map(({ target }) => docs.find(({ name }) => name === target))
             .filter(Boolean);
 
       switch (results.length) {

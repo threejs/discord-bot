@@ -12,13 +12,13 @@ const Examples = {
       required: true,
     },
   ],
-  async execute({ options, client }) {
+  async execute({ options, examples }) {
     const query = options.join(' ');
 
     try {
       // Check for an example if key was specified
       const targetKey = options.join('_').toLowerCase();
-      const target = client.examples.find(
+      const target = examples.find(
         ({ name }) =>
           name === targetKey || name.split('_').every(frag => targetKey.includes(frag))
       );
@@ -26,7 +26,7 @@ const Examples = {
       // Fuzzy search examples
       const results =
         (target && [target]) ||
-        client.examples
+        examples
           .filter(({ tags }) => options.some(tag => tags.includes(tag.toLowerCase())))
           .sort((a, b) => a - b)
           .filter(Boolean);

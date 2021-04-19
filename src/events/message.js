@@ -18,7 +18,7 @@ const MessageEvent = {
       const command = client.commands.get(name);
       if (!command) return;
 
-      const output = await command.execute({ client, options });
+      const output = await command.execute({ ...client, options });
       if (!output) return;
 
       return msg.channel.send(validateMessage(output));

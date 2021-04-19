@@ -3,11 +3,11 @@ import chalk from 'chalk';
 const Help = {
   name: 'help',
   description: "Displays this bot's commands.",
-  execute({ client }) {
+  execute({ commands }) {
     try {
       return {
         title: 'Commands',
-        fields: client.commands.map(({ name, options, description }) => ({
+        fields: commands.map(({ name, options, description }) => ({
           name: `/${name}${options?.map(({ name }) => ` \`${name}\``) || ''}`,
           value: description,
         })),

@@ -18,6 +18,8 @@ class Bot extends Client {
    * @param message Inline or pre-processed message response.
    */
   async send(interaction, message) {
+    const { name, options } = interaction.data;
+
     try {
       const response = await this.api
         .interactions(interaction.id, interaction.token)
@@ -30,10 +32,13 @@ class Bot extends Client {
 
       return response;
     } catch (error) {
-      const { name, options } = interaction.data;
-      const args = ` ${options?.map(({ value }) => value)}` ?? '';
-
-      console.warn(chalk.yellow(`bot/send ${name}${args} >> ${error.stack}`));
+      console.error(
+        chalk.red(
+          `bot#send ${name}${
+            options?.length ? ` ${options.map(({ value }) => value)}` : ''
+          } >> ${error.stack}`
+        )
+      );
     }
   }
 
@@ -43,19 +48,23 @@ class Bot extends Client {
   loadEvents() {
     if (!this.events) this.events = new Collection();
 
-    const files = readdirSync(resolve(__dirname, '../events'));
+    try {
+      const files = readdirSync(resolve(__dirname, '../events'));
 
-    for (const file of files) {
-      const event = require(resolve(__dirname, '../events', file)).default;
+      for (const file of files) {
+        const event = require(resolve(__dirname, '../events', file)).default;
 
-      this.on(event.name, (...args) => event.execute(this, ...args));
+        this.on(event.name, (...args) => event.execute(this, ...args));
 
-      this.events.set(event.name, event);
+        this.events.set(event.name, event);
+      }
+
+      console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
+
+      return this.events;
+    } catch (error) {
+      console.error(chalk.red(`bot#loadEvents >> ${error.stack}`));
     }
-
-    console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
-
-    return this.events;
   }
 
   /**
@@ -63,63 +72,70 @@ class Bot extends Client {
    */
   loadCommands() {
     if (!this.commands) this.commands = new Collection();
+    try {
+      const files = readdirSync(resolve(__dirname, '../commands'));
 
-    const files = readdirSync(resolve(__dirname, '../commands'));
+      for (const file of files) {
+        const command = require(resolve(__dirname, '../commands', file)).default;
 
-    for (const file of files) {
-      const command = require(resolve(__dirname, '../commands', file)).default;
+        this.commands.set(command.name, command);
+      }
 
-      this.commands.set(command.name, command);
+      console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
+
+      return this.commands;
+    } catch (error) {
+      console.error(chalk.red(`bot#loadCommands >> ${error.stack}`));
     }
-
-    console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
-
-    return this.commands;
   }
 
   /**
    * Updates slash commands with Discord.
    */
   async updateCommands() {
-    // Get remote target
-    const remote = () =>
-      config.guild
-        ? this.api.applications(this.user.id).guilds(config.guild)
-        : this.api.applications(this.user.id);
+    try {
+      // Get remote target
+      const remote = () =>
+        config.guild
+          ? this.api.applications(this.user.id).guilds(config.guild)
+          : this.api.applications(this.user.id);
 
-    // Get remote cache
-    const cache = await remote().commands.get();
+      // Get remote cache
+      const cache = await remote().commands.get();
 
-    // Update remote
-    await Promise.all(
-      this.commands.map(async command => {
-        // Validate command props
-        const data = validateCommand(command);
+      // Update remote
+      await Promise.all(
+        this.commands.map(async command => {
+          // Validate command props
+          const data = validateCommand(command);
 
-        // Check for cache
-        const cached = cache?.find(({ name }) => name === command.name);
+          // Check for cache
+          const cached = cache?.find(({ name }) => name === command.name);
 
-        // Update or create command
-        if (cached?.id) {
-          await remote().commands(cached.id).patch({ data });
-        } else {
-          await remote().commands.post({ data });
-        }
-      })
-    );
+          // Update or create command
+          if (cached?.id) {
+            await remote().commands(cached.id).patch({ data });
+          } else {
+            await remote().commands.post({ data });
+          }
+        })
+      );
 
-    // Cleanup cache
-    await Promise.all(
-      cache.map(async command => {
-        const exists = this.commands.get(command.name);
+      // Cleanup cache
+      await Promise.all(
+        cache.map(async command => {
+          const exists = this.commands.get(command.name);
 
-        if (!exists) {
-          await remote().commands(command.id).delete();
-        }
-      })
-    );
+          if (!exists) {
+            await remote().commands(command.id).delete();
+          }
+        })
+      );
 
-    console.info(`${chalk.cyanBright('[Bot]')} updated slash commands`);
+      console.info(`${chalk.cyanBright('[Bot]')} updated slash commands`);
+    } catch (error) {
+      console.error(chalk.red(`bot#updateCommands >> ${error.stack}`));
+    }
   }
 
   /**
@@ -148,7 +164,7 @@ class Bot extends Client {
 
       return (this.docs = docs);
     } catch (error) {
-      console.error(chalk.red(`bot/loadDocs >> ${error.stack}`));
+      console.error(chalk.red(`bot#loadDocs >> ${error.stack}`));
     }
   }
 
@@ -181,7 +197,7 @@ class Bot extends Client {
 
       return (this.examples = examples);
     } catch (error) {
-      console.error(chalk.red(`bot/LoadExamples >> ${error.stack}`));
+      console.error(chalk.red(`bot#LoadExamples >> ${error.stack}`));
     }
   }
 
@@ -199,7 +215,7 @@ class Bot extends Client {
       await this.login(config.token);
       await this.updateCommands();
     } catch (error) {
-      console.error(chalk.red(`bot/start >> ${error.message}`));
+      console.error(chalk.red(`bot#start >> ${error.message}`));
     }
   }
 }

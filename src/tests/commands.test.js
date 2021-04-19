@@ -13,7 +13,7 @@ beforeAll(async () => {
   await client.loadExamples();
 });
 
-describe('commands/Help', () => {
+describe('/help', () => {
   it("displays this bot's commands", () => {
     const output = Help.execute({ client });
 
@@ -21,7 +21,7 @@ describe('commands/Help', () => {
   });
 });
 
-describe('commands/Docs', () => {
+describe('/docs', () => {
   it('has fallback on no result', async () => {
     const output = await Docs.execute({ client, options: ['ThisDoesNotExist'] });
 
@@ -110,7 +110,7 @@ describe('commands/Docs', () => {
   });
 });
 
-describe('commands/Examples', () => {
+describe('/examples', () => {
   it('has fallback on no result', async () => {
     const output = await Examples.execute({ client, options: ['ThisDoesNotExist'] });
 

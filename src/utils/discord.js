@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
 import {
@@ -132,30 +131,22 @@ export const validateCommand = ({ name, description, options }) => ({
  *
  * @param {String} html HTML markup string.
  */
-export const sanitizeHTML = html => {
-  if (!html) return;
-
-  try {
-    return (
-      html
-        // Transform code blocks
-        .replace(/<\/?code.*?>/gi, '```')
-        // Transform bold text
-        .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
-        // Transform italic text
-        .replace(/<\/?(italic|i|em)>/gi, '*')
-        // Transform anchors
-        .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
-        // Trim spaces
-        .replace(/\s+/g, ' ')
-        // Transform newlines
-        .replace(/(\n+\s*|<br\/?>)/gi, '\n')
-        // Remove excess markdown
-        .replace(/<\/?li>/gi, '')
-        // Cleanup result string
-        .trim()
-    );
-  } catch (error) {
-    console.error(chalk.red(`discord/sanitizeHTML >> ${error.stack}`));
-  }
-};
+export const sanitizeHTML = html =>
+  html &&
+  html
+    // Transform code blocks
+    .replace(/<\/?code.*?>/gi, '```')
+    // Transform bold text
+    .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
+    // Transform italic text
+    .replace(/<\/?(italic|i|em)>/gi, '*')
+    // Transform anchors
+    .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
+    // Trim spaces
+    .replace(/\s+/g, ' ')
+    // Transform newlines
+    .replace(/(\n+\s*|<br\/?>)/gi, '\n')
+    // Remove excess markdown
+    .replace(/<\/?li>/gi, '')
+    // Cleanup result string
+    .trim();

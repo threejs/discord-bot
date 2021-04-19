@@ -62,7 +62,7 @@ export const sanitizeMeta = meta =>
  */
 export const getElement = async (element, property) => {
   try {
-    // Fetch and cleanup markup
+    // Fetch page and cleanup self-references
     const response = await crawl(element.url);
     const html = response.replace(/(:)this|\[name\]/g, `$1${element.name}`);
 
@@ -124,6 +124,6 @@ export const getElement = async (element, property) => {
       url: propertyURL,
     });
   } catch (error) {
-    console.error(chalk.red(`three/getElement >> ${error.stack}`));
+    console.error(chalk.red(`three#getElement >> ${error.stack}`));
   }
 };

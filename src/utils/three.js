@@ -54,10 +54,10 @@ export const sanitizeMeta = meta =>
 export const getElement = async ([key, endpoint]) => {
   try {
     // Assemble URL from endpoint
-    const url = `${THREE.DOCS_URL}${endpoint}`;
+    const url = `${THREE.DOCS_URL}#${endpoint}`;
 
     // Fetch source page and cleanup self-references
-    const response = await crawl(url.replace('/#', '/'));
+    const response = await crawl(`${THREE.DOCS_URL}${endpoint}`);
     const html = response.replace(/(:)this|\[name\]/g, `$1${key}`);
 
     // Create context, get page elements
@@ -122,7 +122,7 @@ export const getElement = async ([key, endpoint]) => {
  */
 export const loadDocs = async () => {
   try {
-    const list = await fetch(THREE.DOCS_LIST).then(res => res.json());
+    const list = await fetch(`${THREE.DOCS_URL}list.json`).then(res => res.json());
 
     const endpoints = Object.assign(
       {},
@@ -147,8 +147,8 @@ export const loadDocs = async () => {
  */
 export const loadExamples = async () => {
   try {
-    const list = await fetch(THREE.EXAMPLES_LIST).then(res => res.json());
-    const tagData = await fetch(THREE.EXAMPLES_TAGS).then(res => res.json());
+    const list = await fetch(`${THREE.EXAMPLES_URL}files.json`).then(res => res.json());
+    const tagData = await fetch(`${THREE.EXAMPLES_URL}tags.json`).then(res => res.json());
 
     const examples = Object.keys(list).reduce((results, group) => {
       const items = list[group].map(key => {
@@ -158,7 +158,7 @@ export const loadExamples = async () => {
 
         return {
           name: key,
-          url: `${THREE.EXAMPLES_URL}${key}`,
+          url: `${THREE.EXAMPLES_URL}#${key}`,
           title: key.replace(/_/g, ' '),
           description: `Tags: ${tags
             .map(tag => `[${tag}](${THREE.EXAMPLES_URL}?q=${tag})`)

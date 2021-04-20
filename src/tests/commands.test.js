@@ -48,7 +48,7 @@ describe('/docs', () => {
     const output = await test('docs', 'Vector3');
 
     expect(output.title).toBe('Vector3( x: Float, y: Float, z: Float )');
-    expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3`);
+    expect(output.url).toBe(`${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3`);
     expect(output.description).toBeDefined();
   });
 
@@ -56,7 +56,7 @@ describe('/docs', () => {
     const output = await test('docs', 'Renderer');
 
     expect(output.title).toBe('WebGLRenderer Constants');
-    expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/constants/Renderer`);
+    expect(output.url).toBe(`${THREE.DOCS_URL}#api/${THREE.LOCALE}/constants/Renderer`);
     expect(output.description).toBeDefined();
   });
 
@@ -64,7 +64,7 @@ describe('/docs', () => {
     const output = await test('docs', 'Vector3.set');
 
     expect(output.title).toBe('Vector3.set( x: Float, y: Float, z: Float ): Vector3');
-    expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.set`);
+    expect(output.url).toBe(`${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3.set`);
     expect(output.description).toBeDefined();
   });
 
@@ -73,7 +73,7 @@ describe('/docs', () => {
 
     expect(output.title).toBe('Vector3.getComponent( index: Integer ): Float');
     expect(output.url).toBe(
-      `${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.getComponent`
+      `${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3.getComponent`
     );
     expect(output.description).toBeDefined();
   });
@@ -82,7 +82,7 @@ describe('/docs', () => {
     const output = await test('docs', 'Vector3.x');
 
     expect(output.title).toBe('Vector3.x: Float');
-    expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.x`);
+    expect(output.url).toBe(`${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3.x`);
     expect(output.description).not.toBeDefined();
   });
 
@@ -90,7 +90,7 @@ describe('/docs', () => {
     const output = await test('docs', 'Vectr3');
 
     expect(output.title).toBe('Vector3( x: Float, y: Float, z: Float )');
-    expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3`);
+    expect(output.url).toBe(`${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3`);
     expect(output.description).toBeDefined();
   });
 
@@ -98,7 +98,7 @@ describe('/docs', () => {
     const output = await test('docs', 'Vectr3.set');
 
     expect(output.title).toBe('Vector3.set( x: Float, y: Float, z: Float ): Vector3');
-    expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.set`);
+    expect(output.url).toBe(`${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3.set`);
     expect(output.description).toBeDefined();
   });
 
@@ -106,7 +106,7 @@ describe('/docs', () => {
     const output = await test('docs', 'Vectr3.x');
 
     expect(output.title).toBe('Vector3.x: Float');
-    expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/math/Vector3.x`);
+    expect(output.url).toBe(`${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3.x`);
     expect(output.description).not.toBeDefined();
   });
 });

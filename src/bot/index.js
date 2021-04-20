@@ -184,7 +184,7 @@ class Bot extends Client {
       const examples = Object.keys(json).reduce((results, group) => {
         const items = json[group].map(key => ({
           name: key,
-          url: `${THREE.EXAMPLES_URL}#${key}`,
+          url: `${THREE.EXAMPLES_URL}${key}`,
           tags: tags[key]
             ? Array.from(new Set([...key.split('_'), ...tags[key]]))
             : key.split('_'),

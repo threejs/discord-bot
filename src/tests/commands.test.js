@@ -14,6 +14,15 @@ beforeAll(async () => {
     client.commands.get(name).execute({ ...client, options });
 });
 
+describe('/help', () => {
+  it("displays this bot's commands", async () => {
+    const output = await test('help');
+
+    expect(output.content.length).not.toBe(0);
+    expect(output.ephemeral).toBe(true);
+  });
+});
+
 describe('/docs', () => {
   it('has fallback on no result', async () => {
     const output = await test('docs', 'ThisDoesNotExist');

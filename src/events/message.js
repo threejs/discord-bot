@@ -4,10 +4,10 @@
 const MessageEvent = {
   name: 'message',
   execute(_, msg) {
-    const isCommand = /^!(help|doc|example)s?/i.test(msg.content);
-    if (msg.author.bot || !isCommand) return;
+    const command = msg.content.replace(/^!(help|docs|examples).*/i, '$1');
+    if (msg.author.bot || !command) return;
 
-    return msg.channel.send('Try running a command with `/command`.');
+    return msg.channel.send(`Try running with \`/${command.toLowerCase()}\`.`);
   },
 };
 

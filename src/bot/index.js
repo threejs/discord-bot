@@ -69,6 +69,7 @@ class Bot extends Client {
    */
   loadCommands() {
     if (!this.commands) this.commands = new Collection();
+
     try {
       const files = readdirSync(resolve(__dirname, '../commands'));
 
@@ -109,12 +110,19 @@ class Bot extends Client {
           // Check for cache
           const cached = cache?.find(({ name }) => name === command.name);
 
-          // Update or create command
-          if (cached?.id) {
-            await remote().commands(cached.id).patch({ data });
-          } else {
-            await remote().commands.post({ data });
-          }
+          // Create if no remote
+          if (!cached?.id) return await remote().commands.post({ data });
+
+          // Check if updated
+          const needsUpdate =
+            data.title !== cached.title ||
+            data.description !== cached.description ||
+            data.options?.length !== cached.options?.length ||
+            data.options?.some(
+              (option, index) =>
+                JSON.stringify(option) !== JSON.stringify(cached.options[index])
+            );
+          if (needsUpdate) return await remote().commands(cached.id).patch({ data });
         })
       );
 

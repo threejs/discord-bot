@@ -18,15 +18,13 @@ const Examples = {
     try {
       // Check for an example if key was specified
       const targetKey = query.replace(/\s/g, '_').toLowerCase();
-      const target = examples.find(
+      const exactMatch = examples.find(
         ({ name }) =>
           name === targetKey || name.split('_').every(frag => targetKey.includes(frag))
       );
 
-      // Fuzzy search examples
+      // Fuzzy search for related examples
       const results = examples.reduce((matches, match) => {
-        if (target) return [target];
-
         const isMatch = query
           .split(/\s|_/)
           .some(frag => match?.tags.includes(frag.toLowerCase()));
@@ -35,44 +33,43 @@ const Examples = {
         return matches;
       }, []);
 
-      switch (results.length) {
-        case 0:
-          // Handle no results
-          return {
-            content: `No examples were found for \`${query}\`.`,
-            ephemeral: true,
-          };
-        case 1: {
-          // Handle single result
-          const [{ tags, name: title, ...rest }] = results;
-
-          // List tags in result
-          const description = `Tags: ${tags
-            .map(tag => `[${tag}](${THREE.EXAMPLES_URL}?q=${tag})`)
-            .join(', ')}`;
-
-          return {
-            title,
-            description,
-            ...rest,
-          };
-        }
-        default: {
-          // Handle multiple results
-          const relatedExamples = results
-            .sort((a, b) => a - b)
-            .reduce((message, { name, url }) => {
-              message += `\n• **[${name}](${url})**`;
-
-              return message;
-            }, '');
-
-          return {
-            content: `No examples were found for \`${query}\`.\n\nRelated examples: ${relatedExamples}`,
-            ephemeral: true,
-          };
-        }
+      // Handle no matches
+      if (!exactMatch && !results.length) {
+        return {
+          content: `No examples were found for \`${query}\`.`,
+          ephemeral: true,
+        };
       }
+
+      // Handle single match
+      if (exactMatch || results.length === 1) {
+        const { tags, name: title, ...rest } = exactMatch || results?.[0];
+
+        // List tags in result
+        const description = `Tags: ${tags
+          .map(tag => `[${tag}](${THREE.EXAMPLES_URL}?q=${tag})`)
+          .join(', ')}`;
+
+        return {
+          title,
+          description,
+          ...rest,
+        };
+      }
+
+      // Handle multiple matches
+      const relatedExamples = results
+        .sort((a, b) => a - b)
+        .reduce((message, { name, url }) => {
+          message += `\n• **[${name}](${url})**`;
+
+          return message;
+        }, '');
+
+      return {
+        content: `No examples were found for \`${query}\`.\n\nRelated examples: ${relatedExamples}`,
+        ephemeral: true,
+      };
     } catch (error) {
       console.error(chalk.red(`/examples ${query} >> ${error.stack}`));
     }

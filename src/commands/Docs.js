@@ -19,11 +19,11 @@ const Docs = {
       // Separate property/method from base class
       const [object, property] = query.split(/\.|#/);
 
-      // Get fuzzy results if no exact match is found
+      // Check for an exact match
       const exactResult = docs.find(({ name }) => name === object);
-      const results = docs.reduce((matches, match) => {
-        if (exactResult) return [exactResult];
 
+      // Fuzzy search for related docs
+      const results = docs.reduce((matches, match) => {
         const fuzzySearch = new RegExp(`.*${object.split('').join('.*')}.*`, 'i');
         const isMatch = fuzzySearch.test(match.name);
         if (isMatch) matches.push(match);
@@ -31,43 +31,42 @@ const Docs = {
         return matches;
       }, []);
 
-      switch (results.length) {
-        case 0:
-          // Handle no results
-          return {
-            content: `No documentation was found for \`${query}\`.`,
-            ephemeral: true,
-          };
-        case 1: {
-          // Handle single result
-          const [result] = results;
-          const element = await getElement(result, property);
-
-          // Handle unknown props
-          if (!element)
-            return {
-              content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
-              ephemeral: true,
-            };
-
-          return element;
-        }
-        default: {
-          // Handle multiple results
-          const relatedDocs = results
-            .sort((a, b) => a - b)
-            .reduce((message, { name, url }) => {
-              message += `\n• **[${name}](${url})**`;
-
-              return message;
-            }, '');
-
-          return {
-            content: `No documentation was found for \`${query}\`.\n\nRelated docs: ${relatedDocs}`,
-            ephemeral: true,
-          };
-        }
+      // Handle no matches
+      if (!exactResult && !results.length) {
+        return {
+          content: `No documentation was found for \`${query}\`.`,
+          ephemeral: true,
+        };
       }
+
+      // Handle single match
+      if (exactResult || results.length === 1) {
+        const result = exactResult || results?.[0];
+        const element = await getElement(result, property);
+
+        // Handle unknown props
+        if (!element)
+          return {
+            content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
+            ephemeral: true,
+          };
+
+        return element;
+      }
+
+      // Handle multiple matches
+      const relatedDocs = results
+        .sort((a, b) => a - b)
+        .reduce((message, { name, url }) => {
+          message += `\n• **[${name}](${url})**`;
+
+          return message;
+        }, '');
+
+      return {
+        content: `No documentation was found for \`${query}\`.\n\nRelated docs: ${relatedDocs}`,
+        ephemeral: true,
+      };
     } catch (error) {
       console.error(chalk.red(`/docs ${query} >> ${error.stack}`));
     }

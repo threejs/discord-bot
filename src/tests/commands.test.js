@@ -6,9 +6,7 @@ let test;
 
 beforeAll(async () => {
   client = new Bot();
-  client.loadCommands();
-  await client.loadDocs();
-  await client.loadExamples();
+  await client.start();
 
   test = async (name, ...options) =>
     client.commands.get(name).execute({ ...client, options });
@@ -59,7 +57,7 @@ describe('/docs', () => {
 
     expect(output.title).toBe('WebGLRenderer Constants');
     expect(output.url).toBe(`${THREE.DOCS_URL}api/${THREE.LOCALE}/constants/Renderer`);
-    expect(output.description).not.toBeDefined();
+    expect(output.description).toBeDefined();
   });
 
   it('gets a specified class method', async () => {
@@ -131,14 +129,14 @@ describe('/examples', () => {
   it('gets a result by key', async () => {
     const output = await test('examples', 'webgl_animation_cloth');
 
-    expect(output.title).toBe('webgl_animation_cloth');
+    expect(output.title).toBe('webgl animation cloth');
     expect(output.description.includes('Tags')).toBe(true);
   });
 
   it('fuzzily gets a result by key', async () => {
     const output = await test('examples', 'webgl animation cloth');
 
-    expect(output.title).toBe('webgl_animation_cloth');
+    expect(output.title).toBe('webgl animation cloth');
     expect(output.description.includes('Tags')).toBe(true);
   });
 });

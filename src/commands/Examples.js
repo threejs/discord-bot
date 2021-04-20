@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import { THREE } from 'constants';
 
 const Examples = {
   name: 'examples',
@@ -43,18 +42,9 @@ const Examples = {
 
       // Handle single match
       if (exactMatch || results.length === 1) {
-        const { tags, name: title, ...rest } = exactMatch || results?.[0];
+        const result = exactMatch || results?.[0];
 
-        // List tags in result
-        const description = `Tags: ${tags
-          .map(tag => `[${tag}](${THREE.EXAMPLES_URL}?q=${tag})`)
-          .join(', ')}`;
-
-        return {
-          title,
-          description,
-          ...rest,
-        };
+        return result;
       }
 
       // Handle multiple matches

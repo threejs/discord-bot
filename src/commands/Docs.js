@@ -20,7 +20,9 @@ const Docs = {
       const [object, property] = query.split(/\.|#/);
 
       // Check for an exact match
-      const exactResult = docs.find(({ name }) => name === object);
+      const exactResult = docs.find(
+        ({ name }) => name.toLowerCase() === object.toLowerCase()
+      );
 
       // Fuzzy search for related docs
       const results = docs.reduce((matches, match) => {
@@ -41,17 +43,27 @@ const Docs = {
 
       // Handle single match
       if (exactResult || results.length === 1) {
+        // Early return if no properties specified
         const result = exactResult || results?.[0];
-        const element = await getElement(result, property);
+        if (!property) return result;
+
+        // Fuzzily search properties
+        const targetProperty =
+          result.properties.find(
+            ({ name }) => name.toLowerCase() === property.toLowerCase()
+          ) ||
+          result.properties.find(({ name }) =>
+            name.toLowerCase().includes(property.toLowerCase())
+          );
 
         // Handle unknown props
-        if (!element)
+        if (!targetProperty)
           return {
             content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
             ephemeral: true,
           };
 
-        return element;
+        return targetProperty;
       }
 
       // Handle multiple matches

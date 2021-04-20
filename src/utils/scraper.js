@@ -22,6 +22,6 @@ export const crawl = async url => {
 
     return html;
   } catch (error) {
-    console.error(chalk.red(`scraper/crawl >> ${error.stack}`));
+    console.error(chalk.red(`scraper#crawl >> ${error.stack}`));
   }
 };

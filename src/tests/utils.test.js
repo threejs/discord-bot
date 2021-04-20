@@ -1,9 +1,5 @@
-import {
-  validateFlags,
-  validateEmbed,
-  validateMessage,
-  sanitizeHTML,
-} from 'utils/discord';
+import { validateFlags, validateEmbed, validateMessage, markdown } from 'utils/discord';
+import { loadDocs, loadExamples } from 'utils/three';
 import { INTERACTION_RESPONSE_FLAGS, MESSAGE_LIMITS } from 'constants';
 
 describe('utils/discord', () => {
@@ -44,10 +40,24 @@ describe('utils/discord', () => {
   });
 
   it('transforms HTML to markdown', () => {
-    const output = sanitizeHTML(
+    const output = markdown(
       '<a href="#">Link</a><h1>Header</h1><strong>Bold</strong><b>Bold</b><italic>Italic</italic><i>Italic</i>'
     );
 
     expect(output).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
+  });
+});
+
+describe('utils/three', () => {
+  it('loads three.js docs', async () => {
+    const output = await loadDocs();
+
+    expect(output.length).not.toBe(0);
+  });
+
+  it('loads three.js examples', async () => {
+    const output = await loadExamples();
+
+    expect(output.length).not.toBe(0);
   });
 });

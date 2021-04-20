@@ -88,7 +88,7 @@ export const sanitizeHTML = html =>
   html &&
   html
     // Transform code blocks
-    .replace(/<\/?code.*?>/gi, '```')
+    .replace(/<\/?code[^>]*?>/gi, '```')
     // Transform bold text
     .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
     // Transform italic text

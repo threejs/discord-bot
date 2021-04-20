@@ -54,8 +54,8 @@ export const sanitizeMeta = meta =>
  */
 export const getElement = async (element, property) => {
   try {
-    // Fetch page and cleanup self-references
-    const response = await crawl(element.url);
+    // Fetch source page and cleanup self-references
+    const response = await crawl(element.url.replace('#api', 'api'));
     const html = response.replace(/(:)this|\[name\]/g, `$1${element.name}`);
 
     // Create context, get page elements

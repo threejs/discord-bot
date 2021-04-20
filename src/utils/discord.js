@@ -32,8 +32,9 @@ export const validateFields = fields =>
 /**
  * Validates and generates an embed with default properties.
  */
-export const validateEmbed = ({ title, description, fields }) => ({
+export const validateEmbed = ({ url, title, description, fields }) => ({
   ...EMBED_DEFAULTS,
+  url,
   title: title?.slice(0, MESSAGE_LIMITS.TITLE_LENGTH),
   description: description?.slice(0, MESSAGE_LIMITS.DESC_LENGTH),
   fields: validateFields(fields),
@@ -64,7 +65,6 @@ export const validateMessage = message => {
     tts: Boolean(message.tts),
     flags: validateFlags(message.flags || message),
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
-    embed: message.content ? null : validateEmbed(message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };
 };

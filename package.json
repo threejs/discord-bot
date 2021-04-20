@@ -32,7 +32,7 @@
     "start": "nodemon --exec babel-node src",
     "build": "rimraf build && babel src -d build --ignore \"src/**/*.test.js\"",
     "serve": "node build",
-    "test": "jest src --silent",
+    "test": "jest src --silent --testTimeout=30000",
     "test-watch": "jest --watchAll --verbose --testTimeout=10000",
     "lint": "eslint src && prettier src --check",
     "lint-fix": "eslint src --fix && prettier src --write src"

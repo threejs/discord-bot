@@ -1,7 +1,8 @@
 import chalk from 'chalk';
+import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
-import { crawl } from 'utils/scraper';
-import { sanitizeHTML } from 'utils/discord';
+import { markdown } from 'utils/discord';
+import { THREE } from 'constants';
 
 /**
  * Sanitizes a three meta item.
@@ -10,19 +11,14 @@ export const sanitizeMetaItem = (key, value) => {
   if (!value) return;
 
   switch (key) {
-    case 'url':
-      return (
-        value
-          // Cleanup line ending
-          .replace(/(\/\w+\.)\[\w+:\w+\s([^\]]+).*/, '$1$2')
-      );
     case 'title':
+    case 'name':
       return (
         value
           // Remove labels from bracket syntax
           .replace(/\[\w+:(\w+)\s(\w+)\]/g, '$2: $1')
           // Remove method return type to end
-          .replace(/^(\w+\.\w+)(: \w+)(.*)/, '$1$3$2')
+          .replace(/^(\w+\.\w+|\w+\()(: \w+)(.*)/, '$1$3$2')
       );
     case 'description':
       return (
@@ -33,6 +29,8 @@ export const sanitizeMetaItem = (key, value) => {
           .replace(/\[[^:]+:[^\s]+\s(\w+)\]/g, '$1')
           .replace(/\[[^:]+:([^\s]+)\]/g, '$1')
       );
+    case 'keywords':
+      return value.map(sanitizeMeta);
     default:
       return value;
   }
@@ -45,77 +43,149 @@ export const sanitizeMeta = meta =>
   Object.assign(
     {},
     ...Object.entries(meta).map(([key, value]) => ({
-      [key]: sanitizeHTML(sanitizeMetaItem(key, value)),
+      [key]: markdown(sanitizeMetaItem(key, value)),
     }))
   );
 
 /**
  * Gets a three.js element's meta in Discord markdown.
  */
-export const getElement = async (element, property) => {
+export const getElement = async ([key, endpoint]) => {
   try {
-    // Fetch source page and cleanup self-references
-    const response = await crawl(element.url.replace('/#', '/'));
-    const html = response.replace(/(:)this|\[name\]/g, `$1${element.name}`);
+    // Assemble URL from endpoint
+    const url = `${THREE.DOCS_URL}#${endpoint}`;
+
+    // Fetch source document
+    const response = await fetch(`${THREE.DOCS_URL}${endpoint}`);
+    if (response.status !== 200) throw new Error(response.statusText);
+
+    // Cleanup self-references
+    const html = await response
+      .text()
+      .then(content => content.replace(/(:)this|\[name\]/g, `$1${key}`));
 
     // Create context, get page elements
     const { document } = new JSDOM(html).window;
     const pageElements = Array.from(document.body.children);
 
-    // Constructor meta
-    const constructorElement = pageElements.find(node =>
-      node.outerHTML.includes('Constructor')
-    );
-    const constructorTitle = (
-      constructorElement?.nextElementSibling || document.querySelector('h1')
-    ).textContent;
-    const constructorDesc = document.querySelector('.desc')?.innerHTML;
+    // Element meta
+    const constructor = pageElements.find(node => node.outerHTML.includes('Constructor'));
+    const title = (constructor?.nextElementSibling || document.querySelector('h1'))
+      .textContent;
+    const description = (
+      document.querySelector('.desc') || pageElements.find(elem => elem.tagName === 'P')
+    )?.innerHTML;
 
-    // Early return with constructor meta if no property specified
-    if (!property)
-      return sanitizeMeta({
-        title: constructorTitle,
-        description: constructorDesc,
-        url: element.url,
-      });
+    // Get element keywords
+    const keywords = Array.from(document.querySelectorAll('h3')).reduce(
+      (matches, element) => {
+        // Check if property, otherwise early return on no-op
+        const isProperty = /^\[(property|method):[^\s]+\s[^\]]+\]/.test(
+          element.textContent
+        );
+        if (!isProperty) return matches;
 
-    // Target property or method element
-    const propertyElement = Array.from(document.querySelectorAll('h3')).reduce(
-      (match, element) => {
-        const target = property?.toLowerCase();
-        if (!target) return match;
+        // Get property meta
+        const name = element.textContent.replace(/^\[[^:]+:[^\s]+\s([^\]]+)\].*/, '$1');
+        const type = element.textContent.startsWith('[property') ? 'property' : 'method';
+        const title = `${key}.${element.textContent}`;
+        const description =
+          element.nextElementSibling?.tagName === 'P'
+            ? element.nextElementSibling.innerHTML
+            : null;
+        const propertyURL = `${url}.${name}`;
 
-        // Check property name for exact match, else get partial
-        const content = element.textContent.replace(/^\[\w+:\w+\s|\].*/g, '');
-        if (
-          (!match && content.includes(target)) ||
-          (match !== target && content === target)
-        )
-          match = element;
+        matches.push({
+          name,
+          type,
+          title,
+          description,
+          url: propertyURL,
+        });
 
-        return match;
+        return matches;
       },
-      null
+      []
     );
 
-    // Early return with no-op if no property found
-    if (!propertyElement) return;
-
-    // Property meta
-    const propertyTitle = `${element.name}.${propertyElement.textContent}`;
-    const propertyDesc =
-      propertyElement.nextElementSibling?.tagName === 'P' &&
-      propertyElement.nextElementSibling.innerHTML;
-
-    // Add property to url
-    const propertyURL = element.url.replace(element.name, propertyTitle);
-
+    // Sanitize combined meta
     return sanitizeMeta({
-      title: propertyTitle,
-      description: propertyDesc,
-      url: propertyURL,
+      name: key,
+      url,
+      title,
+      description,
+      keywords,
     });
   } catch (error) {
     console.error(chalk.red(`three#getElement >> ${error.stack}`));
+  }
+};
+
+/**
+ * Fetches and loads three.js documentation.
+ */
+export const loadDocs = async () => {
+  try {
+    const list = await fetch(`${THREE.DOCS_URL}list.json`).then(res => res.json());
+
+    const endpoints = Object.assign(
+      {},
+      ...(function _flatten(root) {
+        return [].concat(
+          ...Object.keys(root).map(key =>
+            typeof root[key] === 'object' ? _flatten(root[key]) : { [key]: root[key] }
+          )
+        );
+      })(list[THREE.LOCALE])
+    );
+    const docs = await Promise.all(Object.entries(endpoints).map(getElement));
+
+    return docs;
+  } catch (error) {
+    console.error(chalk.red(`three#loadDocs >> ${error.stack}`));
+  }
+};
+
+/**
+ * Fetches and loads three.js examples.
+ */
+export const loadExamples = async () => {
+  try {
+    const files = await fetch(`${THREE.EXAMPLES_URL}files.json`).then(res => res.json());
+    const tags = await fetch(`${THREE.EXAMPLES_URL}tags.json`).then(res => res.json());
+
+    const examples = Object.values(files).reduce((results, file) => {
+      const items = file.map(name => {
+        const keywords = tags[name]
+          ? Array.from(new Set([...name.split('_'), ...tags[name]]))
+          : name.split('_');
+
+        const url = `${THREE.EXAMPLES_URL}#${name}`;
+        const title = name.replace(/_/g, ' ');
+        const tagList = keywords.map(
+          word => `[${word}](${THREE.EXAMPLES_URL}?q=${word})`
+        );
+        const description = `Keywords: ${tagList.join(', ')}`;
+
+        return {
+          name: name,
+          keywords,
+          url,
+          title,
+          description,
+          thumbnail: {
+            url: `${THREE.EXAMPLES_URL}screenshots/${name}.jpg`,
+          },
+        };
+      });
+
+      results.push(...items);
+
+      return results;
+    }, []);
+
+    return examples;
+  } catch (error) {
+    console.error(chalk.red(`three#loadExamples >> ${error.stack}`));
   }
 };

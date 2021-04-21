@@ -3,11 +3,8 @@
  */
 export const THREE = {
   LOCALE: 'en', // en, ar, zh, ko, ja
-  DOCS_URL: 'https://threejs.org/docs/#',
-  DOCS_LIST: 'https://threejs.org/docs/list.json',
-  EXAMPLES_URL: 'https://threejs.org/examples/#',
-  EXAMPLES_LIST: 'https://threejs.org/examples/files.json',
-  EXAMPLES_TAGS: 'https://threejs.org/examples/tags.json',
+  DOCS_URL: 'https://threejs.org/docs/',
+  EXAMPLES_URL: 'https://threejs.org/examples/',
 };
 
 /**

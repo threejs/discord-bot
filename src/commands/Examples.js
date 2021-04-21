@@ -3,7 +3,7 @@ import { THREE } from 'constants';
 
 const Examples = {
   name: 'examples',
-  description: 'Searches https://threejs.org/examples for examples matching query.',
+  description: `Searches ${THREE.EXAMPLES_URL} for examples matching query.`,
   options: [
     {
       name: 'query',
@@ -27,7 +27,7 @@ const Examples = {
       const results = examples.reduce((matches, match) => {
         const isMatch = query
           .split(/\s|_/)
-          .some(frag => match?.tags.includes(frag.toLowerCase()));
+          .some(frag => match?.keywords.includes(frag.toLowerCase()));
         if (isMatch) matches.push(match);
 
         return matches;
@@ -43,18 +43,9 @@ const Examples = {
 
       // Handle single match
       if (exactMatch || results.length === 1) {
-        const { tags, name: title, ...rest } = exactMatch || results?.[0];
+        const result = exactMatch || results?.[0];
 
-        // List tags in result
-        const description = `Tags: ${tags
-          .map(tag => `[${tag}](${THREE.EXAMPLES_URL}?q=${tag})`)
-          .join(', ')}`;
-
-        return {
-          title,
-          description,
-          ...rest,
-        };
+        return result;
       }
 
       // Handle multiple matches

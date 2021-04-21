@@ -84,22 +84,23 @@ export const validateCommand = ({ name, description, options }) => ({
 /**
  * Parses HTML into Discord markdown.
  */
-export const sanitizeHTML = html =>
-  html &&
-  html
-    // Transform code blocks
-    .replace(/<\/?code[^>]*?>/gi, '```')
-    // Transform bold text
-    .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
-    // Transform italic text
-    .replace(/<\/?(italic|i|em)>/gi, '*')
-    // Transform anchors
-    .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
-    // Trim spaces
-    .replace(/\s+/g, ' ')
-    // Transform newlines
-    .replace(/(\n+\s*|<br\/?>)/gi, '\n')
-    // Remove excess markdown
-    .replace(/<\/?li>/gi, '')
-    // Cleanup result string
-    .trim();
+export const markdown = html =>
+  typeof html !== 'string'
+    ? html
+    : html
+        // Transform code blocks
+        .replace(/<\/?code[^>]*?>/gi, '```')
+        // Transform bold text
+        .replace(/<\/?(h[0-9]|strong|b)>/gi, '**')
+        // Transform italic text
+        .replace(/<\/?(italic|i|em)>/gi, '*')
+        // Transform anchors
+        .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
+        // Trim spaces
+        .replace(/\s+/g, ' ')
+        // Transform newlines
+        .replace(/(\n+\s*|<br\/?>)/gi, '\n')
+        // Remove excess markdown
+        .replace(/<\/?li>/gi, '')
+        // Cleanup result string
+        .trim();

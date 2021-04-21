@@ -1,4 +1,5 @@
 import Bot from 'bot';
+import config from 'config';
 
 const bot = new Bot();
-bot.start();
+bot.start(config.token);

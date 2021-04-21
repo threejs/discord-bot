@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import { getElement } from 'utils/three';
 
 const Docs = {
   name: 'docs',
@@ -47,16 +46,16 @@ const Docs = {
         const result = exactResult || results?.[0];
         if (!property) return result;
 
-        // Fuzzily search properties
+        // Fuzzily search keywords for property
         const targetProperty =
-          result.properties.find(
+          result.keywords.find(
             ({ name }) => name.toLowerCase() === property.toLowerCase()
           ) ||
-          result.properties.find(({ name }) =>
+          result.keywords.find(({ name }) =>
             name.toLowerCase().includes(property.toLowerCase())
           );
 
-        // Handle unknown props
+        // Handle unknown property
         if (!targetProperty)
           return {
             content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,

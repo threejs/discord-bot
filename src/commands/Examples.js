@@ -26,7 +26,7 @@ const Examples = {
       const results = examples.reduce((matches, match) => {
         const isMatch = query
           .split(/\s|_/)
-          .some(frag => match?.tags.includes(frag.toLowerCase()));
+          .some(frag => match?.keywords.includes(frag.toLowerCase()));
         if (isMatch) matches.push(match);
 
         return matches;

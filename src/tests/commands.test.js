@@ -130,14 +130,14 @@ describe('/examples', () => {
     const output = await test('examples', 'webgl_animation_cloth');
 
     expect(output.title).toBe('webgl animation cloth');
-    expect(output.description.includes('Tags')).toBe(true);
+    expect(output.description.includes('Keywords')).toBe(true);
   });
 
   it('fuzzily gets a result by key', async () => {
     const output = await test('examples', 'webgl animation cloth');
 
     expect(output.title).toBe('webgl animation cloth');
-    expect(output.description.includes('Tags')).toBe(true);
+    expect(output.description.includes('Keywords')).toBe(true);
   });
 });
 

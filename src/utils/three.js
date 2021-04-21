@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
-import { crawl } from 'utils/scraper';
 import { markdown } from 'utils/discord';
 import { THREE } from 'constants';
 
@@ -30,7 +29,7 @@ export const sanitizeMetaItem = (key, value) => {
           .replace(/\[[^:]+:[^\s]+\s(\w+)\]/g, '$1')
           .replace(/\[[^:]+:([^\s]+)\]/g, '$1')
       );
-    case 'properties':
+    case 'keywords':
       return value.map(sanitizeMeta);
     default:
       return value;
@@ -56,9 +55,14 @@ export const getElement = async ([key, endpoint]) => {
     // Assemble URL from endpoint
     const url = `${THREE.DOCS_URL}#${endpoint}`;
 
-    // Fetch source page and cleanup self-references
-    const response = await crawl(`${THREE.DOCS_URL}${endpoint}`);
-    const html = response.replace(/(:)this|\[name\]/g, `$1${key}`);
+    // Fetch source document
+    const response = await fetch(`${THREE.DOCS_URL}${endpoint}`);
+    if (response.status !== 200) throw new Error(response.statusText);
+
+    // Cleanup self-references
+    const html = await response
+      .text()
+      .then(content => content.replace(/(:)this|\[name\]/g, `$1${key}`));
 
     // Create context, get page elements
     const { document } = new JSDOM(html).window;
@@ -72,8 +76,8 @@ export const getElement = async ([key, endpoint]) => {
       document.querySelector('.desc') || pageElements.find(elem => elem.tagName === 'P')
     )?.innerHTML;
 
-    // Get element properties
-    const properties = Array.from(document.querySelectorAll('h3')).reduce(
+    // Get element keywords
+    const keywords = Array.from(document.querySelectorAll('h3')).reduce(
       (matches, element) => {
         // Check if property, otherwise early return on no-op
         const isProperty = /^\[(property|method):[^\s]+\s[^\]]+\]/.test(
@@ -110,7 +114,7 @@ export const getElement = async ([key, endpoint]) => {
       url,
       title,
       description,
-      properties,
+      keywords,
     });
   } catch (error) {
     console.error(chalk.red(`three#getElement >> ${error.stack}`));
@@ -147,25 +151,30 @@ export const loadDocs = async () => {
  */
 export const loadExamples = async () => {
   try {
-    const list = await fetch(`${THREE.EXAMPLES_URL}files.json`).then(res => res.json());
-    const tagData = await fetch(`${THREE.EXAMPLES_URL}tags.json`).then(res => res.json());
+    const files = await fetch(`${THREE.EXAMPLES_URL}files.json`).then(res => res.json());
+    const tags = await fetch(`${THREE.EXAMPLES_URL}tags.json`).then(res => res.json());
 
-    const examples = Object.keys(list).reduce((results, group) => {
-      const items = list[group].map(key => {
-        const tags = tagData[key]
-          ? Array.from(new Set([...key.split('_'), ...tagData[key]]))
-          : key.split('_');
+    const examples = Object.values(files).reduce((results, file) => {
+      const items = file.map(name => {
+        const keywords = tags[name]
+          ? Array.from(new Set([...name.split('_'), ...tags[name]]))
+          : name.split('_');
+
+        const url = `${THREE.EXAMPLES_URL}#${name}`;
+        const title = name.replace(/_/g, ' ');
+        const tagList = keywords.map(
+          word => `[${word}](${THREE.EXAMPLES_URL}?q=${word})`
+        );
+        const description = `Keywords: ${tagList.join(', ')}`;
 
         return {
-          name: key,
-          url: `${THREE.EXAMPLES_URL}#${key}`,
-          title: key.replace(/_/g, ' '),
-          description: `Tags: ${tags
-            .map(tag => `[${tag}](${THREE.EXAMPLES_URL}?q=${tag})`)
-            .join(', ')}`,
-          tags,
+          name: name,
+          keywords,
+          url,
+          title,
+          description,
           thumbnail: {
-            url: `${THREE.EXAMPLES_URL}screenshots/${key}.jpg`,
+            url: `${THREE.EXAMPLES_URL}screenshots/${name}.jpg`,
           },
         };
       });

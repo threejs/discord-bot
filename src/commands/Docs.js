@@ -1,8 +1,9 @@
 import chalk from 'chalk';
+import { THREE } from 'constants';
 
 const Docs = {
   name: 'docs',
-  description: 'Searches https://threejs.org/docs for docs matching query.',
+  description: `Searches ${THREE.DOCS_URL} for docs matching query.`,
   options: [
     {
       name: 'query',

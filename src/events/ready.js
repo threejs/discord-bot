@@ -6,11 +6,7 @@ import chalk from 'chalk';
 const ReadyEvent = {
   name: 'ready',
   execute(client) {
-    try {
-      console.info(`${chalk.cyanBright('[Bot]')} connected as ${client.user.tag}`);
-    } catch (error) {
-      console.warn(chalk.yellow(`ready >> ${error.stack}`));
-    }
+    console.info(`${chalk.cyanBright('[Bot]')} connected as ${client.user.tag}`);
   },
 };
 

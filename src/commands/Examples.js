@@ -1,8 +1,9 @@
 import chalk from 'chalk';
+import { THREE } from 'constants';
 
 const Examples = {
   name: 'examples',
-  description: 'Searches https://threejs.org/examples for examples matching query.',
+  description: `Searches ${THREE.EXAMPLES_URL} for examples matching query.`,
   options: [
     {
       name: 'query',

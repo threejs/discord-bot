@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { THREE } from 'constants';
+import { THREE, MESSAGE_LIMITS } from 'constants';
 
 const Examples = {
   name: 'examples',
@@ -49,16 +49,16 @@ const Examples = {
       }
 
       // Handle multiple matches
-      const relatedExamples = results
-        .sort((a, b) => a - b)
-        .reduce((message, { name, url }) => {
-          message += `\n• **[${name}](${url})**`;
-
-          return message;
-        }, '');
-
       return {
-        content: `No examples were found for \`${query}\`.\n\nRelated examples: ${relatedExamples}`,
+        content: results
+          .sort((a, b) => a - b)
+          .reduce((message, { name, url }) => {
+            const result = `\n• **[${name}](${url})**`;
+            if (message.length + result.length <= MESSAGE_LIMITS.CONTENT_LENGTH)
+              message += result;
+
+            return message;
+          }, `No examples were found for \`${query}\`.\n\nRelated examples:`),
         ephemeral: true,
       };
     } catch (error) {

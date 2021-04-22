@@ -9,8 +9,10 @@ import { THREE } from 'constants';
  */
 export const search = (source, query) => {
   // Early return with exact match if found
-  const exactResult = source.find(
-    ({ name }) => name.toLowerCase() === query.toLowerCase()
+  const exactResult = source.find(({ name }) =>
+    name.includes('_')
+      ? name.toLowerCase() === query.replace(/\s/g, '_').toLowerCase()
+      : name.toLowerCase() === query.toLowerCase()
   );
   if (exactResult) return [exactResult];
 

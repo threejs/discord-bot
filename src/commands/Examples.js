@@ -19,7 +19,7 @@ const Examples = {
 
     try {
       // Fuzzy search for matching examples
-      const results = search(examples, query.replace(/\s/g, '_'));
+      const results = search(examples, query);
 
       // Handle no matches
       if (!results.length) {

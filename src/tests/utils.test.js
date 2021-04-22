@@ -1,5 +1,11 @@
-import { validateFlags, validateEmbed, validateMessage, markdown } from 'utils/discord';
-import { loadDocs, loadExamples } from 'utils/three';
+import {
+  validateFlags,
+  validateEmbed,
+  validateMessage,
+  markdown,
+  formatList,
+} from 'utils/discord';
+import { search, loadDocs, loadExamples } from 'utils/three';
 import { INTERACTION_RESPONSE_FLAGS, MESSAGE_LIMITS } from 'constants';
 
 describe('utils/discord', () => {
@@ -46,18 +52,71 @@ describe('utils/discord', () => {
 
     expect(output).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
   });
+
+  it('formats a Discord-safe list', () => {
+    const listItem = { title: 'title', url: 'url' };
+    const listItemLength = formatList([listItem]).length;
+
+    const message = ' '.repeat(MESSAGE_LIMITS.CONTENT_LENGTH - listItemLength);
+    const output = formatList([listItem, listItem], message);
+
+    expect(output.length).toBe(MESSAGE_LIMITS.CONTENT_LENGTH);
+  });
 });
 
 describe('utils/three', () => {
+  let docs, examples;
+
+  beforeAll(async () => {
+    docs = await loadDocs();
+    examples = await loadExamples();
+  });
+
   it('loads three.js docs', async () => {
-    const output = await loadDocs();
+    expect(docs.length).not.toBe(0);
+  });
+
+  it('loads three.js examples', async () => {
+    expect(examples.length).not.toBe(0);
+  });
+
+  it('searches docs for classes', () => {
+    const [output] = search(docs, 'Vector3');
+
+    expect(output.title.includes('Vector3')).toBe(true);
+  });
+
+  it('searches docs for related classes', () => {
+    const output = search(docs, 'Vector');
+
+    expect(output.length).not.toBe(0);
+    expect(output.length).not.toBe(1);
+  });
+
+  it('searches class for properties', () => {
+    const [baseClass] = search(docs, 'Vector3');
+    const [output] = search(baseClass.properties, 'set');
+
+    expect(output.title.includes('set')).toBe(true);
+  });
+
+  it('searches class for related properties', () => {
+    const [baseClass] = search(docs, 'Vector3');
+    const output = search(baseClass.properties, 'get');
+
+    expect(output.length).not.toBe(0);
+    expect(output.length).not.toBe(1);
+  });
+
+  it('searches examples for matching examples', () => {
+    const [output] = search(examples, 'webgl');
 
     expect(output.length).not.toBe(0);
   });
 
-  it('loads three.js examples', async () => {
-    const output = await loadExamples();
+  it('searches examples for an example', () => {
+    const [output] = search(examples, 'webgl animation cloth');
 
-    expect(output.length).not.toBe(0);
+    expect(output.title.includes('webgl animation cloth')).toBe(true);
   });
 });

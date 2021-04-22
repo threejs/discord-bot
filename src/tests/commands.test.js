@@ -68,14 +68,11 @@ describe('/docs', () => {
     expect(output.description).toBeDefined();
   });
 
-  it('gets a shorthand class method', async () => {
+  it('searches alternate methods and properties', async () => {
     const output = await test('docs', 'Vector3.get');
 
-    expect(output.title).toBe('Vector3.getComponent( index: Integer ): Float');
-    expect(output.url).toBe(
-      `${THREE.DOCS_URL}#api/${THREE.LOCALE}/math/Vector3.getComponent`
-    );
-    expect(output.description).toBeDefined();
+    expect(output.content.includes('get')).toBe(true);
+    expect(output.ephemeral).toBe(true);
   });
 
   it('gets a class property', async () => {
@@ -130,14 +127,12 @@ describe('/examples', () => {
     const output = await test('examples', 'webgl_animation_cloth');
 
     expect(output.title).toBe('webgl animation cloth');
-    expect(output.description.includes('Keywords')).toBe(true);
   });
 
   it('fuzzily gets a result by key', async () => {
     const output = await test('examples', 'webgl animation cloth');
 
     expect(output.title).toBe('webgl animation cloth');
-    expect(output.description.includes('Keywords')).toBe(true);
   });
 });
 

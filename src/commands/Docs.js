@@ -1,5 +1,7 @@
 import chalk from 'chalk';
-import { THREE, MESSAGE_LIMITS } from 'constants';
+import { search } from 'utils/three';
+import { formatList } from 'utils/discord';
+import { THREE } from 'constants';
 
 const Docs = {
   name: 'docs',
@@ -7,7 +9,7 @@ const Docs = {
   options: [
     {
       name: 'query',
-      description: 'A query or class to search related docs for',
+      description: 'A query or class to search matching docs for',
       type: 'string',
       required: true,
     },
@@ -19,22 +21,11 @@ const Docs = {
       // Separate property/method from base class
       const [object, property] = query.split(/\.|#/);
 
-      // Check for an exact match
-      const exactResult = docs.find(
-        ({ name }) => name.toLowerCase() === object.toLowerCase()
-      );
-
-      // Fuzzy search for related docs
-      const results = docs.reduce((matches, match) => {
-        const fuzzySearch = new RegExp(`.*${object.split('').join('.*')}.*`, 'i');
-        const isMatch = fuzzySearch.test(match.name);
-        if (isMatch) matches.push(match);
-
-        return matches;
-      }, []);
+      // Fuzzy search for matching docs
+      const results = search(docs, object);
 
       // Handle no matches
-      if (!exactResult && !results.length) {
+      if (!results.length) {
         return {
           content: `No documentation was found for \`${query}\`.`,
           ephemeral: true,
@@ -42,41 +33,40 @@ const Docs = {
       }
 
       // Handle single match
-      if (exactResult || results.length === 1) {
+      if (results.length === 1) {
         // Early return if no properties specified
-        const result = exactResult || results?.[0];
+        const result = results[0];
         if (!property) return result;
 
-        // Fuzzily search keywords for property
-        const targetProperty =
-          result.keywords.find(
-            ({ name }) => name.toLowerCase() === property.toLowerCase()
-          ) ||
-          result.keywords.find(({ name }) =>
-            name.toLowerCase().includes(property.toLowerCase())
-          );
+        // Fuzzily search result for property
+        const properties = search(result.properties, property);
 
         // Handle unknown property
-        if (!targetProperty)
+        if (!properties.length)
           return {
             content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
             ephemeral: true,
           };
 
-        return targetProperty;
+        // Handle matching property
+        if (properties.length === 1) return properties[0];
+
+        // Handle multiple matching properties
+        return {
+          content: formatList(
+            properties,
+            `\`${property}\` is not a known method or property of [${result.name}](${result.url}).\n\nDid you mean:`
+          ),
+          ephemeral: true,
+        };
       }
 
       // Handle multiple matches
       return {
-        content: results
-          .sort((a, b) => a - b)
-          .reduce((message, { name, url }) => {
-            const result = `\n• **[${name}](${url})**`;
-            if (message.length + result.length <= MESSAGE_LIMITS.CONTENT_LENGTH)
-              message += result;
-
-            return message;
-          }, `No documentation was found for \`${query}\`.\n\nRelated docs:`),
+        content: formatList(
+          results,
+          `No documentation was found for \`${query}\`.\n\nRelated docs:`
+        ),
         ephemeral: true,
       };
     } catch (error) {

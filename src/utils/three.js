@@ -5,6 +5,29 @@ import { markdown } from 'utils/discord';
 import { THREE } from 'constants';
 
 /**
+ * Searches a three.js source for matching results.
+ */
+export const search = (source, query) => {
+  // Early return with exact match if found
+  const exactResult = source.find(
+    ({ name }) => name.toLowerCase() === query.toLowerCase()
+  );
+  if (exactResult) return [exactResult];
+
+  // Fuzzy search for related matches
+  const results = source.reduce((matches, match) => {
+    const fuzzySearch = new RegExp(`.*${query.split('').join('.*')}.*`, 'i');
+    const isMatch = fuzzySearch.test(match.name);
+    if (isMatch) matches.push(match);
+
+    return matches;
+  }, []);
+
+  // Return alphabetically sorted matches
+  return results.sort((a, b) => a - b);
+};
+
+/**
  * Sanitizes a three meta item.
  */
 export const sanitizeMetaItem = (key, value) => {
@@ -29,7 +52,7 @@ export const sanitizeMetaItem = (key, value) => {
           .replace(/\[[^:]+:[^\s]+\s(\w+)\]/g, '$1')
           .replace(/\[[^:]+:([^\s]+)\]/g, '$1')
       );
-    case 'keywords':
+    case 'properties':
       return value.map(sanitizeMeta);
     default:
       return value;
@@ -76,8 +99,8 @@ export const getElement = async ([key, endpoint]) => {
       document.querySelector('.desc') || pageElements.find(elem => elem.tagName === 'P')
     )?.innerHTML;
 
-    // Get element keywords
-    const keywords = Array.from(document.querySelectorAll('h3')).reduce(
+    // Get element properties
+    const properties = Array.from(document.querySelectorAll('h3')).reduce(
       (matches, element) => {
         // Check if property, otherwise early return on no-op
         const isProperty = /^\[(property|method):[^\s]+\s[^\]]+\]/.test(
@@ -114,7 +137,7 @@ export const getElement = async ([key, endpoint]) => {
       url,
       title,
       description,
-      keywords,
+      properties,
     });
   } catch (error) {
     console.error(chalk.red(`three#getElement >> ${error.stack}`));
@@ -152,32 +175,16 @@ export const loadDocs = async () => {
 export const loadExamples = async () => {
   try {
     const files = await fetch(`${THREE.EXAMPLES_URL}files.json`).then(res => res.json());
-    const tags = await fetch(`${THREE.EXAMPLES_URL}tags.json`).then(res => res.json());
 
     const examples = Object.values(files).reduce((results, file) => {
-      const items = file.map(name => {
-        const keywords = tags[name]
-          ? Array.from(new Set([...name.split('_'), ...tags[name]]))
-          : name.split('_');
-
-        const url = `${THREE.EXAMPLES_URL}#${name}`;
-        const title = name.replace(/_/g, ' ');
-        const tagList = keywords.map(
-          word => `[${word}](${THREE.EXAMPLES_URL}?q=${word})`
-        );
-        const description = `Keywords: ${tagList.join(', ')}`;
-
-        return {
-          name: name,
-          keywords,
-          url,
-          title,
-          description,
-          thumbnail: {
-            url: `${THREE.EXAMPLES_URL}screenshots/${name}.jpg`,
-          },
-        };
-      });
+      const items = file.map(name => ({
+        name,
+        url: `${THREE.EXAMPLES_URL}#${name}`,
+        title: name.replace(/_/g, ' '),
+        thumbnail: {
+          url: `${THREE.EXAMPLES_URL}screenshots/${name}.jpg`,
+        },
+      }));
 
       results.push(...items);
 

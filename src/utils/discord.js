@@ -104,3 +104,14 @@ export const markdown = html =>
         .replace(/<\/?li>/gi, '')
         // Cleanup result string
         .trim();
+
+/**
+ * Formats a list of embedded items into a Discord-safe string.
+ */
+export const formatList = (items, message = '') =>
+  items.reduce((output, { title, url }) => {
+    const line = `\n• **[${title}](${url})**`;
+    if (output.length + line.length <= MESSAGE_LIMITS.CONTENT_LENGTH) output += line;
+
+    return output;
+  }, message);

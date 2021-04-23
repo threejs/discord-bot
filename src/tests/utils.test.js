@@ -100,6 +100,13 @@ describe('utils/three', () => {
     expect(output.title.includes('set')).toBe(true);
   });
 
+  it('handles duplicated methods in Object3D', () => {
+    const [baseClass] = search(docs, 'Object3D');
+    const [output] = search(baseClass.properties, 'lookat');
+
+    expect(output.title.includes('lookAt')).toBe(true);
+  });
+
   it('searches class for related properties', () => {
     const [baseClass] = search(docs, 'Vector3');
     const output = search(baseClass.properties, 'get');

@@ -111,9 +111,10 @@ export const getElement = async ([key, endpoint]) => {
         if (!isProperty) return matches;
 
         // Get property meta
-        const name = element.textContent.replace(/^\[[^:]+:[^\s]+\s([^\]]+)\].*/, '$1');
-        const type = element.textContent.startsWith('[property') ? 'property' : 'method';
-        const title = `${key}.${element.textContent}`;
+        const content = element.textContent.replace(/\n.*/g, '');
+        const name = content.replace(/^\[[^:]+:[^\s]+\s([^\]]+)\].*/, '$1');
+        const type = content.startsWith('[property') ? 'property' : 'method';
+        const title = `${key}.${content}`;
         const description =
           element.nextElementSibling?.tagName === 'P'
             ? element.nextElementSibling.innerHTML

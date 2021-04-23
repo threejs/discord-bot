@@ -95,11 +95,13 @@ export const markdown = html =>
         // Transform italic text
         .replace(/<\/?(italic|i|em)>/gi, '*')
         // Transform anchors
-        .replace(/<a.*?href=["']([^"']*)["'][^>]*>([^<]*)<\/a>/gim, '[$2]($1)')
+        .replace(/<a.*?href=["']([^"']*)["'][^>]*>\s*([^<]*)\s*<\/a>/gim, '[$2]($1)')
         // Trim spaces
         .replace(/\s+/g, ' ')
         // Transform newlines
-        .replace(/(\n+\s*|<br\/?>)/gi, '\n')
+        .replace(/(\n|<br\/?>)+/gi, '\n')
+        // Insert em dashes
+        .replace(/-{2,}/g, '—')
         // Remove excess markdown
         .replace(/<\/?li>/gi, '')
         // Cleanup result string

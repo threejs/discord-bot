@@ -41,18 +41,19 @@ export const sanitizeMetaItem = (key, value) => {
       return (
         value
           // Remove labels from bracket syntax
-          .replace(/\[\w+:(\w+)\s(\w+)\]/g, '$2: $1')
+          .replace(/\[[^:]+:([^\s]+)\s([^\]]+)\s*\]/g, '$2: $1')
           // Remove method return type to end
           .replace(/^(\w+\.\w+|\w+\()(: \w+)(.*)/, '$1$3$2')
+          // Cleanup type spacing
+          .replace(/\s+:\s+/g, ': ')
       );
     case 'description':
       return (
         value
           // Transform custom links
-          .replace(/\[link:([^\s]+)\s([^\]]+)\]/g, '[$2]($1)')
+          .replace(/\[link:([^\s]+)\s([^\]]+)\]/g, '<a href="$1">$2</a>')
           // Cleanup inline links
-          .replace(/\[[^:]+:[^\s]+\s(\w+)\]/g, '$1')
-          .replace(/\[[^:]+:([^\s]+)\]/g, '$1')
+          .replace(/\[[^:]+:([^\s\]]+\s)?([^\]]+)\]/g, '$2')
       );
     case 'properties':
       return value.map(sanitizeMeta);

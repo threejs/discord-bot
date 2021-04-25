@@ -146,7 +146,7 @@ class Bot extends Client {
   /**
    * Loads and starts up the bot.
    */
-  async start(token) {
+  async start() {
     try {
       this.loadEvents();
       this.loadCommands();
@@ -154,8 +154,8 @@ class Bot extends Client {
       this.docs = await loadDocs();
       this.examples = await loadExamples();
 
-      if (token) {
-        await this.login(token);
+      if (process.env.NODE_ENV !== 'test') {
+        await this.login(config.token);
         await this.updateCommands();
       }
     } catch (error) {

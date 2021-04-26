@@ -33,7 +33,8 @@
     "build": "rimraf build && babel src -d build --ignore \"src/**/*.test.js\"",
     "serve": "node build",
     "test": "jest src --testTimeout=30000",
-    "test-watch": "jest --watchAll --verbose --testTimeout=10000",
+    "test-watch": "jest --watchAll --verbose --testTimeout=30000",
+    "test-update": "jest src --updateSnapshot --testTimeout=30000",
     "lint": "eslint src && prettier src --check",
     "lint-fix": "eslint src --fix && prettier src --write src"
   },

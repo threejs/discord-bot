@@ -1,20 +1,19 @@
 import chalk from 'chalk';
+import { formatList } from 'utils/discord';
 
 const Help = {
   name: 'help',
   description: "Displays this bot's commands.",
   execute({ commands }) {
     try {
-      const commandList = commands.reduce((list, { name, options, description }) => {
+      const commandList = commands.map(({ name, options, description }) => {
         const args = options?.map(({ name }) => ` \`${name}\``) || '';
 
-        list += `\n**/${name}**${args} - ${description}`;
-
-        return list;
-      }, '');
+        return `**/${name}**${args} - ${description}`;
+      });
 
       return {
-        content: `**Commands**:\n${commandList}`,
+        content: formatList(commandList, 'Available commands:'),
         ephemeral: true,
       };
     } catch (error) {

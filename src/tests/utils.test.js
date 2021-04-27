@@ -54,11 +54,11 @@ describe('utils/discord', () => {
   });
 
   it('formats a Discord-safe list', () => {
-    const listItem = { title: 'title', url: 'url' };
+    const listItem = '**[title](url)**';
     const listItemLength = formatList([listItem]).length;
 
     const message = ' '.repeat(MESSAGE_LIMITS.CONTENT_LENGTH - listItemLength);
-    const output = formatList([listItem, listItem], message);
+    const output = formatList(new Array(2).fill(listItem), message);
 
     expect(output.length).toBe(MESSAGE_LIMITS.CONTENT_LENGTH);
   });

@@ -111,8 +111,8 @@ export const markdown = html =>
  * Formats a list of embedded items into a Discord-safe string.
  */
 export const formatList = (items, message = '') =>
-  items.reduce((output, { title, url }) => {
-    const line = `\n• **[${title}](${url})**`;
+  items.reduce((output, item) => {
+    const line = `\n• ${item}`;
     if (output.length + line.length <= MESSAGE_LIMITS.CONTENT_LENGTH) output += line;
 
     return output;

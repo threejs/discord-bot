@@ -54,7 +54,7 @@ const Docs = {
         // Handle multiple matching properties
         return {
           content: formatList(
-            properties,
+            properties.map(({ title, url }) => `**[${title}](${url})**`),
             `\`${property}\` is not a known method or property of [${result.name}](${result.url}).\n\nDid you mean:`
           ),
           ephemeral: true,
@@ -64,7 +64,7 @@ const Docs = {
       // Handle multiple matches
       return {
         content: formatList(
-          results,
+          results.map(({ name, url }) => `**[${name}](${url})**`),
           `No documentation was found for \`${query}\`.\n\nRelated docs:`
         ),
         ephemeral: true,

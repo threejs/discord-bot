@@ -33,7 +33,7 @@ const Examples = {
       if (results.length === 1) return results[0];
       return {
         content: formatList(
-          results,
+          results.map(({ title, url }) => `**[${title}](${url})**`),
           `No examples were found for \`${query}\`.\n\nRelated examples:`
         ),
         ephemeral: true,

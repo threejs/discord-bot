@@ -17,7 +17,6 @@ describe('/help', () => {
     const output = await test('help');
 
     expect(output).toBeDefined();
-    expect(output.ephemeral).toBe(true);
   });
 });
 
@@ -26,7 +25,6 @@ describe('/docs', () => {
     const output = await test('docs', 'ThisDoesNotExist');
 
     expect(output.description.includes('ThisDoesNotExist')).toBe(true);
-    expect(output.ephemeral).toBe(true);
   });
 
   it('has fallback for unknown properties', async () => {
@@ -34,14 +32,12 @@ describe('/docs', () => {
 
     expect(output.description.includes('thisDoesNotExist')).toBe(true);
     expect(output.description.includes('Vector3')).toBe(true);
-    expect(output.ephemeral).toBe(true);
   });
 
   it('searches alternate docs', async () => {
     const output = await test('docs', 'vector');
 
     expect(output.description.includes('Vector3')).toBe(true);
-    expect(output.ephemeral).toBe(true);
   });
 
   it('gets a specified class', async () => {
@@ -72,7 +68,6 @@ describe('/docs', () => {
     const output = await test('docs', 'Vector3.get');
 
     expect(output.description.includes('getComponent')).toBe(true);
-    expect(output.ephemeral).toBe(true);
   });
 
   it('gets a class property', async () => {
@@ -113,14 +108,12 @@ describe('/examples', () => {
     const output = await test('examples', 'ThisDoesNotExist');
 
     expect(output.description.includes('ThisDoesNotExist')).toBe(true);
-    expect(output.ephemeral).toBe(true);
   });
 
   it('gets multiple results', async () => {
     const output = await test('examples', 'webgl');
 
     expect(output.description.includes('webgl')).toBe(true);
-    expect(output.ephemeral).toBe(true);
   });
 
   it('gets a result by key', async () => {

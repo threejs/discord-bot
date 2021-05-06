@@ -29,7 +29,6 @@ const Docs = {
         return {
           title: `Docs for "${query}"`,
           description: `No documentation was found for \`${query}\`.`,
-          ephemeral: true,
         };
       }
 
@@ -47,7 +46,6 @@ const Docs = {
           return {
             title: `Docs for "${query}"`,
             description: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
-            ephemeral: true,
           };
 
         // Handle matching property
@@ -60,7 +58,6 @@ const Docs = {
             properties.map(({ title, url }) => `**[${title}](${url})**`),
             `\`${property}\` is not a known method or property of [${result.name}](${result.url}).\n\nDid you mean:`
           ),
-          ephemeral: true,
         };
       }
 
@@ -71,7 +68,6 @@ const Docs = {
           results.map(({ name, url }) => `**[${name}](${url})**`),
           `No documentation was found for \`${query}\`.\n\nRelated docs:`
         ),
-        ephemeral: true,
       };
     } catch (error) {
       console.error(chalk.red(`/docs ${query} >> ${error.stack}`));

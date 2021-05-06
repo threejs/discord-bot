@@ -15,7 +15,6 @@ const Help = {
       return {
         title: 'Commands',
         description: formatList(commandList),
-        ephemeral: true,
       };
     } catch (error) {
       console.error(chalk.red(`/help >> ${error.stack}`));

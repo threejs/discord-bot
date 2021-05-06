@@ -26,7 +26,6 @@ const Examples = {
         return {
           title: `Examples for "${query}"`,
           description: `No examples were found for \`${query}\`.`,
-          ephemeral: true,
         };
       }
 
@@ -40,7 +39,6 @@ const Examples = {
           results.map(({ title, url }) => `**[${title}](${url})**`),
           `No examples were found for \`${query}\`.\n\nRelated examples:`
         ),
-        ephemeral: true,
       };
     } catch (error) {
       console.error(chalk.red(`/examples ${query} >> ${error.stack}`));

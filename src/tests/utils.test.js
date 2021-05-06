@@ -1,4 +1,5 @@
 import {
+  sanitize,
   validateFlags,
   validateEmbed,
   validateMessage,
@@ -7,8 +8,39 @@ import {
 } from 'utils/discord';
 import { search, loadDocs, loadExamples } from 'utils/three';
 import { INTERACTION_RESPONSE_FLAGS, MESSAGE_LIMITS } from 'constants';
+import config from 'config';
 
 describe('utils/discord', () => {
+  it('sanitizes Discord mentions', () => {
+    const output = sanitize(`${config.prefix}command args <@!1234>`);
+
+    expect(output).toBe(`${config.prefix}command args`);
+  });
+
+  it('sanitizes Discord emotes', () => {
+    const output = sanitize(`${config.prefix}command args :emote:`);
+
+    expect(output).toBe(`${config.prefix}command args emote`);
+  });
+
+  it('sanitizes whitespace', () => {
+    const output = sanitize(`${config.prefix}command args  arg2\narg3`);
+
+    expect(output).toBe(`${config.prefix}command args arg2 arg3`);
+  });
+
+  it('sanitizes Discord markdown', () => {
+    const output = sanitize(`
+      ${config.prefix}command args
+      *Italics*
+      **Bold**
+      \`Code\`
+      \`\`\`Codeblock\`\`\`
+    `);
+
+    expect(output).toBe(`${config.prefix}command args Italics Bold Code Codeblock`);
+  });
+
   it('validates message flags', () => {
     const output = validateFlags({ ephemeral: true });
 

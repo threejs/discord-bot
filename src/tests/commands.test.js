@@ -16,8 +16,7 @@ describe('/help', () => {
   it("displays this bot's commands", async () => {
     const output = await test('help');
 
-    expect(output.content.length).not.toBe(0);
-    expect(output.ephemeral).toBe(true);
+    expect(output).toBeDefined();
   });
 });
 
@@ -25,23 +24,20 @@ describe('/docs', () => {
   it('has fallback on no result', async () => {
     const output = await test('docs', 'ThisDoesNotExist');
 
-    expect(output.content.includes('ThisDoesNotExist')).toBe(true);
-    expect(output.ephemeral).toBe(true);
+    expect(output.description.includes('ThisDoesNotExist')).toBe(true);
   });
 
   it('has fallback for unknown properties', async () => {
-    const output = await test('docs', 'Vector3.thisDoesNotExist');
+    const output = await test('docs', 'vector3.thisDoesNotExist');
 
-    expect(output.content.includes('thisDoesNotExist')).toBe(true);
-    expect(output.content.includes('Vector3')).toBe(true);
-    expect(output.ephemeral).toBe(true);
+    expect(output.description.includes('thisDoesNotExist')).toBe(true);
+    expect(output.description.includes('Vector3')).toBe(true);
   });
 
   it('searches alternate docs', async () => {
     const output = await test('docs', 'vector');
 
-    expect(output.content.includes('vector')).toBe(true);
-    expect(output.ephemeral).toBe(true);
+    expect(output.description.includes('Vector3')).toBe(true);
   });
 
   it('gets a specified class', async () => {
@@ -71,8 +67,7 @@ describe('/docs', () => {
   it('searches alternate methods and properties', async () => {
     const output = await test('docs', 'Vector3.get');
 
-    expect(output.content.includes('get')).toBe(true);
-    expect(output.ephemeral).toBe(true);
+    expect(output.description.includes('getComponent')).toBe(true);
   });
 
   it('gets a class property', async () => {
@@ -112,15 +107,13 @@ describe('/examples', () => {
   it('has fallback on no result', async () => {
     const output = await test('examples', 'ThisDoesNotExist');
 
-    expect(output.content.includes('ThisDoesNotExist')).toBe(true);
-    expect(output.ephemeral).toBe(true);
+    expect(output.description.includes('ThisDoesNotExist')).toBe(true);
   });
 
   it('gets multiple results', async () => {
     const output = await test('examples', 'webgl');
 
-    expect(output.content.includes('webgl')).toBe(true);
-    expect(output.ephemeral).toBe(true);
+    expect(output.description.includes('webgl')).toBe(true);
   });
 
   it('gets a result by key', async () => {

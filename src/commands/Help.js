@@ -13,8 +13,8 @@ const Help = {
       });
 
       return {
-        content: formatList(commandList, 'Available commands:'),
-        ephemeral: true,
+        title: 'Commands',
+        description: formatList(commandList),
       };
     } catch (error) {
       console.error(chalk.red(`/help >> ${error.stack}`));

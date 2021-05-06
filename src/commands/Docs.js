@@ -27,8 +27,8 @@ const Docs = {
       // Handle no matches
       if (!results.length) {
         return {
-          content: `No documentation was found for \`${query}\`.`,
-          ephemeral: true,
+          title: `Docs for "${query}"`,
+          description: `No documentation was found for \`${query}\`.`,
         };
       }
 
@@ -44,8 +44,8 @@ const Docs = {
         // Handle unknown property
         if (!properties.length)
           return {
-            content: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
-            ephemeral: true,
+            title: `Docs for "${query}"`,
+            description: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
           };
 
         // Handle matching property
@@ -53,21 +53,21 @@ const Docs = {
 
         // Handle multiple matching properties
         return {
-          content: formatList(
+          title: `Docs for "${query}"`,
+          description: formatList(
             properties.map(({ title, url }) => `**[${title}](${url})**`),
             `\`${property}\` is not a known method or property of [${result.name}](${result.url}).\n\nDid you mean:`
           ),
-          ephemeral: true,
         };
       }
 
       // Handle multiple matches
       return {
-        content: formatList(
+        title: `Docs for "${query}"`,
+        description: formatList(
           results.map(({ name, url }) => `**[${name}](${url})**`),
           `No documentation was found for \`${query}\`.\n\nRelated docs:`
         ),
-        ephemeral: true,
       };
     } catch (error) {
       console.error(chalk.red(`/docs ${query} >> ${error.stack}`));

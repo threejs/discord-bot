@@ -40,6 +40,10 @@ exports[`bot loads events 1`] = `
 Array [
   Object {
     "execute": [Function],
+    "name": "message",
+  },
+  Object {
+    "execute": [Function],
     "name": "raw",
   },
   Object {

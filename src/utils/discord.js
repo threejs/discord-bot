@@ -1,3 +1,5 @@
+import { JSDOM } from 'jsdom';
+import createDOMPurify from 'dompurify';
 import {
   EMBED_DEFAULTS,
   MESSAGE_LIMITS,
@@ -5,6 +7,39 @@ import {
   COMMAND_OPTION_TYPES,
 } from 'constants';
 import { APIMessage } from 'discord.js';
+
+// Shared sanitation context
+const { window } = new JSDOM('');
+const DOMPurify = createDOMPurify(window);
+
+/**
+ * Normalizes and cleans up unsafe strings, eval.
+ *
+ * @param {String} string Target string to normalize.
+ */
+export const normalize = string => DOMPurify.sanitize(string);
+
+/**
+ * Sanitizes Discord syntax from command arguments.
+ *
+ * @param {String} message Discord message string to sanitize.
+ */
+export const sanitize = message => {
+  if (!message) return;
+
+  return normalize(
+    message
+      // Remove newline characters
+      .replace(/\n/gm, ' ')
+      // Remove mentions
+      .replace(/<@!\d*>/g, '')
+      // Remove formatting
+      .replace(/(\*|`|:)*/g, '')
+      // Trim inline spaces
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
+};
 
 /**
  * Converts a vanilla or camelCase string to SNAKE_CASE.
@@ -66,6 +101,7 @@ export const validateMessage = message => {
     tts: Boolean(message.tts),
     flags: validateFlags(message.flags || message),
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
+    embed: message.content ? null : validateEmbed(message.embed || message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };
 };

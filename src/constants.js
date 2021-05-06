@@ -27,6 +27,11 @@ export const MESSAGE_LIMITS = {
 };
 
 /**
+ * The TTL for message-based ephemeral responses.
+ */
+export const INTERACTION_TIMEOUT = 10000;
+
+/**
  * The type of interaction this request is.
  */
 export const INTERACTION_TYPE = {

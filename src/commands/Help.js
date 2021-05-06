@@ -13,7 +13,8 @@ const Help = {
       });
 
       return {
-        content: formatList(commandList, 'Available commands:'),
+        title: 'Commands',
+        description: formatList(commandList),
         ephemeral: true,
       };
     } catch (error) {

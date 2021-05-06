@@ -24,15 +24,19 @@ const Examples = {
       // Handle no matches
       if (!results.length) {
         return {
-          content: `No examples were found for \`${query}\`.`,
+          title: `Examples for "${query}"`,
+          description: `No examples were found for \`${query}\`.`,
           ephemeral: true,
         };
       }
 
       // Handle single match
       if (results.length === 1) return results[0];
+
+      // Handle multiple matches
       return {
-        content: formatList(
+        title: `Examples for "${query}"`,
+        description: formatList(
           results.map(({ title, url }) => `**[${title}](${url})**`),
           `No examples were found for \`${query}\`.\n\nRelated examples:`
         ),

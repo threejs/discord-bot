@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import sanitize from 'utils/discord';
 
 /**
  * Handles interaction events.
@@ -17,7 +18,7 @@ const RawEvent = {
 
       const output = await command.execute({
         ...client,
-        options: options?.map(({ value }) => value),
+        options: options?.map(({ value }) => sanitize(value)),
       });
       if (!output) return;
 

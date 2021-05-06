@@ -62,6 +62,7 @@ export const validateMessage = message => {
 
   // Handle message object and inline specifiers
   return {
+    files: message.files,
     tts: Boolean(message.tts),
     flags: validateFlags(message.flags || message),
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',

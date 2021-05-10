@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import sanitize from 'utils/discord';
+import { sanitize } from 'utils/discord';
 
 /**
  * Handles interaction events.

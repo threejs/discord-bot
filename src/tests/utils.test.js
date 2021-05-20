@@ -1,13 +1,12 @@
 import {
   sanitize,
-  validateFlags,
   validateEmbed,
   validateMessage,
   markdown,
   formatList,
 } from 'utils/discord';
 import { search, loadDocs, loadExamples } from 'utils/three';
-import { INTERACTION_RESPONSE_FLAGS, MESSAGE_LIMITS } from 'constants';
+import { MESSAGE_LIMITS } from 'constants';
 import config from 'config';
 
 describe('utils/discord', () => {
@@ -39,12 +38,6 @@ describe('utils/discord', () => {
     `);
 
     expect(output).toBe(`${config.prefix}command args Italics Bold Code Codeblock`);
-  });
-
-  it('validates message flags', () => {
-    const output = validateFlags({ ephemeral: true });
-
-    expect(output).toBe(INTERACTION_RESPONSE_FLAGS.EPHEMERAL);
   });
 
   it('validates message strings', () => {

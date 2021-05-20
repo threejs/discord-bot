@@ -16,14 +16,14 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.14.2",
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
     "@babel/node": "^7.14.2",
-    "@babel/plugin-transform-runtime": "^7.14.2",
+    "@babel/plugin-transform-runtime": "^7.14.3",
     "@babel/preset-env": "^7.14.2",
     "babel-plugin-module-resolver": "^4.1.0",
     "chalk": "4.1.1",
-    "discord.js": "12.5.3",
+    "discord.js": "github:discordjs/discord.js",
     "dompurify": "^2.2.8",
     "dotenv": "9.0.2",
     "jsdom": "^16.5.3",

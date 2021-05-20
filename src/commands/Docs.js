@@ -10,7 +10,7 @@ const Docs = {
     {
       name: 'query',
       description: 'A query or class to search matching docs for',
-      type: 'string',
+      type: 'STRING',
       required: true,
     },
   ],

@@ -1,11 +1,6 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
-import {
-  EMBED_DEFAULTS,
-  MESSAGE_LIMITS,
-  INTERACTION_RESPONSE_FLAGS,
-  COMMAND_OPTION_TYPES,
-} from 'constants';
+import { EMBED_DEFAULTS, MESSAGE_LIMITS } from 'constants';
 import { APIMessage } from 'discord.js';
 
 // Shared sanitation context
@@ -76,15 +71,6 @@ export const validateEmbed = ({ url, title, description, fields }) => ({
 });
 
 /**
- * Parses and validates an interaction flags object.
- */
-export const validateFlags = flags =>
-  Object.keys(flags).reduce(
-    (previous, flag) => INTERACTION_RESPONSE_FLAGS[snakeCase(flag)] || previous,
-    null
-  );
-
-/**
  * Validates a message object or response and its flags.
  */
 export const validateMessage = message => {
@@ -97,26 +83,11 @@ export const validateMessage = message => {
 
   // Handle message object and inline specifiers
   return {
-    files: message.files,
-    tts: Boolean(message.tts),
-    flags: validateFlags(message.flags || message),
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
     embed: message.content ? null : validateEmbed(message.embed || message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };
 };
-
-/**
- * Validates human-readable command meta into a Discord-ready object.
- */
-export const validateCommand = ({ name, description, options }) => ({
-  name,
-  description,
-  options: options?.map(({ type, ...rest }) => ({
-    type: COMMAND_OPTION_TYPES[snakeCase(type)],
-    ...rest,
-  })),
-});
 
 /**
  * Parses HTML into Discord markdown.

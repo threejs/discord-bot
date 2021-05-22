@@ -12,7 +12,7 @@ export const THREE = {
 /**
  * Default bot intents and permission scopes.
  */
-export const INTENTS_DEFAULTS = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
+export const CLIENT_INTENTS = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
 
 /**
  * Embed default properties.

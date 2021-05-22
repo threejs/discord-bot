@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.14.2",
     "babel-plugin-module-resolver": "^4.1.0",
     "chalk": "4.1.1",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "discordjs/discord.js",
     "dompurify": "^2.2.8",
     "dotenv": "9.0.2",
     "jsdom": "^16.5.3",

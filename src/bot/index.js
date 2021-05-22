@@ -3,19 +3,19 @@ import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import { loadDocs, loadExamples } from 'utils/three';
-import { INTENTS_DEFAULTS } from 'constants';
+import { CLIENT_INTENTS } from 'constants';
 import config from 'config';
 
 /**
  * An extended `Client` to support slash-command interactions and events.
  */
 class Bot extends Client {
-  constructor({ intents, ...rest }) {
-    super({ intents: [...INTENTS_DEFAULTS, ...intents], ...rest });
+  constructor({ ...rest }) {
+    super({ intents: CLIENT_INTENTS, ...rest });
   }
 
   /**
-   * Loads and registers `Client` events from the events folder.
+   * Loads and registers events from the events folder.
    */
   loadEvents() {
     if (!this.events) this.events = new Collection();
@@ -40,7 +40,7 @@ class Bot extends Client {
   }
 
   /**
-   * Loads and registers interaction commands from the commands folder.
+   * Loads and registers commands from the commands folder.
    */
   loadCommands() {
     if (!this.commands) this.commands = new Collection();
@@ -63,6 +63,30 @@ class Bot extends Client {
   }
 
   /**
+   * Loads and generates three.js docs and examples
+   */
+  async loadThree() {
+    this.docs = await loadDocs();
+    console.info(`${chalk.cyanBright('[Bot]')} ${this.docs.length} docs loaded`);
+
+    this.examples = await loadExamples();
+    console.info(`${chalk.cyanBright('[Bot]')} ${this.examples.length} examples loaded`);
+  }
+
+  /**
+   * Loads and registers interactions with Discord remote
+   */
+  async loadInteractions() {
+    const remote = config.guild ? this.guilds.cache.get(config.guild) : this.application;
+
+    await remote.commands.set(this.commands.array());
+
+    console.info(
+      `${chalk.cyanBright('[Bot]')} ${this.commands.array().length} interactions loaded`
+    );
+  }
+
+  /**
    * Loads and starts up the bot.
    */
   async start() {
@@ -70,17 +94,11 @@ class Bot extends Client {
       this.loadEvents();
       this.loadCommands();
 
-      this.docs = await loadDocs();
-      this.examples = await loadExamples();
+      await this.loadThree();
 
       if (process.env.NODE_ENV !== 'test') {
         await this.login(config.token);
-
-        const { commands } = config.guild
-          ? this.guilds.cache.get(config.guild)
-          : this.application;
-
-        await commands.set(this.commands.array());
+        await this.loadInteractions();
       }
     } catch (error) {
       console.error(chalk.red(`bot#start >> ${error.message}`));

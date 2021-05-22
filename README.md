@@ -81,8 +81,8 @@ const Command = {
       name: 'type',
       // option hint text to describe modified behavior
       description: 'Type of message to respond with',
-      // Type of option (case-insensitive, see COMMAND_OPTION_TYPES in src/constants.js)
-      type: 'string',
+      // Type of option (case-sensitive `ApplicationCommandOptionTypes`)
+      type: 'STRING',
       // Whether to require a value to invoke
       required: true,
     },
@@ -125,14 +125,14 @@ const Command = {
       // Send an ephemeral message (supports markdown)
       return {
         content: 'Ephemeral response.',
-        // Support for inline flags, or via flags: Integer (see INTERACTION_RESPONSE_FLAGS in src/constants.js)
+        // Support for inline `MessageFlags` or explicit via `flags: Integer`
         ephemeral: true,
       };
     } else if (messageType === 'tts') {
       // Send a TTS (text-to-speech) message
       return {
         content: 'TTS response.',
-        // Support for overloaded message options
+        // Support for `APIMessage` options
         tts: true,
       };
     }

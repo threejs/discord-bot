@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
 import { EMBED_DEFAULTS, MESSAGE_LIMITS } from 'constants';
-import { APIMessage } from 'discord.js';
+import { MessageFlags, APIMessage } from 'discord.js';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -71,6 +71,15 @@ export const validateEmbed = ({ url, title, description, fields }) => ({
 });
 
 /**
+ * Parses and validates an interaction flags object.
+ */
+export const validateFlags = flags =>
+  Object.keys(flags).reduce(
+    (previous, flag) => MessageFlags.FLAGS[snakeCase(flag)] || previous,
+    null
+  );
+
+/**
  * Validates a message object or response and its flags.
  */
 export const validateMessage = message => {
@@ -83,6 +92,9 @@ export const validateMessage = message => {
 
   // Handle message object and inline specifiers
   return {
+    files: message.files,
+    tts: Boolean(message.tts),
+    flags: validateFlags(message.flags || message),
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
     embed: message.content ? null : validateEmbed(message.embed || message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),

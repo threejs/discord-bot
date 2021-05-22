@@ -106,11 +106,11 @@ describe('utils/three', () => {
   });
 
   it('loads three.js docs', async () => {
-    expect(docs).toMatchSnapshot();
+    expect(docs.array().length).not.toBe(0);
   });
 
   it('loads three.js examples', async () => {
-    expect(examples).toMatchSnapshot();
+    expect(examples.array()).not.toBe(0);
   });
 
   it('searches docs for classes', () => {

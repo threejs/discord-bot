@@ -67,10 +67,12 @@ class Bot extends Client {
    */
   async loadThree() {
     this.docs = await loadDocs();
-    console.info(`${chalk.cyanBright('[Bot]')} ${this.docs.length} docs loaded`);
+    console.info(`${chalk.cyanBright('[Bot]')} ${this.docs.array().length} docs loaded`);
 
     this.examples = await loadExamples();
-    console.info(`${chalk.cyanBright('[Bot]')} ${this.examples.length} examples loaded`);
+    console.info(
+      `${chalk.cyanBright('[Bot]')} ${this.examples.array().length} examples loaded`
+    );
   }
 
   /**

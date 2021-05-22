@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import fetch from 'node-fetch';
 import { JSDOM } from 'jsdom';
+import { Collection } from 'discord.js';
 import { markdown } from 'utils/discord';
 import { THREE } from 'constants';
 
@@ -165,7 +166,16 @@ export const loadDocs = async () => {
         );
       })(list[THREE.LOCALE])
     );
-    const docs = await Promise.all(Object.entries(endpoints).map(getElement));
+
+    const docs = new Collection();
+    await Promise.all(
+      Object.entries(endpoints).map(async endpoint => {
+        const element = await getElement(endpoint);
+        docs.set(element.name, element);
+
+        return element;
+      })
+    );
 
     return docs;
   } catch (error) {
@@ -180,20 +190,21 @@ export const loadExamples = async () => {
   try {
     const files = await fetch(`${THREE.EXAMPLES_URL}files.json`).then(res => res.json());
 
-    const examples = Object.values(files).reduce((results, file) => {
-      const items = file.map(name => ({
-        name,
-        url: `${THREE.EXAMPLES_URL}#${name}`,
-        title: name.replace(/_/g, ' '),
-        thumbnail: {
-          url: `${THREE.EXAMPLES_URL}screenshots/${name}.jpg`,
-        },
-      }));
+    const examples = new Collection();
+    Object.values(files)
+      .flat()
+      .forEach(name => {
+        const example = {
+          name,
+          url: `${THREE.EXAMPLES_URL}#${name}`,
+          title: name.replace(/_/g, ' '),
+          thumbnail: {
+            url: `${THREE.EXAMPLES_URL}screenshots/${name}.jpg`,
+          },
+        };
 
-      results.push(...items);
-
-      return results;
-    }, []);
+        examples.set(example.name, example);
+      });
 
     return examples;
   } catch (error) {

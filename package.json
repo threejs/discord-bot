@@ -10,7 +10,7 @@
   "private": true,
   "devDependencies": {
     "eslint": "^7.27.0",
-    "jest": "26.6.3",
+    "jest": "27.0.1",
     "nodemon": "2.0.7",
     "prettier": "^2.3.0",
     "rimraf": "^3.0.2"
@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.14.2",
     "babel-plugin-module-resolver": "^4.1.0",
     "chalk": "4.1.1",
-    "discord.js": "discordjs/discord.js#0ca200f",
+    "discord.js": "discordjs/discord.js#840ad0a",
     "dompurify": "^2.2.8",
     "dotenv": "10.0.0",
     "jsdom": "^16.6.0",

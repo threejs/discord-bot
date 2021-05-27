@@ -31,4 +31,46 @@ export const MESSAGE_LIMITS = {
   FIELD_LENGTH: 25,
   FIELD_NAME_LENGTH: 256,
   FIELD_VALUE_LENGTH: 1024,
+  COMPONENT_ID_LENGTH: 100,
+  COMPONENT_LABEL_LENGTH: 80,
+};
+
+/**
+ * Discord message component types.
+ */
+export const MESSAGE_COMPONENT_TYPES = {
+  /**
+   * A container for other components.
+   */
+  ACTION_ROW: 1,
+  /**
+   * A clickable button.
+   */
+  BUTTON: 2,
+};
+
+/**
+ * Discord message component styles.
+ */
+export const MESSAGE_COMPONENT_STYLES = {
+  /**
+   * Blurple button. Requires `custom_id` to be specified.
+   */
+  PRIMARY: 1,
+  /**
+   * Grey button. Requires `custom_id` to be specified.
+   */
+  SECONDARY: 2,
+  /**
+   * Green button. Requires `custom_id` to be specified.
+   */
+  SUCCESS: 3,
+  /**
+   * Red button. Requires `custom_id` to be specified.
+   */
+  DANGER: 4,
+  /**
+   * Grey link button. Requires `url` to be specified.
+   */
+  LINK: 5,
 };

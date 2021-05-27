@@ -1,6 +1,11 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
-import { EMBED_DEFAULTS, MESSAGE_LIMITS } from 'constants';
+import {
+  EMBED_DEFAULTS,
+  MESSAGE_LIMITS,
+  MESSAGE_COMPONENT_TYPES,
+  MESSAGE_COMPONENT_STYLES,
+} from 'constants';
 import { MessageFlags, APIMessage } from 'discord.js';
 
 // Shared sanitation context
@@ -46,6 +51,12 @@ export const snakeCase = string =>
     .toUpperCase();
 
 /**
+ * Parses and validates keys against a types enum.
+ */
+export const validateKeys = (keys, types) =>
+  Object.keys(keys).reduce((previous, key) => types[snakeCase(key)] || previous, null);
+
+/**
  * Validates embed fields.
  */
 export const validateFields = fields =>
@@ -71,13 +82,15 @@ export const validateEmbed = ({ url, title, description, fields }) => ({
 });
 
 /**
- * Parses and validates an interaction flags object.
+ * Parses and validates a message component array.
  */
-export const validateFlags = flags =>
-  Object.keys(flags).reduce(
-    (previous, flag) => MessageFlags.FLAGS[snakeCase(flag)] || previous,
-    null
-  );
+export const validateComponent = ({ name, label, style, url, ...rest }) => ({
+  type: MESSAGE_COMPONENT_TYPES.BUTTON,
+  custom_id: name?.slice(0, MESSAGE_LIMITS.COMPONENT_ID_LENGTH),
+  label: label?.slice(0, MESSAGE_LIMITS.COMPONENT_LABEL_LENGTH),
+  style: style || validateKeys(rest, MESSAGE_COMPONENT_STYLES),
+  url,
+});
 
 /**
  * Validates a message object or response and its flags.
@@ -94,7 +107,13 @@ export const validateMessage = message => {
   return {
     files: message.files,
     tts: Boolean(message.tts),
-    flags: validateFlags(message.flags || message),
+    flags: validateKeys(message.flags || message, MessageFlags.FLAGS),
+    components: message.components?.length
+      ? {
+          type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
+          components: message.components.map(validateComponent),
+        }
+      : null,
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
     embed: message.content ? null : validateEmbed(message.embed || message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),

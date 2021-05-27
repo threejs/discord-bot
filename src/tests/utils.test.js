@@ -1,7 +1,5 @@
-import { MessageFlags } from 'discord.js';
 import {
   sanitize,
-  validateFlags,
   validateMessage,
   validateEmbed,
   markdown,
@@ -40,12 +38,6 @@ describe('utils/discord', () => {
     `);
 
     expect(output).toBe(`${config.prefix}command args Italics Bold Code Codeblock`);
-  });
-
-  it('validates message flags', () => {
-    const output = validateFlags({ ephemeral: true });
-
-    expect(output).toBe(MessageFlags.FLAGS.EPHEMERAL);
   });
 
   it('validates message strings', () => {

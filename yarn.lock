@@ -2117,9 +2117,9 @@ diff-sequences@^27.0.1:
   resolved "https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-27.0.1.tgz#9c9801d52ed5f576ff0a20e3022a13ee6e297e7c"
   integrity sha512-XPLijkfJUh/PIBnfkcSHgvD6tlYixmcMAn3osTk6jt+H0v/mgURto1XUiD9DKuGX5NDoVS6dSlA23gd9FUaCFg==
 
-discord.js@discordjs/discord.js#840ad0a:
+discord.js@discordjs/discord.js#b90b0c3:
   version "13.0.0-dev"
-  resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/840ad0a35a344a19c5bb84c421f80802fb186d0b"
+  resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/b90b0c3cfa2278caa38d1ff41eef2ccf4428b99e"
   dependencies:
     "@discordjs/collection" "^0.1.6"
     "@discordjs/form-data" "^3.0.1"

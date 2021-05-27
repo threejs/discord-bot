@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.14.2",
     "babel-plugin-module-resolver": "^4.1.0",
     "chalk": "4.1.1",
-    "discord.js": "discordjs/discord.js#840ad0a",
+    "discord.js": "discordjs/discord.js#b90b0c3",
     "dompurify": "^2.2.8",
     "dotenv": "10.0.0",
     "jsdom": "^16.6.0",
@@ -35,7 +35,6 @@
     "serve": "node build",
     "test": "jest src --testTimeout=30000",
     "test-watch": "jest --watchAll --verbose --testTimeout=30000",
-    "test-update": "jest src --updateSnapshot --testTimeout=30000",
     "lint": "eslint src && prettier src --check",
     "lint-fix": "eslint src --fix && prettier src --write src"
   },

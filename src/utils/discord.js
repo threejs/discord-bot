@@ -109,10 +109,12 @@ export const validateMessage = message => {
     tts: Boolean(message.tts),
     flags: validateKeys(message.flags || message, MessageFlags.FLAGS),
     components: message.components?.length
-      ? {
-          type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
-          components: message.components.map(validateComponent),
-        }
+      ? [
+          {
+            type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
+            components: message.components.map(validateComponent),
+          },
+        ]
       : null,
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
     embed: message.content ? null : validateEmbed(message.embed || message),

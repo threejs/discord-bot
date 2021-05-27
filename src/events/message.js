@@ -21,8 +21,8 @@ const MessageEvent = {
       const output = await command.execute({ ...client, options });
       if (!output) return;
 
-      const message = validateMessage(output);
-      return msg.channel.send(message);
+      const data = validateMessage(output);
+      return client.api.channels(msg.channel.id).messages.post({ data });
     } catch (error) {
       console.error(chalk.red(`message >> ${error.stack}`));
     }

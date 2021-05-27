@@ -36,6 +36,24 @@ export const MESSAGE_LIMITS = {
 };
 
 /**
+ * The type of response that is being sent.
+ */
+export const INTERACTION_RESPONSE_TYPE = {
+  /**
+   * Acknowledge a `PING`.
+   */
+  PONG: 1,
+  /**
+   * Respond with a message, showing the user's input.
+   */
+  CHANNEL_MESSAGE_WITH_SOURCE: 4,
+  /**
+   * Acknowledge a command without sending a message, showing the user's input. Requires follow-up.
+   */
+  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
+};
+
+/**
  * Discord message component types.
  */
 export const MESSAGE_COMPONENT_TYPES = {

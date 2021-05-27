@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { sanitize, validateMessage } from 'utils/discord';
+import { INTERACTION_RESPONSE_TYPE } from 'constants';
 
 /**
  * Handles interaction events.
@@ -19,8 +20,13 @@ const InteractionEvent = {
       });
       if (!output) return;
 
-      const message = validateMessage(output);
-      return interaction.reply(message);
+      const data = validateMessage(output);
+      return client.api.interactions(interaction.id, interaction.token).callback.post({
+        data: {
+          type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
+          data,
+        },
+      });
     } catch (error) {
       console.error(chalk.red(`interaction >> ${error.stack}`));
     }

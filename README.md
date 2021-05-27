@@ -14,6 +14,8 @@
     <a href="https://github.com/threejs/discord-bot/issues">Report Bug</a>
     ·
     <a href="https://github.com/threejs/discord-bot/issues">Request Feature</a>
+    ·
+    <a href="https://discord.com/api/oauth2/authorize?client_id=810151319285006356&permissions=0&scope=bot">Invite to Server</a>
     <br />
     <br />
     <a href="https://discord.gg/HF4UdyF">

@@ -2,45 +2,20 @@ import chalk from 'chalk';
 import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import { validateMessage, validateCommand } from 'utils/discord';
 import { loadDocs, loadExamples } from 'utils/three';
-import { INTERACTION_RESPONSE_TYPE } from 'constants';
+import { CLIENT_INTENTS } from 'constants';
 import config from 'config';
 
 /**
  * An extended `Client` to support slash-command interactions and events.
  */
 class Bot extends Client {
-  /**
-   * Sends a message over an interaction endpoint.
-   */
-  async send(interaction, message) {
-    const { name, options } = interaction.data;
-
-    try {
-      const response = await this.api
-        .interactions(interaction.id, interaction.token)
-        .callback.post({
-          data: {
-            type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: validateMessage(message),
-          },
-        });
-
-      return response;
-    } catch (error) {
-      console.error(
-        chalk.red(
-          `bot#send ${name}${
-            options?.length ? ` ${options.map(({ value }) => value)}` : ''
-          } >> ${error.stack}`
-        )
-      );
-    }
+  constructor({ ...rest }) {
+    super({ intents: CLIENT_INTENTS, ...rest });
   }
 
   /**
-   * Loads and registers `Client` events from the events folder.
+   * Loads and registers events from the events folder.
    */
   loadEvents() {
     if (!this.events) this.events = new Collection();
@@ -65,7 +40,7 @@ class Bot extends Client {
   }
 
   /**
-   * Loads and registers interaction commands from the commands folder.
+   * Loads and registers commands from the commands folder.
    */
   loadCommands() {
     if (!this.commands) this.commands = new Collection();
@@ -88,59 +63,29 @@ class Bot extends Client {
   }
 
   /**
-   * Updates slash commands with Discord.
+   * Loads and generates three.js docs and examples
    */
-  async updateCommands() {
-    try {
-      // Get remote target
-      const remote = () =>
-        config.guild
-          ? this.api.applications(this.user.id).guilds(config.guild)
-          : this.api.applications(this.user.id);
+  async loadThree() {
+    this.docs = await loadDocs();
+    console.info(`${chalk.cyanBright('[Bot]')} ${this.docs.array().length} docs loaded`);
 
-      // Get remote cache
-      const cache = await remote().commands.get();
+    this.examples = await loadExamples();
+    console.info(
+      `${chalk.cyanBright('[Bot]')} ${this.examples.array().length} examples loaded`
+    );
+  }
 
-      // Update remote
-      await Promise.all(
-        this.commands.map(async command => {
-          // Validate command props
-          const data = validateCommand(command);
+  /**
+   * Loads and registers interactions with Discord remote
+   */
+  async loadInteractions() {
+    const remote = config.guild ? this.guilds.cache.get(config.guild) : this.application;
 
-          // Check for cache
-          const cached = cache?.find(({ name }) => name === command.name);
+    await remote.commands.set(this.commands.array());
 
-          // Create if no remote
-          if (!cached?.id) return await remote().commands.post({ data });
-
-          // Check if updated
-          const needsUpdate =
-            data.title !== cached.title ||
-            data.description !== cached.description ||
-            data.options?.length !== cached.options?.length ||
-            data.options?.some(
-              (option, index) =>
-                JSON.stringify(option) !== JSON.stringify(cached.options[index])
-            );
-          if (needsUpdate) return await remote().commands(cached.id).patch({ data });
-        })
-      );
-
-      // Cleanup cache
-      await Promise.all(
-        cache.map(async command => {
-          const exists = this.commands.get(command.name);
-
-          if (!exists) {
-            await remote().commands(command.id).delete();
-          }
-        })
-      );
-
-      console.info(`${chalk.cyanBright('[Bot]')} updated slash commands`);
-    } catch (error) {
-      console.error(chalk.red(`bot#updateCommands >> ${error.stack}`));
-    }
+    console.info(
+      `${chalk.cyanBright('[Bot]')} ${this.commands.array().length} interactions loaded`
+    );
   }
 
   /**
@@ -151,12 +96,11 @@ class Bot extends Client {
       this.loadEvents();
       this.loadCommands();
 
-      this.docs = await loadDocs();
-      this.examples = await loadExamples();
+      await this.loadThree();
 
       if (process.env.NODE_ENV !== 'test') {
         await this.login(config.token);
-        await this.updateCommands();
+        await this.loadInteractions();
       }
     } catch (error) {
       console.error(chalk.red(`bot#start >> ${error.message}`));

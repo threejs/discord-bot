@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import config from 'config';
 import { sanitize, validateMessage } from 'utils/discord';
-import { INTERACTION_RESPONSE_FLAGS, INTERACTION_TIMEOUT } from 'constants';
 
 /**
  * Handles Discord message events.
@@ -23,13 +22,7 @@ const MessageEvent = {
       if (!output) return;
 
       const message = validateMessage(output);
-      const response = await msg.channel.send(message);
-
-      if (message.flags === INTERACTION_RESPONSE_FLAGS.EPHEMERAL) {
-        response.delete({ timeout: INTERACTION_TIMEOUT });
-      }
-
-      return response;
+      return msg.channel.send(message);
     } catch (error) {
       console.error(chalk.red(`message >> ${error.stack}`));
     }

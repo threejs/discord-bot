@@ -1,12 +1,7 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
-import {
-  EMBED_DEFAULTS,
-  MESSAGE_LIMITS,
-  INTERACTION_RESPONSE_FLAGS,
-  COMMAND_OPTION_TYPES,
-} from 'constants';
-import { APIMessage } from 'discord.js';
+import { EMBED_DEFAULTS, MESSAGE_LIMITS } from 'constants';
+import { MessageFlags, APIMessage } from 'discord.js';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -80,7 +75,7 @@ export const validateEmbed = ({ url, title, description, fields }) => ({
  */
 export const validateFlags = flags =>
   Object.keys(flags).reduce(
-    (previous, flag) => INTERACTION_RESPONSE_FLAGS[snakeCase(flag)] || previous,
+    (previous, flag) => MessageFlags.FLAGS[snakeCase(flag)] || previous,
     null
   );
 
@@ -105,18 +100,6 @@ export const validateMessage = message => {
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };
 };
-
-/**
- * Validates human-readable command meta into a Discord-ready object.
- */
-export const validateCommand = ({ name, description, options }) => ({
-  name,
-  description,
-  options: options?.map(({ type, ...rest }) => ({
-    type: COMMAND_OPTION_TYPES[snakeCase(type)],
-    ...rest,
-  })),
-});
 
 /**
  * Parses HTML into Discord markdown.

@@ -3,6 +3,7 @@ import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import { loadDocs, loadExamples } from 'utils/three';
+import { validateCommand } from 'utils/discord';
 import { CLIENT_INTENTS } from 'constants';
 import config from 'config';
 
@@ -79,13 +80,56 @@ class Bot extends Client {
    * Loads and registers interactions with Discord remote
    */
   async loadInteractions() {
-    const remote = config.guild ? this.guilds.cache.get(config.guild) : this.application;
+    try {
+      // Get remote target
+      const remote = () =>
+        config.guild
+          ? this.api.applications(this.user.id).guilds(config.guild)
+          : this.api.applications(this.user.id);
 
-    await remote.commands.set(this.commands.array());
+      // Get remote cache
+      const cache = await remote().commands.get();
 
-    console.info(
-      `${chalk.cyanBright('[Bot]')} ${this.commands.array().length} interactions loaded`
-    );
+      // Update remote
+      await Promise.all(
+        this.commands.map(async command => {
+          // Validate command props
+          const data = validateCommand(command);
+
+          // Check for cache
+          const cached = cache?.find(({ name }) => name === command.name);
+
+          // Create if no remote
+          if (!cached?.id) return await remote().commands.post({ data });
+
+          // Check if updated
+          const needsUpdate =
+            data.title !== cached.title ||
+            data.description !== cached.description ||
+            data.options?.length !== cached.options?.length ||
+            data.options?.some(
+              (option, index) =>
+                JSON.stringify(option) !== JSON.stringify(cached.options[index])
+            );
+          if (needsUpdate) return await remote().commands(cached.id).patch({ data });
+        })
+      );
+
+      // Cleanup cache
+      await Promise.all(
+        cache.map(async command => {
+          const exists = this.commands.get(command.name);
+
+          if (!exists) {
+            await remote().commands(command.id).delete();
+          }
+        })
+      );
+
+      console.info(`${chalk.cyanBright('[Bot]')} loaded interactions`);
+    } catch (error) {
+      console.error(chalk.red(`bot#loadInteractions >> ${error.stack}`));
+    }
   }
 
   /**
@@ -101,6 +145,8 @@ class Bot extends Client {
       if (process.env.NODE_ENV !== 'test') {
         await this.login(config.token);
         await this.loadInteractions();
+
+        this.listeners = new Collection();
       }
     } catch (error) {
       console.error(chalk.red(`bot#start >> ${error.message}`));

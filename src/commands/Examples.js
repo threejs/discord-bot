@@ -10,7 +10,7 @@ const Examples = {
     {
       name: 'query',
       description: 'Query to search matching examples for',
-      type: 'STRING',
+      type: 'string',
       required: true,
     },
   ],

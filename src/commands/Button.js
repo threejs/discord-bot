@@ -3,11 +3,12 @@ const Button = {
   description: 'Button test command.',
   execute: () => ({
     content: 'Button',
-    components: [
+    buttons: [
       {
-        name: 'button1',
+        name: 'Button 1',
         label: 'Button 1',
         primary: true,
+        onClick: console.log,
       },
     ],
   }),

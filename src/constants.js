@@ -36,24 +36,6 @@ export const MESSAGE_LIMITS = {
 };
 
 /**
- * The type of response that is being sent.
- */
-export const INTERACTION_RESPONSE_TYPE = {
-  /**
-   * Acknowledge a `PING`.
-   */
-  PONG: 1,
-  /**
-   * Respond with a message, showing the user's input.
-   */
-  CHANNEL_MESSAGE_WITH_SOURCE: 4,
-  /**
-   * Acknowledge a command without sending a message, showing the user's input. Requires follow-up.
-   */
-  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
-};
-
-/**
  * Discord message component types.
  */
 export const MESSAGE_COMPONENT_TYPES = {
@@ -91,4 +73,61 @@ export const MESSAGE_COMPONENT_STYLES = {
    * Grey link button. Requires `url` to be specified.
    */
   LINK: 5,
+};
+
+/**
+ * The type of interaction this request is.
+ */
+export const INTERACTION_TYPE = {
+  /**
+   * A ping.
+   */
+  PING: 1,
+  /**
+   * A command invocation.
+   */
+  APPLICATION_COMMAND: 2,
+};
+
+/**
+ * The type of response that is being sent.
+ */
+export const INTERACTION_RESPONSE_TYPE = {
+  /**
+   * Acknowledge a `PING`.
+   */
+  PONG: 1,
+  /**
+   * Respond with a message, showing the user's input.
+   */
+  CHANNEL_MESSAGE_WITH_SOURCE: 4,
+  /**
+   * Acknowledge a command without sending a message, showing the user's input. Requires follow-up.
+   */
+  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
+};
+
+/**
+ * Flags that can be included in an Interaction Response.
+ */
+export const INTERACTION_RESPONSE_FLAGS = {
+  /**
+   * Show the message only to the user that performed the interaction. Message
+   * does not persist between sessions.
+   */
+  EPHEMERAL: 64, // 1 << 6
+};
+
+/**
+ * Valid option `type` values.
+ */
+export const COMMAND_OPTION_TYPES = {
+  SUB_COMMAND: 1,
+  SUB_COMMAND_GROUP: 2,
+  STRING: 3,
+  INTEGER: 4,
+  BOOLEAN: 5,
+  USER: 6,
+  CHANNEL: 7,
+  ROLE: 8,
 };

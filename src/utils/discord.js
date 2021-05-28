@@ -5,8 +5,10 @@ import {
   MESSAGE_LIMITS,
   MESSAGE_COMPONENT_TYPES,
   MESSAGE_COMPONENT_STYLES,
+  INTERACTION_RESPONSE_FLAGS,
+  COMMAND_OPTION_TYPES,
 } from 'constants';
-import { MessageFlags, APIMessage } from 'discord.js';
+import { APIMessage } from 'discord.js';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -82,9 +84,9 @@ export const validateEmbed = ({ url, title, description, fields }) => ({
 });
 
 /**
- * Parses and validates a message component array.
+ * Parses and validates a message button component.
  */
-export const validateComponent = ({ name, label, style, url, ...rest }) => ({
+export const validateButton = ({ name, label, style, url, ...rest }) => ({
   type: MESSAGE_COMPONENT_TYPES.BUTTON,
   custom_id: name?.slice(0, MESSAGE_LIMITS.COMPONENT_ID_LENGTH),
   label: label?.slice(0, MESSAGE_LIMITS.COMPONENT_LABEL_LENGTH),
@@ -107,12 +109,12 @@ export const validateMessage = message => {
   return {
     files: message.files,
     tts: Boolean(message.tts),
-    flags: validateKeys(message.flags || message, MessageFlags.FLAGS),
-    components: message.components?.length
+    flags: validateKeys(message.flags || message, INTERACTION_RESPONSE_FLAGS),
+    components: message.buttons?.length
       ? [
           {
             type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
-            components: message.components.map(validateComponent),
+            components: message.buttons.map(validateButton),
           },
         ]
       : null,
@@ -121,6 +123,18 @@ export const validateMessage = message => {
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };
 };
+
+/**
+ * Validates human-readable command meta into a Discord-ready object.
+ */
+export const validateCommand = ({ name, description, options }) => ({
+  name,
+  description,
+  options: options?.map(({ type, ...rest }) => ({
+    type: COMMAND_OPTION_TYPES[snakeCase(type)],
+    ...rest,
+  })),
+});
 
 /**
  * Parses HTML into Discord markdown.
@@ -158,3 +172,13 @@ export const formatList = (items, message = '') =>
 
     return output;
   }, message);
+
+/**
+ * Registers button event handlers.
+ */
+export const registerButtons = (client, message, buttons) => {
+  buttons.forEach(button => {
+    const listenerId = `${message.id}-${button.name}`;
+    client.listeners.set(listenerId, button.onClick);
+  });
+};

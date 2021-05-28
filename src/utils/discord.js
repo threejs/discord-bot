@@ -93,7 +93,10 @@ export const validateButtons = buttons => [
       type: MESSAGE_COMPONENT_TYPES.BUTTON,
       custom_id: `button-${index + 1}`,
       label: label?.slice(0, MESSAGE_LIMITS.BUTTON_LABEL_LENGTH),
-      style: style || validateKeys(rest, MESSAGE_COMPONENT_STYLES),
+      style:
+        style ||
+        validateKeys(rest, MESSAGE_COMPONENT_STYLES) ||
+        MESSAGE_COMPONENT_STYLES.SECONDARY,
       url,
       ...rest,
     })),

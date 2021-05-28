@@ -35,14 +35,14 @@ const RawEvent = {
               data,
             },
           });
+          if (!data.components) return;
+
           const message = await client.api
             .webhooks(client.user.id, interaction.token)
             .messages('@original')
-            .patch({ data });
+            .get();
 
-          if (data.components) registerComponents(client, message.id, data.components);
-
-          return;
+          return registerComponents(client, message.id, data.components);
         }
         // Button interactions
         case INTERACTION_TYPE.BUTTON: {

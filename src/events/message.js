@@ -23,8 +23,9 @@ const MessageEvent = {
 
       const data = validateMessage(output);
       const message = await client.api.channels(msg.channel.id).messages.post({ data });
+      if (!data.components) return;
 
-      if (data.components) registerComponents(client, message.id, data.components);
+      return registerComponents(client, message.id, data.components);
     } catch (error) {
       console.error(chalk.red(`message >> ${error.stack}`));
     }

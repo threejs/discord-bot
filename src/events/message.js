@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import config from 'config';
-import { sanitize, validateMessage } from 'utils/discord';
+import { sanitize, validateMessage, registerComponents } from 'utils/discord';
 
 /**
  * Handles Discord message events.
@@ -21,8 +21,11 @@ const MessageEvent = {
       const output = await command.execute({ ...client, options });
       if (!output) return;
 
-      const message = validateMessage(output);
-      return msg.channel.send(message);
+      const data = validateMessage(output);
+      const message = await client.api.channels(msg.channel.id).messages.post({ data });
+      if (!data.components) return;
+
+      return registerComponents(client, message.id, data.components);
     } catch (error) {
       console.error(chalk.red(`message >> ${error.stack}`));
     }

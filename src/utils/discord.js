@@ -1,7 +1,14 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
-import { EMBED_DEFAULTS, MESSAGE_LIMITS } from 'constants';
-import { MessageFlags, APIMessage } from 'discord.js';
+import {
+  EMBED_DEFAULTS,
+  MESSAGE_LIMITS,
+  MESSAGE_COMPONENT_TYPES,
+  MESSAGE_COMPONENT_STYLES,
+  INTERACTION_RESPONSE_FLAGS,
+  COMMAND_OPTION_TYPES,
+} from 'constants';
+import { APIMessage } from 'discord.js';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -46,6 +53,12 @@ export const snakeCase = string =>
     .toUpperCase();
 
 /**
+ * Parses and validates keys against a types enum.
+ */
+export const validateKeys = (keys, types) =>
+  Object.keys(keys).reduce((previous, key) => types[snakeCase(key)] || previous, null);
+
+/**
  * Validates embed fields.
  */
 export const validateFields = fields =>
@@ -71,13 +84,24 @@ export const validateEmbed = ({ url, title, description, fields }) => ({
 });
 
 /**
- * Parses and validates an interaction flags object.
+ * Parses and validates message button components.
  */
-export const validateFlags = flags =>
-  Object.keys(flags).reduce(
-    (previous, flag) => MessageFlags.FLAGS[snakeCase(flag)] || previous,
-    null
-  );
+export const validateButtons = buttons => [
+  {
+    type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
+    components: buttons.map(({ label, style, url, ...rest }, index) => ({
+      type: MESSAGE_COMPONENT_TYPES.BUTTON,
+      custom_id: `button-${index + 1}`,
+      label: label?.slice(0, MESSAGE_LIMITS.BUTTON_LABEL_LENGTH),
+      style:
+        style ||
+        validateKeys(rest, MESSAGE_COMPONENT_STYLES) ||
+        MESSAGE_COMPONENT_STYLES.SECONDARY,
+      url,
+      ...rest,
+    })),
+  },
+];
 
 /**
  * Validates a message object or response and its flags.
@@ -94,12 +118,25 @@ export const validateMessage = message => {
   return {
     files: message.files,
     tts: Boolean(message.tts),
-    flags: validateFlags(message.flags || message),
+    flags: validateKeys(message.flags || message, INTERACTION_RESPONSE_FLAGS),
+    components: message.buttons?.length ? validateButtons(message.buttons) : null,
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
     embed: message.content ? null : validateEmbed(message.embed || message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };
 };
+
+/**
+ * Validates human-readable command meta into a Discord-ready object.
+ */
+export const validateCommand = ({ name, description, options }) => ({
+  name,
+  description,
+  options: options?.map(({ type, ...rest }) => ({
+    type: COMMAND_OPTION_TYPES[snakeCase(type)],
+    ...rest,
+  })),
+});
 
 /**
  * Parses HTML into Discord markdown.
@@ -137,3 +174,13 @@ export const formatList = (items, message = '') =>
 
     return output;
   }, message);
+
+/**
+ * Registers component event handlers.
+ */
+export const registerComponents = (client, parentId, components) => {
+  components[0].components.forEach(button => {
+    const listenerId = `${parentId}-${button.custom_id}`;
+    client.listeners.set(listenerId, button.onClick);
+  });
+};

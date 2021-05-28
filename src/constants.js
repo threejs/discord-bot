@@ -31,4 +31,114 @@ export const MESSAGE_LIMITS = {
   FIELD_LENGTH: 25,
   FIELD_NAME_LENGTH: 256,
   FIELD_VALUE_LENGTH: 1024,
+  BUTTON_LABEL_LENGTH: 80,
+};
+
+/**
+ * Discord message component types.
+ */
+export const MESSAGE_COMPONENT_TYPES = {
+  /**
+   * A container for other components.
+   */
+  ACTION_ROW: 1,
+  /**
+   * A clickable button.
+   */
+  BUTTON: 2,
+};
+
+/**
+ * Discord message component styles.
+ */
+export const MESSAGE_COMPONENT_STYLES = {
+  /**
+   * Blurple button. Requires `custom_id` to be specified.
+   */
+  PRIMARY: 1,
+  /**
+   * Grey button. Requires `custom_id` to be specified.
+   */
+  SECONDARY: 2,
+  /**
+   * Green button. Requires `custom_id` to be specified.
+   */
+  SUCCESS: 3,
+  /**
+   * Red button. Requires `custom_id` to be specified.
+   */
+  DANGER: 4,
+  /**
+   * Grey link button. Requires `url` to be specified.
+   */
+  LINK: 5,
+};
+
+/**
+ * The type of interaction this request is.
+ */
+export const INTERACTION_TYPE = {
+  /**
+   * A ping.
+   */
+  PING: 1,
+  /**
+   * A command invocation.
+   */
+  APPLICATION_COMMAND: 2,
+  /**
+   * A button interaction.
+   */
+  BUTTON: 3,
+};
+
+/**
+ * The type of response that is being sent.
+ */
+export const INTERACTION_RESPONSE_TYPE = {
+  /**
+   * Acknowledge a `PING`.
+   */
+  PONG: 1,
+  /**
+   * Respond with a message, showing the user's input.
+   */
+  CHANNEL_MESSAGE_WITH_SOURCE: 4,
+  /**
+   * Acknowledge a command without sending a message, showing the user's input. Requires follow-up.
+   */
+  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
+  /**
+   * For components, ACK an interaction and edit the original message later; the user does not see a loading state.
+   */
+  DEFERRED_UPDATE_MESSAGE: 6,
+  /**
+   * For components, edit the message the component was attached to.
+   */
+  UPDATE_MESSAGE: 7,
+};
+
+/**
+ * Flags that can be included in an Interaction Response.
+ */
+export const INTERACTION_RESPONSE_FLAGS = {
+  /**
+   * Show the message only to the user that performed the interaction. Message
+   * does not persist between sessions.
+   */
+  EPHEMERAL: 64, // 1 << 6
+};
+
+/**
+ * Valid option `type` values.
+ */
+export const COMMAND_OPTION_TYPES = {
+  SUB_COMMAND: 1,
+  SUB_COMMAND_GROUP: 2,
+  STRING: 3,
+  INTEGER: 4,
+  BOOLEAN: 5,
+  USER: 6,
+  CHANNEL: 7,
+  ROLE: 8,
 };

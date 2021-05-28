@@ -75,12 +75,12 @@ export const validateFields = fields =>
 /**
  * Validates and generates an embed with default properties.
  */
-export const validateEmbed = ({ url, title, description, fields }) => ({
+export const validateEmbed = ({ title, description, fields, ...rest }) => ({
   ...EMBED_DEFAULTS,
-  url,
   title: title?.slice(0, MESSAGE_LIMITS.TITLE_LENGTH),
   description: description?.slice(0, MESSAGE_LIMITS.DESC_LENGTH),
   fields: validateFields(fields),
+  ...rest,
 });
 
 /**
@@ -165,15 +165,54 @@ export const markdown = html =>
         .trim();
 
 /**
- * Formats a list of embedded items into a Discord-safe string.
+ * Formats a list of items into an embed with navigable pages.
  */
-export const formatList = (items, message = '') =>
-  items.reduce((output, item) => {
+export const formatPages = (items, message, page = 0) => {
+  const pages = items.reduce((output, item, index) => {
+    const pageIndex = Math.trunc(index / 10);
     const line = `\n• ${item}`;
-    if (output.length + line.length <= MESSAGE_LIMITS.CONTENT_LENGTH) output += line;
+
+    if (output[pageIndex]) {
+      output[pageIndex] += line;
+    } else {
+      output[pageIndex] = message?.description ? `${message.description}${line}` : line;
+    }
 
     return output;
-  }, message);
+  }, []);
+
+  return {
+    ...message,
+    description: pages[page],
+    footer: { text: `Page ${page + 1} of ${pages.length}` },
+    buttons: pages.length > 1 && [
+      {
+        label: '← Back',
+        onClick: () => {
+          if (page > 0) page--;
+
+          return {
+            ...message,
+            description: pages[page],
+            footer: { text: `Page ${page + 1} of ${pages.length}` },
+          };
+        },
+      },
+      {
+        label: 'Next →',
+        onClick: () => {
+          if (page < pages.length - 1) page++;
+
+          return {
+            ...message,
+            description: pages[page],
+            footer: { text: `Page ${page + 1} of ${pages.length}` },
+          };
+        },
+      },
+    ],
+  };
+};
 
 /**
  * Registers component event handlers.

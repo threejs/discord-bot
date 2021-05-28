@@ -24,7 +24,7 @@ const MessageEvent = {
       const data = validateMessage(output);
       const message = await client.api.channels(msg.channel.id).messages.post({ data });
 
-      if (output.buttons) registerButtons(client, message, output.buttons);
+      if (output.buttons) registerButtons(client, message.id, output.buttons);
     } catch (error) {
       console.error(chalk.red(`message >> ${error.stack}`));
     }

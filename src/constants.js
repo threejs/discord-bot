@@ -109,6 +109,14 @@ export const INTERACTION_RESPONSE_TYPE = {
    * Acknowledge a command without sending a message, showing the user's input. Requires follow-up.
    */
   DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
+  /**
+   * For components, ACK an interaction and edit the original message later; the user does not see a loading state.
+   */
+  DEFERRED_UPDATE_MESSAGE: 6,
+  /**
+   * For components, edit the message the component was attached to.
+   */
+  UPDATE_MESSAGE: 7,
 };
 
 /**

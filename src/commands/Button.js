@@ -9,7 +9,7 @@ const Button = {
         name: 'Button 1',
         label: 'Button 1',
         primary: true,
-        onClick: console.log,
+        onClick: () => 'Button Clicked',
       },
     ],
   }),

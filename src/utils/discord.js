@@ -176,9 +176,9 @@ export const formatList = (items, message = '') =>
 /**
  * Registers button event handlers.
  */
-export const registerButtons = (client, message, buttons) => {
+export const registerButtons = (client, parentId, buttons) => {
   buttons.forEach(button => {
-    const listenerId = `${message.id}-${button.name}`;
+    const listenerId = `${parentId}-${button.name}`;
     client.listeners.set(listenerId, button.onClick);
   });
 };

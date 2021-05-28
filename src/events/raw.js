@@ -29,16 +29,18 @@ const RawEvent = {
           if (!output) return;
 
           const data = validateMessage(output);
+          await client.api.interactions(interaction.id, interaction.token).callback.post({
+            data: {
+              type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
+              data,
+            },
+          });
           const message = await client.api
-            .interactions(interaction.id, interaction.token)
-            .callback.post({
-              data: {
-                type: INTERACTION_RESPONSE_TYPE.CHANNEL_MESSAGE_WITH_SOURCE,
-                data,
-              },
-            });
+            .webhooks(client.user.id, interaction.token)
+            .messages('@original')
+            .patch({ data });
 
-          if (output.buttons) registerButtons(client, message, output.buttons);
+          if (output.buttons) registerButtons(client, message.id, output.buttons);
 
           return;
         }
@@ -51,7 +53,18 @@ const RawEvent = {
 
           client.listeners.delete(listenerId);
 
-          return callback(interaction);
+          const output = callback(interaction);
+          if (!output) return;
+
+          const data = validateMessage(output);
+          return client.api
+            .interactions(interaction.id, interaction.token)
+            .callback.post({
+              data: {
+                type: INTERACTION_RESPONSE_TYPE.UPDATE_MESSAGE,
+                data,
+              },
+            });
         }
         default:
           return;

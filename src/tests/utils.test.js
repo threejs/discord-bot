@@ -3,7 +3,7 @@ import {
   validateMessage,
   validateEmbed,
   markdown,
-  formatList,
+  formatPages,
 } from 'utils/discord';
 import { search, loadDocs, loadExamples } from 'utils/three';
 import { MESSAGE_LIMITS } from 'constants';
@@ -78,14 +78,15 @@ describe('utils/discord', () => {
     expect(output).toBe('[Link](#)**Header****Bold****Bold***Italic**Italic*');
   });
 
-  it('formats a Discord-safe list', () => {
-    const listItem = '**[title](url)**';
-    const listItemLength = formatList([listItem]).length;
+  it('formats items into pages', () => {
+    const output = formatPages(new Array(20).fill('item'), {
+      title: 'Message Title',
+      description: 'Items:',
+    });
 
-    const message = ' '.repeat(MESSAGE_LIMITS.CONTENT_LENGTH - listItemLength);
-    const output = formatList(new Array(2).fill(listItem), message);
-
-    expect(output.length).toBe(MESSAGE_LIMITS.CONTENT_LENGTH);
+    expect(output.title).toBe('Message Title');
+    expect(output.description).not.toBe('Items:');
+    expect(output.buttons).toBeDefined();
   });
 });
 

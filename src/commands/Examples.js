@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { search } from 'utils/three';
-import { formatList } from 'utils/discord';
+import { formatPages } from 'utils/discord';
 import { THREE } from 'constants';
 
 const Examples = {
@@ -14,7 +14,7 @@ const Examples = {
       required: true,
     },
   ],
-  async execute({ options, examples }) {
+  execute({ options, examples }) {
     const [query] = options;
 
     try {
@@ -33,13 +33,13 @@ const Examples = {
       if (results.length === 1) return results[0];
 
       // Handle multiple matches
-      return {
-        title: `Examples for "${query}"`,
-        description: formatList(
-          results.map(({ title, url }) => `**[${title}](${url})**`),
-          `No examples were found for \`${query}\`.\n\nRelated examples:`
-        ),
-      };
+      return formatPages(
+        results.map(({ title, url }) => `**[${title}](${url})**`),
+        {
+          title: `Examples for "${query}"`,
+          description: `No example was found for \`${query}\`.\n\nRelated examples:`,
+        }
+      );
     } catch (error) {
       console.error(chalk.red(`/examples ${query} >> ${error.stack}`));
     }

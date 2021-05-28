@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { search } from 'utils/three';
-import { formatList } from 'utils/discord';
+import { formatPages } from 'utils/discord';
 import { THREE } from 'constants';
 
 const Docs = {
@@ -14,7 +14,7 @@ const Docs = {
       required: true,
     },
   ],
-  async execute({ options, docs }) {
+  execute({ options, docs }) {
     const [query] = options;
 
     try {
@@ -52,23 +52,23 @@ const Docs = {
         if (properties.length === 1) return properties[0];
 
         // Handle multiple matching properties
-        return {
-          title: `Docs for "${query}"`,
-          description: formatList(
-            properties.map(({ title, url }) => `**[${title}](${url})**`),
-            `\`${property}\` is not a known method or property of [${result.name}](${result.url}).\n\nDid you mean:`
-          ),
-        };
+        return formatPages(
+          properties.map(({ title, url }) => `**[${title}](${url})**`),
+          {
+            title: `Docs for "${query}"`,
+            description: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).\n\nDid you mean:`,
+          }
+        );
       }
 
       // Handle multiple matches
-      return {
-        title: `Docs for "${query}"`,
-        description: formatList(
-          results.map(({ name, url }) => `**[${name}](${url})**`),
-          `No documentation was found for \`${query}\`.\n\nRelated docs:`
-        ),
-      };
+      return formatPages(
+        results.map(({ name, url }) => `**[${name}](${url})**`),
+        {
+          title: `Docs for "${query}"`,
+          description: `No documentation was found for \`${query}\`.\n\nRelated docs:`,
+        }
+      );
     } catch (error) {
       console.error(chalk.red(`/docs ${query} >> ${error.stack}`));
     }

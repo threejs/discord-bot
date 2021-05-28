@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { sanitize, validateMessage, registerButtons } from 'utils/discord';
-import { INTERACTION_RESPONSE_TYPE } from 'constants';
+import { INTERACTION_TYPE, INTERACTION_RESPONSE_TYPE } from 'constants';
 
 /**
  * Handles interaction events.
@@ -16,7 +16,7 @@ const RawEvent = {
 
       switch (type) {
         // Command interactions
-        case 2: {
+        case INTERACTION_TYPE.APPLICATION_COMMAND: {
           const { name, options } = interaction.data;
 
           const command = client.commands.get(name);
@@ -43,7 +43,7 @@ const RawEvent = {
           return;
         }
         // Button interactions
-        case 3: {
+        case INTERACTION_TYPE.BUTTON: {
           const listenerId = `${interaction.message.id}-${interaction.data.custom_id}`;
 
           const callback = client.listeners.get(listenerId);

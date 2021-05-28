@@ -87,6 +87,10 @@ export const INTERACTION_TYPE = {
    * A command invocation.
    */
   APPLICATION_COMMAND: 2,
+  /**
+   * A button interaction.
+   */
+  BUTTON: 3,
 };
 
 /**

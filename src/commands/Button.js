@@ -3,6 +3,7 @@ const Button = {
   description: 'Button test command.',
   execute: () => ({
     content: 'Button',
+    ephemeral: true,
     buttons: [
       {
         name: 'Button 1',

@@ -84,15 +84,21 @@ export const validateEmbed = ({ url, title, description, fields }) => ({
 });
 
 /**
- * Parses and validates a message button component.
+ * Parses and validates message button components.
  */
-export const validateButton = ({ name, label, style, url, ...rest }) => ({
-  type: MESSAGE_COMPONENT_TYPES.BUTTON,
-  custom_id: name?.slice(0, MESSAGE_LIMITS.COMPONENT_ID_LENGTH),
-  label: label?.slice(0, MESSAGE_LIMITS.COMPONENT_LABEL_LENGTH),
-  style: style || validateKeys(rest, MESSAGE_COMPONENT_STYLES),
-  url,
-});
+export const validateButtons = buttons => [
+  {
+    type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
+    components: buttons.map(({ label, style, url, ...rest }, index) => ({
+      type: MESSAGE_COMPONENT_TYPES.BUTTON,
+      custom_id: `button-${index + 1}`,
+      label: label?.slice(0, MESSAGE_LIMITS.BUTTON_LABEL_LENGTH),
+      style: style || validateKeys(rest, MESSAGE_COMPONENT_STYLES),
+      url,
+      ...rest,
+    })),
+  },
+];
 
 /**
  * Validates a message object or response and its flags.
@@ -110,14 +116,7 @@ export const validateMessage = message => {
     files: message.files,
     tts: Boolean(message.tts),
     flags: validateKeys(message.flags || message, INTERACTION_RESPONSE_FLAGS),
-    components: message.buttons?.length
-      ? [
-          {
-            type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
-            components: message.buttons.map(validateButton),
-          },
-        ]
-      : null,
+    components: message.buttons?.length ? validateButtons(message.buttons) : null,
     content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
     embed: message.content ? null : validateEmbed(message.embed || message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
@@ -174,11 +173,11 @@ export const formatList = (items, message = '') =>
   }, message);
 
 /**
- * Registers button event handlers.
+ * Registers component event handlers.
  */
-export const registerButtons = (client, parentId, buttons) => {
-  buttons.forEach(button => {
-    const listenerId = `${parentId}-${button.name}`;
+export const registerComponents = (client, parentId, components) => {
+  components[0].components.forEach(button => {
+    const listenerId = `${parentId}-${button.custom_id}`;
     client.listeners.set(listenerId, button.onClick);
   });
 };

@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { sanitize, validateMessage, registerButtons } from 'utils/discord';
+import { sanitize, validateMessage, registerComponents } from 'utils/discord';
 import { INTERACTION_TYPE, INTERACTION_RESPONSE_TYPE } from 'constants';
 
 /**
@@ -40,7 +40,7 @@ const RawEvent = {
             .messages('@original')
             .patch({ data });
 
-          if (output.buttons) registerButtons(client, message.id, output.buttons);
+          if (data.components) registerComponents(client, message.id, data.components);
 
           return;
         }
@@ -51,7 +51,7 @@ const RawEvent = {
           const callback = client.listeners.get(listenerId);
           if (!callback) return;
 
-          const output = callback(interaction);
+          const output = await callback(interaction);
           if (!output) return;
 
           const data = validateMessage(output);

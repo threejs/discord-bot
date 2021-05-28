@@ -51,8 +51,6 @@ const RawEvent = {
           const callback = client.listeners.get(listenerId);
           if (!callback) return;
 
-          client.listeners.delete(listenerId);
-
           const output = callback(interaction);
           if (!output) return;
 

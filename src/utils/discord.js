@@ -187,6 +187,18 @@ export const formatPages = (items, message, page = 0) => {
     footer: { text: `Page ${page + 1} of ${pages.length}` },
     buttons: pages.length > 1 && [
       {
+        label: '<<',
+        onClick: () => {
+          page = 0;
+
+          return {
+            ...message,
+            description: pages[page],
+            footer: { text: `Page ${page + 1} of ${pages.length}` },
+          };
+        },
+      },
+      {
         label: '← Back',
         onClick: () => {
           if (page > 0) page--;
@@ -202,6 +214,18 @@ export const formatPages = (items, message, page = 0) => {
         label: 'Next →',
         onClick: () => {
           if (page < pages.length - 1) page++;
+
+          return {
+            ...message,
+            description: pages[page],
+            footer: { text: `Page ${page + 1} of ${pages.length}` },
+          };
+        },
+      },
+      {
+        label: '>>',
+        onClick: () => {
+          page = pages.length - 1;
 
           return {
             ...message,

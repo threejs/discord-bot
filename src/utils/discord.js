@@ -181,21 +181,21 @@ export const formatPages = (items, message, page = 0) => {
     return output;
   }, []);
 
-  return {
+  const genMessage = () => ({
     ...message,
     description: pages[page],
     footer: { text: `Page ${page + 1} of ${pages.length}` },
+  });
+
+  return {
+    ...genMessage(),
     buttons: pages.length > 1 && [
       {
         label: '<<',
         onClick: () => {
           page = 0;
 
-          return {
-            ...message,
-            description: pages[page],
-            footer: { text: `Page ${page + 1} of ${pages.length}` },
-          };
+          return genMessage();
         },
       },
       {
@@ -203,11 +203,7 @@ export const formatPages = (items, message, page = 0) => {
         onClick: () => {
           if (page > 0) page--;
 
-          return {
-            ...message,
-            description: pages[page],
-            footer: { text: `Page ${page + 1} of ${pages.length}` },
-          };
+          return genMessage();
         },
       },
       {
@@ -215,11 +211,7 @@ export const formatPages = (items, message, page = 0) => {
         onClick: () => {
           if (page < pages.length - 1) page++;
 
-          return {
-            ...message,
-            description: pages[page],
-            footer: { text: `Page ${page + 1} of ${pages.length}` },
-          };
+          return genMessage();
         },
       },
       {
@@ -227,11 +219,7 @@ export const formatPages = (items, message, page = 0) => {
         onClick: () => {
           page = pages.length - 1;
 
-          return {
-            ...message,
-            description: pages[page],
-            footer: { text: `Page ${page + 1} of ${pages.length}` },
-          };
+          return genMessage();
         },
       },
     ],
@@ -242,7 +230,9 @@ export const formatPages = (items, message, page = 0) => {
  * Registers component event handlers.
  */
 export const registerComponents = (client, parentId, components) => {
-  components[0].components.forEach(button => {
+  const [buttons] = components;
+
+  buttons.components.forEach(button => {
     const listenerId = `${parentId}-${button.custom_id}`;
     client.listeners.set(listenerId, button.onClick);
   });

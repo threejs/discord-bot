@@ -137,6 +137,17 @@ const Command = {
         // Support for `APIMessage` options
         tts: true,
       };
+    } else if (messageType === 'buttons') {
+      // Send a message with interactable buttons
+      return {
+        content: 'Buttons!',
+        buttons: [
+          {
+            label: 'Click Me',
+            onClick: () => 'Buttons! - Clicked',
+          },
+        ],
+      };
     }
 
     // Send a basic response

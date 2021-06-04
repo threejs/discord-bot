@@ -16,15 +16,11 @@ const DOMPurify = createDOMPurify(window);
 
 /**
  * Normalizes and cleans up unsafe strings, eval.
- *
- * @param {String} string Target string to normalize.
  */
 export const normalize = string => DOMPurify.sanitize(string);
 
 /**
  * Sanitizes Discord syntax from command arguments.
- *
- * @param {String} message Discord message string to sanitize.
  */
 export const sanitize = message => {
   if (!message) return;
@@ -89,15 +85,13 @@ export const validateEmbed = ({ title, description, fields, ...rest }) => ({
 export const validateButtons = buttons => [
   {
     type: MESSAGE_COMPONENT_TYPES.ACTION_ROW,
-    components: buttons.map(({ label, style, url, ...rest }, index) => ({
+    components: buttons.map(({ label, ...rest }, index) => ({
       type: MESSAGE_COMPONENT_TYPES.BUTTON,
       custom_id: `button-${index + 1}`,
       label: label?.slice(0, MESSAGE_LIMITS.BUTTON_LABEL_LENGTH),
       style:
-        style ||
         validateKeys(rest, MESSAGE_COMPONENT_STYLES) ||
         MESSAGE_COMPONENT_STYLES.SECONDARY,
-      url,
       ...rest,
     })),
   },
@@ -168,6 +162,7 @@ export const markdown = html =>
  * Formats a list of items into an embed with navigable pages.
  */
 export const formatPages = (items, message, page = 0) => {
+  // Format items into pages of 10
   const pages = items.reduce((output, item, index) => {
     const pageIndex = Math.trunc(index / 10);
     const line = `\n• ${item}`;
@@ -181,48 +176,43 @@ export const formatPages = (items, message, page = 0) => {
     return output;
   }, []);
 
-  const genMessage = () => ({
+  // Return a message with updated props
+  const updateMessage = () => ({
     ...message,
     description: pages[page],
     footer: { text: `Page ${page + 1} of ${pages.length}` },
   });
 
+  // Format message buttons with pages
   return {
-    ...genMessage(),
-    buttons: pages.length > 1 && [
-      {
-        label: '<<',
-        onClick: () => {
-          page = 0;
-
-          return genMessage();
+    ...updateMessage(),
+    buttons:
+      pages.length > 1 &&
+      [
+        {
+          label: '<<',
+          update: () => (page = 0),
         },
-      },
-      {
-        label: '← Back',
-        onClick: () => {
-          if (page > 0) page--;
-
-          return genMessage();
+        {
+          label: '← Back',
+          update: () => page > 0 && page--,
         },
-      },
-      {
-        label: 'Next →',
-        onClick: () => {
-          if (page < pages.length - 1) page++;
-
-          return genMessage();
+        {
+          label: 'Next →',
+          update: () => page < pages.length - 1 && page++,
         },
-      },
-      {
-        label: '>>',
-        onClick: () => {
-          page = pages.length - 1;
-
-          return genMessage();
+        {
+          label: '>>',
+          update: () => (page = pages.length - 1),
         },
-      },
-    ],
+      ].map(({ label, update }) => ({
+        label,
+        onClick: () => {
+          update();
+
+          return updateMessage();
+        },
+      })),
   };
 };
 

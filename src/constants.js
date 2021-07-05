@@ -5,6 +5,7 @@ import { Intents } from 'discord.js';
  */
 export const THREE = {
   LOCALE: 'en', // en, ar, zh, ko, ja
+  REPO_URL: 'https://raw.githubusercontent.com/mrdoob/three.js',
   DOCS_URL: 'https://threejs.org/docs/',
   EXAMPLES_URL: 'https://threejs.org/examples/',
 };

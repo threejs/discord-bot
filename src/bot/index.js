@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import { loadDocs, loadExamples } from 'utils/three';
+import { getRevision, loadDocs, loadExamples } from 'utils/three';
 import { validateCommand } from 'utils/discord';
 import { CLIENT_INTENTS } from 'constants';
 import config from 'config';
@@ -67,13 +67,30 @@ class Bot extends Client {
    * Loads and generates three.js docs and examples
    */
   async loadThree() {
-    this.docs = await loadDocs();
-    console.info(`${chalk.cyanBright('[Bot]')} ${this.docs.array().length} docs loaded`);
+    const revision = await getRevision();
 
-    this.examples = await loadExamples();
-    console.info(
-      `${chalk.cyanBright('[Bot]')} ${this.examples.array().length} examples loaded`
-    );
+    // Compare local revision
+    if (revision !== this.revision) {
+      this.revision = revision;
+
+      await this.user?.setPresence({
+        status: 'online',
+        activity: {
+          name: `three.js - r${revision}`,
+          type: 'PLAYING',
+        },
+      });
+
+      this.docs = await loadDocs();
+      console.info(
+        `${chalk.cyanBright('[Bot]')} ${this.docs.array().length} docs loaded`
+      );
+
+      this.examples = await loadExamples();
+      console.info(
+        `${chalk.cyanBright('[Bot]')} ${this.examples.array().length} examples loaded`
+      );
+    }
   }
 
   /**
@@ -137,17 +154,22 @@ class Bot extends Client {
    */
   async start() {
     try {
-      this.loadEvents();
-      this.loadCommands();
-
-      await this.loadThree();
-
       if (process.env.NODE_ENV !== 'test') {
         await this.login(config.token);
         await this.loadInteractions();
 
         this.listeners = new Collection();
       }
+
+      this.loadEvents();
+      this.loadCommands();
+
+      const syncThree = async () => {
+        await this.loadThree();
+
+        setTimeout(syncThree, config.ttl);
+      };
+      await syncThree();
     } catch (error) {
       console.error(chalk.red(`bot#start >> ${error.message}`));
     }

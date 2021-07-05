@@ -5,7 +5,7 @@ import {
   markdown,
   formatPages,
 } from 'utils/discord';
-import { search, loadDocs, loadExamples } from 'utils/three';
+import { loadDocs, loadExamples, getRevision, search } from 'utils/three';
 import { MESSAGE_LIMITS } from 'constants';
 import config from 'config';
 
@@ -104,6 +104,12 @@ describe('utils/three', () => {
 
   it('loads three.js examples', async () => {
     expect(examples.array()).not.toBe(0);
+  });
+
+  it('gets the current revision', async () => {
+    const revision = await getRevision();
+
+    expect(revision).toMatch(/^\d+$/);
   });
 
   it('searches docs for classes', () => {

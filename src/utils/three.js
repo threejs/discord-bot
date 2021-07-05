@@ -6,6 +6,18 @@ import { markdown } from 'utils/discord';
 import { THREE } from 'constants';
 
 /**
+ * Fetches the current stable three.js revision.
+ */
+export const getRevision = async () => {
+  const constants = await fetch(`${THREE.REPO_URL}/master/src/constants.js`).then(res =>
+    res.text()
+  );
+  const [revision] = constants.match(/(?!REVISION[^\d]+)(\d+)/);
+
+  return revision;
+};
+
+/**
  * Searches a three.js source for matching results.
  */
 export const search = (source, query) => {

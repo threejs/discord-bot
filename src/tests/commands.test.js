@@ -6,7 +6,8 @@ let test;
 
 beforeAll(async () => {
   client = new Bot();
-  await client.start();
+  client.loadCommands();
+  await client.loadThree();
 
   test = async (name, ...options) =>
     client.commands.get(name).execute({ ...client, options });

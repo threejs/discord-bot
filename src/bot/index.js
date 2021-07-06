@@ -154,15 +154,15 @@ class Bot extends Client {
    */
   async start() {
     try {
+      this.loadEvents();
+      this.loadCommands();
+
       if (process.env.NODE_ENV !== 'test') {
         await this.login(config.token);
         await this.loadInteractions();
 
         this.listeners = new Collection();
       }
-
-      this.loadEvents();
-      this.loadCommands();
 
       const syncThree = async () => {
         await this.loadThree();

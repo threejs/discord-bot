@@ -40,5 +40,9 @@
   },
   "jest": {
     "testEnvironment": "node"
+  },
+  "engines": {
+    "node": ">=16.6.0",
+    "npm": ">=7.0.0"
   }
 }

@@ -8,7 +8,7 @@ import {
   INTERACTION_RESPONSE_FLAGS,
   COMMAND_OPTION_TYPES,
 } from 'constants';
-import { APIMessage } from 'discord.js';
+import { MessagePayload } from 'discord.js';
 
 // Shared sanitation context
 const { window } = new JSDOM('');
@@ -102,7 +102,7 @@ export const validateButtons = buttons => [
  */
 export const validateMessage = message => {
   // No-op on empty or pre-processed message
-  if (!message || message instanceof APIMessage) return message;
+  if (!message || message instanceof MessagePayload) return message;
 
   // Early return if evaluating message string
   if (typeof message === 'string')
@@ -114,7 +114,7 @@ export const validateMessage = message => {
     tts: Boolean(message.tts),
     flags: validateKeys(message.flags || message, INTERACTION_RESPONSE_FLAGS),
     components: message.buttons?.length ? validateButtons(message.buttons) : null,
-    content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || '',
+    content: message.content?.slice(0, MESSAGE_LIMITS.CONTENT_LENGTH) || null,
     embed: message.content ? null : validateEmbed(message.embed || message),
     embeds: message.content ? null : [message.embeds || message].map(validateEmbed),
   };

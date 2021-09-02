@@ -6,7 +6,7 @@ import { sanitize, validateMessage, registerComponents } from 'utils/discord';
  * Handles Discord message events.
  */
 const MessageEvent = {
-  name: 'message',
+  name: 'messageCreate',
   async execute(client, msg) {
     try {
       if (msg.author.bot || !msg.content.startsWith(config.prefix)) return;
@@ -27,7 +27,7 @@ const MessageEvent = {
 
       return registerComponents(client, message.id, data.components);
     } catch (error) {
-      console.error(chalk.red(`message >> ${error.stack}`));
+      console.error(chalk.red(`messageCreate >> ${error.stack}`));
     }
   },
 };

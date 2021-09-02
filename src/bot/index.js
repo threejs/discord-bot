@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import fetch from 'node-fetch';
 import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
@@ -73,22 +74,24 @@ class Bot extends Client {
     if (revision !== this.revision) {
       this.revision = revision;
 
-      await this.user?.setPresence({
+      this.user?.setPresence({
         status: 'online',
-        activity: {
-          name: `three.js - r${revision}`,
-          type: 'PLAYING',
-        },
+        activities: [
+          {
+            name: `three.js - r${revision}`,
+            type: 'PLAYING',
+          },
+        ],
       });
 
       this.docs = await loadDocs();
       console.info(
-        `${chalk.cyanBright('[Bot]')} ${this.docs.array().length} docs loaded`
+        `${chalk.cyanBright('[Bot]')} ${[...this.docs.keys()].length} docs loaded`
       );
 
       this.examples = await loadExamples();
       console.info(
-        `${chalk.cyanBright('[Bot]')} ${this.examples.array().length} examples loaded`
+        `${chalk.cyanBright('[Bot]')} ${[...this.examples.keys()].length} examples loaded`
       );
     }
   }
@@ -98,50 +101,19 @@ class Bot extends Client {
    */
   async loadInteractions() {
     try {
-      // Get remote target
-      const remote = () =>
-        config.guild
-          ? this.api.applications(this.user.id).guilds(config.guild)
-          : this.api.applications(this.user.id);
+      const url = config.guild
+        ? `/applications/${this.user.id}/guilds/${config.guild}/commands`
+        : `/applications/${this.user.id}/commands`;
 
-      // Get remote cache
-      const cache = await remote().commands.get();
-
-      // Update remote
-      await Promise.all(
-        this.commands.map(async command => {
-          // Validate command props
-          const data = validateCommand(command);
-
-          // Check for cache
-          const cached = cache?.find(({ name }) => name === command.name);
-
-          // Create if no remote
-          if (!cached?.id) return await remote().commands.post({ data });
-
-          // Check if updated
-          const needsUpdate =
-            data.title !== cached.title ||
-            data.description !== cached.description ||
-            data.options?.length !== cached.options?.length ||
-            data.options?.some(
-              (option, index) =>
-                JSON.stringify(option) !== JSON.stringify(cached.options[index])
-            );
-          if (needsUpdate) return await remote().commands(cached.id).patch({ data });
-        })
-      );
-
-      // Cleanup cache
-      await Promise.all(
-        cache.map(async command => {
-          const exists = this.commands.get(command.name);
-
-          if (!exists) {
-            await remote().commands(command.id).delete();
-          }
-        })
-      );
+      await fetch(`https://discord.com/api/v9${url}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bot ${config.token}`,
+          'User-Agent': 'Three.js Discord Bot',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.commands.map(validateCommand)),
+      });
 
       console.info(`${chalk.cyanBright('[Bot]')} loaded interactions`);
     } catch (error) {

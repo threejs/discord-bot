@@ -26,10 +26,7 @@ const InteractionEvent = {
           await interaction.reply(data);
           if (!data.components) return;
 
-          const message = await client.api
-            .webhooks(client.user.id, interaction.token)
-            .messages('@original')
-            .get();
+          const message = await interaction.fetchReply();
 
           return registerComponents(client, message.id, data.components);
         }

@@ -22,7 +22,7 @@ const MessageEvent = {
       if (!output) return;
 
       const data = validateMessage(output);
-      const message = await client.api.channels(msg.channel.id).messages.post({ data });
+      const message = await msg.channel.send(data);
       if (!data.components) return;
 
       return registerComponents(client, message.id, data.components);

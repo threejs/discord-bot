@@ -99,11 +99,11 @@ describe('utils/three', () => {
   });
 
   it('loads three.js docs', async () => {
-    expect(docs.array().length).not.toBe(0);
+    expect([...docs.keys()].length).not.toBe(0);
   });
 
   it('loads three.js examples', async () => {
-    expect(examples.array()).not.toBe(0);
+    expect([...examples.keys()].length).not.toBe(0);
   });
 
   it('gets the current revision', async () => {

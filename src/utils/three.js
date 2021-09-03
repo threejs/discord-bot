@@ -9,9 +9,11 @@ import { THREE } from 'constants';
  * Fetches the current stable three.js revision.
  */
 export const getRevision = async () => {
-  const constants = await fetch(`${THREE.REPO_URL}/master/src/constants.js`).then(res =>
-    res.text()
-  );
+  const constants = await fetch(`${THREE.REPO_URL}/master/src/constants.js`, {
+    headers: {
+      'User-Agent': 'Three.js Discord Bot',
+    },
+  }).then(res => res.text());
   const [revision] = constants.match(/(?!REVISION[^\d]+)(\d+)/);
 
   return revision;
@@ -95,7 +97,11 @@ export const getElement = async ([key, endpoint]) => {
     const url = `${THREE.DOCS_URL}#${endpoint}`;
 
     // Fetch source document
-    const response = await fetch(`${THREE.DOCS_URL}${endpoint}`);
+    const response = await fetch(`${THREE.DOCS_URL}${endpoint}`, {
+      headers: {
+        'User-Agent': 'Three.js Discord Bot',
+      },
+    });
     if (response.status !== 200) throw new Error(response.statusText);
 
     // Cleanup self-references
@@ -166,7 +172,11 @@ export const getElement = async ([key, endpoint]) => {
  */
 export const loadDocs = async () => {
   try {
-    const list = await fetch(`${THREE.DOCS_URL}list.json`).then(res => res.json());
+    const list = await fetch(`${THREE.DOCS_URL}list.json`, {
+      headers: {
+        'User-Agent': 'Three.js Discord Bot',
+      },
+    }).then(res => res.json());
 
     const endpoints = Object.assign(
       {},
@@ -200,7 +210,11 @@ export const loadDocs = async () => {
  */
 export const loadExamples = async () => {
   try {
-    const files = await fetch(`${THREE.EXAMPLES_URL}files.json`).then(res => res.json());
+    const files = await fetch(`${THREE.EXAMPLES_URL}files.json`, {
+      headers: {
+        'User-Agent': 'Three.js Discord Bot',
+      },
+    }).then(res => res.json());
 
     const examples = new Collection();
     Object.values(files)

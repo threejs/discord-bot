@@ -11,7 +11,7 @@
   "devDependencies": {
     "eslint": "^7.32.0",
     "jest": "27.2.1",
-    "nodemon": "2.0.12",
+    "nodemon": "2.0.13",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2"
   },
@@ -26,8 +26,8 @@
     "discord.js": "^13.1.0",
     "dompurify": "^2.3.3",
     "dotenv": "10.0.0",
-    "jsdom": "^17.0.0",
-    "node-fetch": "^2.6.5"
+    "fetch-h2": "^3.0.0",
+    "jsdom": "^17.0.0"
   },
   "scripts": {
     "start": "nodemon --exec babel-node src",

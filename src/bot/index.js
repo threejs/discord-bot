@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import fetch from 'node-fetch';
+import { fetch } from 'fetch-h2';
 import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';

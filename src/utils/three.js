@@ -122,13 +122,15 @@ export const getElement = async ([key, endpoint]) => {
     )?.innerHTML;
 
     // Get element parents for fallback
+    const parentRegex = /(?:\[page:([^\]]+)\])/g;
     const metaText = document.body.innerHTML.slice(
       0,
       document.body.innerHTML.indexOf('<h1>')
     );
-    const parentRegex = /(?:\[page:([^\]]+)\])/g;
     const parentLinks = metaText.match(parentRegex);
-    const parents = parentLinks?.map(match => parentRegex.exec(match)[1]).reverse();
+    const parents = parentLinks
+      ?.map(match => /(?:\[page:([^\]]+)\])/.exec(match)[1])
+      .reverse();
 
     // Get element properties
     const properties = Array.from(document.querySelectorAll('h3')).reduce(

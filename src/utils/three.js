@@ -121,6 +121,17 @@ export const getElement = async ([key, endpoint]) => {
       document.querySelector('.desc') || pageElements.find(elem => elem.tagName === 'P')
     )?.innerHTML;
 
+    // Get element parents for fallback
+    const parentRegex = /(?:\[page:([^\]]+)\])/g;
+    const metaText = document.body.innerHTML.slice(
+      0,
+      document.body.innerHTML.indexOf('<h1>')
+    );
+    const parentLinks = metaText.match(parentRegex);
+    const parents = parentLinks
+      ?.map(match => /(?:\[page:([^\]]+)\])/.exec(match)[1])
+      .reverse();
+
     // Get element properties
     const properties = Array.from(document.querySelectorAll('h3')).reduce(
       (matches, element) => {
@@ -160,6 +171,7 @@ export const getElement = async ([key, endpoint]) => {
       url,
       title,
       description,
+      parents,
       properties,
     });
   } catch (error) {

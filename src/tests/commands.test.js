@@ -35,6 +35,12 @@ describe('/docs', () => {
     expect(output.description.includes('Vector3')).toBe(true);
   });
 
+  it('searches parent properties', async () => {
+    const output = await test('docs', 'PerspectiveCamera.rotation');
+
+    expect(output.title.includes('Object3D.rotation')).toBe(true);
+  });
+
   it('searches alternate docs', async () => {
     const output = await test('docs', 'vector');
 
@@ -118,15 +124,15 @@ describe('/examples', () => {
   });
 
   it('gets a result by key', async () => {
-    const output = await test('examples', 'webgl_animation_cloth');
+    const output = await test('examples', 'webgl_animation_keyframes');
 
-    expect(output.title).toBe('webgl animation cloth');
+    expect(output.title).toBe('webgl animation keyframes');
   });
 
   it('fuzzily gets a result by key', async () => {
-    const output = await test('examples', 'webgl animation cloth');
+    const output = await test('examples', 'webgl animation keyframes');
 
-    expect(output.title).toBe('webgl animation cloth');
+    expect(output.title).toBe('webgl animation keyframes');
   });
 });
 

@@ -42,11 +42,23 @@ const Docs = {
         const properties = search(result.properties, property);
 
         // Handle unknown property
-        if (!properties.length)
+        if (!properties.length) {
+          // Check for matches in parent
+          const parentMatch = results[0].parents?.reduce((acc, parent) => {
+            if (!acc) {
+              const result = Docs.execute({ options: [`${parent}.${property}`], docs });
+              if (!/No documentation|not a known/g.test(result.description)) acc = result;
+            }
+            return acc;
+          }, null);
+          if (parentMatch) return parentMatch;
+
+          // Otherwise, fallback to error
           return {
             title: `Docs for "${query}"`,
             description: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
           };
+        }
 
         // Handle matching property
         if (properties.length === 1) return properties[0];

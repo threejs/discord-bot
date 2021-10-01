@@ -154,8 +154,8 @@ describe('utils/three', () => {
   });
 
   it('searches examples for an example', () => {
-    const [output] = search(examples, 'webgl animation cloth');
+    const [output] = search(examples, 'webgl animation keyframes');
 
-    expect(output.title.includes('webgl animation cloth')).toBe(true);
+    expect(output.title.includes('webgl animation keyframes')).toBe(true);
   });
 });

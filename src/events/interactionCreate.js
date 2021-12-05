@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { sanitize, validateMessage, registerComponents } from '../utils/discord';
 
 /**
@@ -47,7 +46,7 @@ const InteractionEvent = {
           return;
       }
     } catch (error) {
-      console.error(chalk.red(`interactionCreate >> ${error.stack}`));
+      console.error(`interactionCreate >> ${error.stack}`);
     }
   },
 };

@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { search } from '../utils/three';
 import { formatPages } from '../utils/discord';
 import { THREE } from '../constants';
@@ -82,7 +81,7 @@ const Docs = {
         }
       );
     } catch (error) {
-      console.error(chalk.red(`/docs ${query} >> ${error.stack}`));
+      console.error(`/docs ${query} >> ${error.stack}`);
     }
   },
 };

@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom';
 import createDOMPurify from 'dompurify';
+import { MessagePayload } from 'discord.js';
 import {
   EMBED_DEFAULTS,
   MESSAGE_LIMITS,
@@ -7,8 +8,7 @@ import {
   MESSAGE_COMPONENT_STYLES,
   INTERACTION_RESPONSE_FLAGS,
   COMMAND_OPTION_TYPES,
-} from 'constants';
-import { MessagePayload } from 'discord.js';
+} from '../constants';
 
 // Shared sanitation context
 const { window } = new JSDOM('');

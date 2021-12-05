@@ -4,10 +4,10 @@ import {
   validateEmbed,
   markdown,
   formatPages,
-} from 'utils/discord';
-import { loadDocs, loadExamples, getRevision, search } from 'utils/three';
-import { MESSAGE_LIMITS } from 'constants';
-import config from 'config';
+} from '../utils/discord';
+import { loadDocs, loadExamples, getRevision, search } from '../utils/three';
+import { MESSAGE_LIMITS } from '../constants';
+import config from '../config';
 
 describe('utils/discord', () => {
   it('sanitizes Discord mentions', () => {

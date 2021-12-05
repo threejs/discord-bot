@@ -35,7 +35,7 @@ yarn
 Once it's done start up the bot with:
 
 ```bash
-yarn start
+yarn dev
 ```
 
 To run tests:

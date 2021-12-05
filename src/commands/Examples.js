@@ -1,7 +1,6 @@
-import chalk from 'chalk';
-import { search } from 'utils/three';
-import { formatPages } from 'utils/discord';
-import { THREE } from 'constants';
+import { search } from '../utils/three';
+import { formatPages } from '../utils/discord';
+import { THREE } from '../constants';
 
 const Examples = {
   name: 'examples',
@@ -41,7 +40,7 @@ const Examples = {
         }
       );
     } catch (error) {
-      console.error(chalk.red(`/examples ${query} >> ${error.stack}`));
+      console.error(`/examples ${query} >> ${error.stack}`);
     }
   },
 };

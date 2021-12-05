@@ -1,9 +1,8 @@
-import chalk from 'chalk';
 import { fetch } from 'fetch-h2';
 import { JSDOM } from 'jsdom';
 import { Collection } from 'discord.js';
-import { markdown } from 'utils/discord';
-import { THREE } from 'constants';
+import { markdown } from '../utils/discord';
+import { THREE } from '../constants';
 
 /**
  * Fetches the current stable three.js revision.
@@ -175,7 +174,7 @@ export const getElement = async ([key, endpoint]) => {
       properties,
     });
   } catch (error) {
-    console.error(chalk.red(`three#getElement >> ${error.stack}`));
+    console.error(`three#getElement >> ${error.stack}`);
   }
 };
 
@@ -213,7 +212,7 @@ export const loadDocs = async () => {
 
     return docs;
   } catch (error) {
-    console.error(chalk.red(`three#loadDocs >> ${error.stack}`));
+    console.error(`three#loadDocs >> ${error.stack}`);
   }
 };
 
@@ -246,6 +245,6 @@ export const loadExamples = async () => {
 
     return examples;
   } catch (error) {
-    console.error(chalk.red(`three#loadExamples >> ${error.stack}`));
+    console.error(`three#loadExamples >> ${error.stack}`);
   }
 };

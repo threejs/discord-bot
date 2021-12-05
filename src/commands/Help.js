@@ -1,5 +1,4 @@
-import chalk from 'chalk';
-import { formatPages } from 'utils/discord';
+import { formatPages } from '../utils/discord';
 
 const Help = {
   name: 'help',
@@ -14,7 +13,7 @@ const Help = {
 
       return formatPages(commandList, { title: 'Commands' });
     } catch (error) {
-      console.error(chalk.red(`/help >> ${error.stack}`));
+      console.error(`/help >> ${error.stack}`);
     }
   },
 };

@@ -1,12 +1,11 @@
-import chalk from 'chalk';
 import { fetch } from 'fetch-h2';
 import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import { getRevision, loadDocs, loadExamples } from 'utils/three';
-import { validateCommand } from 'utils/discord';
-import { CLIENT_INTENTS } from 'constants';
-import config from 'config';
+import { getRevision, loadDocs, loadExamples } from '../utils/three';
+import { validateCommand } from '../utils/discord';
+import { CLIENT_INTENTS } from '../constants';
+import config from '../config';
 
 /**
  * An extended `Client` to support slash-command interactions and events.
@@ -33,11 +32,11 @@ class Bot extends Client {
         this.events.set(event.name, event);
       }
 
-      console.info(`${chalk.cyanBright('[Bot]')} ${files.length} events loaded`);
+      console.info(`[Bot] ${files.length} events loaded`);
 
       return this.events;
     } catch (error) {
-      console.error(chalk.red(`bot#loadEvents >> ${error.stack}`));
+      console.error(`bot#loadEvents >> ${error.stack}`);
     }
   }
 
@@ -56,11 +55,11 @@ class Bot extends Client {
         this.commands.set(command.name, command);
       }
 
-      console.info(`${chalk.cyanBright('[Bot]')} ${files.length} commands loaded`);
+      console.info(`[Bot] ${files.length} commands loaded`);
 
       return this.commands;
     } catch (error) {
-      console.error(chalk.red(`bot#loadCommands >> ${error.stack}`));
+      console.error(`bot#loadCommands >> ${error.stack}`);
     }
   }
 
@@ -85,14 +84,10 @@ class Bot extends Client {
       });
 
       this.docs = await loadDocs();
-      console.info(
-        `${chalk.cyanBright('[Bot]')} ${[...this.docs.keys()].length} docs loaded`
-      );
+      console.info(`[Bot] ${[...this.docs.keys()].length} docs loaded`);
 
       this.examples = await loadExamples();
-      console.info(
-        `${chalk.cyanBright('[Bot]')} ${[...this.examples.keys()].length} examples loaded`
-      );
+      console.info(`[Bot] ${[...this.examples.keys()].length} examples loaded`);
     }
   }
 
@@ -115,9 +110,9 @@ class Bot extends Client {
         body: JSON.stringify(this.commands.map(validateCommand)),
       });
 
-      console.info(`${chalk.cyanBright('[Bot]')} loaded interactions`);
+      console.info(`[Bot] loaded interactions`);
     } catch (error) {
-      console.error(chalk.red(`bot#loadInteractions >> ${error.stack}`));
+      console.error(`bot#loadInteractions >> ${error.stack}`);
     }
   }
 
@@ -143,7 +138,7 @@ class Bot extends Client {
       };
       await syncThree();
     } catch (error) {
-      console.error(chalk.red(`bot#start >> ${error.message}`));
+      console.error(`bot#start >> ${error.message}`);
     }
   }
 }

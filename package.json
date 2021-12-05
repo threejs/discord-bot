@@ -9,22 +9,22 @@
   "main": "src/config.js",
   "private": true,
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "jest": "27.2.1",
-    "nodemon": "2.0.13",
-    "prettier": "^2.4.1",
+    "eslint": "^8.4.0",
+    "jest": "^27.4.3",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1",
     "rimraf": "^3.0.2"
   },
   "dependencies": {
     "@swc/cli": "^0.1.52",
     "@swc/core": "^1.2.118",
     "@swc/jest": "^0.2.11",
-    "chalk": "4.1.2",
-    "discord.js": "^13.1.0",
+    "chalk": "^4.1.2",
+    "discord.js": "^13.3.1",
     "dompurify": "^2.3.3",
-    "dotenv": "10.0.0",
-    "fetch-h2": "^3.0.0",
-    "jsdom": "^17.0.0"
+    "dotenv": "^10.0.0",
+    "fetch-h2": "^3.0.1",
+    "jsdom": "^19.0.0"
   },
   "scripts": {
     "dev": "nodemon --exec npm run start --ignore build",

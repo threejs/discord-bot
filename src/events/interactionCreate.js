@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { sanitize, validateMessage, registerComponents } from 'utils/discord';
+import { sanitize, validateMessage, registerComponents } from '../utils/discord';
 
 /**
  * Handles interaction events.

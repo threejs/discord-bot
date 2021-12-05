@@ -2,8 +2,8 @@ import chalk from 'chalk';
 import { fetch } from 'fetch-h2';
 import { JSDOM } from 'jsdom';
 import { Collection } from 'discord.js';
-import { markdown } from 'utils/discord';
-import { THREE } from 'constants';
+import { markdown } from '../utils/discord';
+import { THREE } from '../constants';
 
 /**
  * Fetches the current stable three.js revision.

@@ -1,5 +1,5 @@
-import Bot from 'bot';
-import { THREE } from 'constants';
+import Bot from '../bot';
+import { THREE } from '../constants';
 
 let client;
 let test;

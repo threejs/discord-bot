@@ -3,10 +3,10 @@ import { fetch } from 'fetch-h2';
 import { Client, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import { getRevision, loadDocs, loadExamples } from 'utils/three';
-import { validateCommand } from 'utils/discord';
-import { CLIENT_INTENTS } from 'constants';
-import config from 'config';
+import { getRevision, loadDocs, loadExamples } from '../utils/three';
+import { validateCommand } from '../utils/discord';
+import { CLIENT_INTENTS } from '../constants';
+import config from '../config';
 
 /**
  * An extended `Client` to support slash-command interactions and events.

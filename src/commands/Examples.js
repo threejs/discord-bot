@@ -1,7 +1,7 @@
 import chalk from 'chalk';
-import { search } from 'utils/three';
-import { formatPages } from 'utils/discord';
-import { THREE } from 'constants';
+import { search } from '../utils/three';
+import { formatPages } from '../utils/discord';
+import { THREE } from '../constants';
 
 const Examples = {
   name: 'examples',

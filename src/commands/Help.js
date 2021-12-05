@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { formatPages } from 'utils/discord';
+import { formatPages } from '../utils/discord';
 
 const Help = {
   name: 'help',

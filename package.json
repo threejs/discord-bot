@@ -9,6 +9,7 @@
   "main": "src/config.js",
   "private": true,
   "devDependencies": {
+    "@types/jest": "^27.0.3",
     "eslint": "^8.4.0",
     "jest": "^27.4.3",
     "nodemon": "^2.0.15",

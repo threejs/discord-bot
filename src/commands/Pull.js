@@ -17,13 +17,14 @@ const Pull = {
   /**
    *
    * @param {{
-   *  options: {number: number},
+   *  options: string[],
    *  msg:import("discord.js").Message,
    *  interaction: import("discord.js").CommandInteraction
    * }} param0
    */
   async execute({ options, interaction, msg }) {
     if (interaction) interaction.deferReply();
+    if (!options.length) return;
 
     const pull = await getPull(options[0]).catch(e => e);
 

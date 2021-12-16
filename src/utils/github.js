@@ -13,7 +13,7 @@ const ctx = context({
 const cache = new Map();
 
 /**
- * @param {number} number Pull number
+ * @param {number|string} number Pull number
  * @returns {Promise<APIResponse>}
  */
 export async function getPull(number) {
@@ -53,8 +53,11 @@ export async function getPull(number) {
  */
 export function validateLinks(str) {
   return str
-    .replaceAll(/\s#(\d+)\s/g, ' [#$1](https://github.com/mrdoob/three.js/issues/$1) ')
-    .replaceAll(/\s(.+\/.+)#(\d+)\s/gi, ' [$1#$2](https://github.com/$1/issues/$2) ');
+    .replaceAll(/\s#(\d+)\s?/gi, ' [#$1](https://github.com/mrdoob/three.js/issues/$1) ')
+    .replaceAll(
+      /\s(\w(?:\w|\d)+\/.+)#(\d+)\s/gi,
+      ' [$1#$2](https://github.com/$1/issues/$2) '
+    );
 }
 
 /**

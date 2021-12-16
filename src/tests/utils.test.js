@@ -6,8 +6,9 @@ import {
   formatPages,
 } from '../utils/discord';
 import { loadDocs, loadExamples, getRevision, search } from '../utils/three';
-import { MESSAGE_LIMITS } from '../constants';
+import { MESSAGE_LIMITS, PR_EMOJIS } from '../constants';
 import config from '../config';
+import { getPull, resolveEmoji, validateLinks } from '../utils/github';
 
 describe('utils/discord', () => {
   it('sanitizes Discord mentions', () => {
@@ -157,5 +158,28 @@ describe('utils/three', () => {
     const [output] = search(examples, 'webgl animation keyframes');
 
     expect(output.title.includes('webgl animation keyframes')).toBe(true);
+  });
+});
+
+describe('utils/github', () => {
+  // See https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls#issues-and-pull-requests
+  it('Transforms Autolinked references for GH issues and PRs', () => {
+    const output = validateLinks('Demo text issues/issues.js#26 \n\n Text #56');
+    expect(output).toBe(
+      'Demo text [issues/issues.js#26](https://github.com/issues/issues.js/issues/26) \n\n Text [#56](https://github.com/mrdoob/three.js/issues/56) '
+    );
+  });
+
+  it("Resolves the emoji for the PR's state", () => {
+    // @ts-ignore
+    const output = resolveEmoji({ state: 'closed', merged: true });
+    expect(output).toBe(PR_EMOJIS.MERGED);
+  });
+
+  it('fetch a PR', async () => {
+    const pr = await getPull(23029)
+      .then(r => r)
+      .catch(e => e);
+    expect(pr).not.toBe(false);
   });
 });

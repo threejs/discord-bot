@@ -99,3 +99,22 @@ export const COMMAND_OPTION_TYPES = {
   CHANNEL: 7,
   ROLE: 8,
 };
+
+/**
+ * Time constants
+ */
+
+export const time = {
+  FIVE_MINUTES: 300000,
+};
+
+/**
+ * PR Emojis
+ */
+
+export const PR_EMOJIS = {
+  CLOSED: '<:pr_closed:920634455054483507>',
+  DRAFT: '<:pr_draft:920636227424768020>',
+  MERGED: '<:pr_merged:920634455713017868>',
+  OPEN: '<:pr_open:920634457613033562>',
+};

@@ -12,12 +12,12 @@ const MessageEvent = {
 
       const input = sanitize(msg.content);
 
-      const options = input.substring(config.prefix.length).split(' ');
-      const name = options.shift().toLowerCase();
+      const options = input?.substring(config.prefix.length).split(' ');
+      const name = options?.shift()?.toLowerCase();
       const command = client.commands.get(name);
       if (!command) return;
 
-      const output = await command.execute({ ...client, options });
+      const output = await command.execute({ ...client, options, msg });
       if (!output) return;
 
       const data = validateMessage(output);

@@ -17,6 +17,7 @@ const InteractionEvent = {
 
           const output = await command.execute({
             ...client,
+            interaction,
             options: options?.data?.map(({ value }) => sanitize(value)),
           });
           if (!output) return;

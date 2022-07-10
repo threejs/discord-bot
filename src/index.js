@@ -147,22 +147,16 @@ function formatData(output, options = {}, page = 0) {
   // Format message string
   if (typeof output === 'string') return { content: output }
 
-  // Format items into navigable pages of 10
+  // Format message entries into navigable pages of 10
   if (output.entries?.length) {
-    const pages = []
-
-    output.entries.forEach((entry, index) => {
-      const pageIndex = Math.trunc(index / 10)
-      const line = `\n• ${entry}`
-
-      if (pages[pageIndex]) pages[pageIndex] += line
-      else pages[pageIndex] = `${output.description ?? ''}${line}`
-    })
+    const pageLength = Math.ceil(output.entries.length / 10)
+    const pageIndex = page * 10
+    output.entries = output.entries.slice(pageIndex, pageIndex + 10)
 
     Object.assign(output, {
-      description: pages[page],
-      footer: { text: `Page ${page + 1} of ${pages.length}` },
-      components: pages.length > 1 && [
+      description: output.entries.reduce((acc, entry) => `${acc}\n• ${entry}`, output.description ?? ''),
+      footer: { text: `Page ${page + 1} of ${pageLength}` },
+      components: pageLength > 1 && [
         {
           type: 1,
           components: [
@@ -176,7 +170,7 @@ function formatData(output, options = {}, page = 0) {
             {
               type: 2,
               style: 2,
-              custom_id: `1${stringify({ ...options, page: Math.max(page - 1, 0) })}`,
+              custom_id: `1${stringify({ ...options, page: page - 1 })}`,
               disabled: page === 0,
               label: '← Back',
             },
@@ -184,14 +178,14 @@ function formatData(output, options = {}, page = 0) {
               type: 2,
               style: 2,
               custom_id: `2${stringify({ ...options, page: page + 1 })}`,
-              disabled: page === pages.length - 1,
+              disabled: page === pageLength - 1,
               label: 'Next →',
             },
             {
               type: 2,
               style: 2,
-              custom_id: `3${stringify({ ...options, page: pages.length - 1 })}`,
-              disabled: page === pages.length - 1,
+              custom_id: `3${stringify({ ...options, page: pageLength - 1 })}`,
+              disabled: page === pageLength - 1,
               label: '>>',
             },
           ],

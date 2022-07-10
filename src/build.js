@@ -3,10 +3,12 @@ import { fetch } from 'undici'
 import { JSDOM } from 'jsdom'
 import fs from 'fs'
 import path from 'path'
-import { commands } from './index.js'
+import { commands, getRevision } from './index.js'
 
+// Sync node env
 config()
 
+// Update command meta
 const response = await fetch(
   `https://discord.com/api/v8/applications/${process.env.APPLICATION_ID}/guilds/${process.env.GUILD}/commands`,
   {
@@ -18,9 +20,12 @@ const response = await fetch(
     body: JSON.stringify(commands),
   },
 )
-
 if (!response.ok) console.error(JSON.stringify(await response.json()))
 
+// Fetch revision
+const revision = await getRevision()
+
+// Fetch docs
 const DOCS_PATH = 'http://localhost:8080/docs' ?? 'https://threejs.org/docs'
 const DOCS_PROPS_REGEX = /^\[(property|method):[^\s]+\s([^\]]+)\].*/gi
 
@@ -81,6 +86,7 @@ const docs = await Promise.all(
   }),
 )
 
+// Fetch examples
 const EXAMPLES_PATH = 'http://localhost:8080/examples' ?? 'https://threejs.org/examples'
 
 const examplesEntries = await fetch(`${EXAMPLES_PATH}/files.json`).then((res) => res.json())
@@ -100,4 +106,5 @@ for (const key in examplesEntries) {
   }
 }
 
-fs.writeFileSync(path.join(process.cwd(), 'api/data.json'), JSON.stringify({ docs, examples }))
+// Write to disk
+fs.writeFileSync(path.join(process.cwd(), 'api/data.json'), JSON.stringify({ revision, docs, examples }))

@@ -1,12 +1,16 @@
 import { createRequire } from 'module'
 import { stringify, parse } from 'querystring'
+import { fetch } from 'undici'
 import { verifyKey, InteractionType, InteractionResponseType } from 'discord-interactions'
+
+// prettier-ignore
+try{var data = createRequire(import.meta.url)('../api/data.json')}catch(_){}
 
 /**
  * Fuzzy searches three.js source for a query.
  */
 function search(source, query) {
-  const target = typeof source === 'string' ? createRequire(import.meta.url)('../api/data.json')[source] : source
+  const target = typeof source === 'string' ? data[source] : source
 
   // Early return with exact match if found
   const exactResult = target.find(({ name }) =>
@@ -140,10 +144,11 @@ export const commands = [
  * Formats a command response into message data.
  */
 function formatData(output, options = {}, page = 0) {
+  // Format message string
   if (typeof output === 'string') return { content: output }
 
+  // Format items into navigable pages of 10
   if (output.entries?.length) {
-    // Format items into pages of 10
     const pages = []
 
     output.entries.forEach((entry, index) => {
@@ -154,7 +159,6 @@ function formatData(output, options = {}, page = 0) {
       else pages[pageIndex] = `${output.description ?? ''}${line}`
     })
 
-    // Format message buttons with pages
     Object.assign(output, {
       description: pages[page],
       footer: { text: `Page ${page + 1} of ${pages.length}` },
@@ -206,7 +210,19 @@ function formatData(output, options = {}, page = 0) {
   }
 }
 
+/**
+ * Gets the latest three.js revision.
+ */
+export async function getRevision() {
+  const response = await fetch('https://raw.githubusercontent.com/mrdoob/three.js/master/src/constants.js')
+  if (!response.ok) throw new Error(response.statusText)
+
+  const constants = await response.text()
+  return constants.match(/(?!REVISION[^\d]+)(\d+)/)[0]
+}
+
 export default async (request, response) => {
+  // Validate request signature
   const verified = verifyKey(
     JSON.stringify(request.body),
     request.headers['x-signature-ed25519'],
@@ -215,6 +231,11 @@ export default async (request, response) => {
   )
   if (!verified) return response.status(401).end()
 
+  // Update in background on new release
+  const revision = await getRevision()
+  if (revision !== data.revision) await fetch(process.env.VERCEL_DEPLOY_WEBHOOK, { method: 'POST' })
+
+  // Handle interactions
   switch (request.body.type) {
     case InteractionType.PING:
       return response.send({ type: InteractionResponseType.PONG })

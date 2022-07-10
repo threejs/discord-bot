@@ -1,8 +1,8 @@
 .DS_Store
 node_modules
-build
+api/data.json
+.vercel
 .env
-*.log
 
 # Editor directories and files
 .idea

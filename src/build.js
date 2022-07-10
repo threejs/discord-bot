@@ -9,7 +9,7 @@ import { commands, getRevision } from './index.js'
 config()
 
 // Update command meta
-const response = await fetch(
+await fetch(
   `https://discord.com/api/v8/applications/${process.env.APPLICATION_ID}/guilds/${process.env.GUILD}/commands`,
   {
     method: 'PUT',
@@ -19,8 +19,7 @@ const response = await fetch(
     },
     body: JSON.stringify(commands),
   },
-)
-if (!response.ok) console.error(JSON.stringify(await response.json()))
+).then(async (res) => !res.ok && console.error(JSON.stringify(await res.json())))
 
 // Fetch revision
 const revision = await getRevision()

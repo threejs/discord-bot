@@ -202,7 +202,11 @@ export default async (request, response) => {
 
   // Update in background on new release
   const revision = await getRevision()
-  if (revision !== data.revision) await fetch(process.env.VERCEL_DEPLOY_WEBHOOK, { method: 'POST' })
+  if (revision !== data.revision) {
+    await fetch(process.env.VERCEL_DEPLOY_WEBHOOK, { method: 'POST' }).then(
+      async (res) => !res.ok && console.error(JSON.stringify(await res.json())),
+    )
+  }
 
   // Handle interactions
   switch (request.body.type) {

@@ -74,12 +74,12 @@ const docs = await Promise.all(
       if (!DOCS_PROPS_REGEX.test(element.textContent)) continue
 
       const title = element.textContent.replace(/\n.*/g, '')
-      const name = title.replace(DOCS_PROPS_REGEX, '$2')
+      const propertyName = title.replace(DOCS_PROPS_REGEX, '$2')
       const type = title.startsWith('[property') ? 'property' : 'method'
       const description = element.nextElementSibling?.tagName === 'P' ? element.nextElementSibling.innerHTML : ''
-      const url = `${DOCS_PATH}/#${endpoint}.${name}`
+      const url = `${DOCS_PATH}/#${endpoint}.${propertyName}`
 
-      properties.push(transform({ name, type, title, description, url }))
+      properties.push(transform({ name: `${name}.${propertyName}`, type, title, description, url }))
     }
 
     return transform({ url, name, title, description, properties })

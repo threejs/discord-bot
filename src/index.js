@@ -10,24 +10,25 @@ try{var data = createRequire(import.meta.url)('../api/data.json')}catch(_){}
  * Fuzzy searches three.js source for a query.
  */
 function search(source, query) {
-  const target = typeof source === 'string' ? data[source] : source
+  // Separate property/method from docs query
+  const hasProperty = source === 'docs' && /\.|#/.test(query)
+  const target = hasProperty ? query.split(/\.|#/)[0] : query
 
-  // Early return with exact match if found
-  const exactResult = target.find(({ name }) =>
+  if (typeof source === 'string') source = data[source]
+
+  // Search for exact result and recursive search for properties
+  const exactResult = source.find(({ name }) =>
     name.includes('_')
-      ? name.toLowerCase() === query.replace(/\s/g, '_').toLowerCase()
-      : name.toLowerCase() === query.toLowerCase(),
+      ? name.toLowerCase() === target.replace(/\s/g, '_').toLowerCase()
+      : name.toLowerCase() === target.toLowerCase(),
   )
-  if (exactResult) return [exactResult]
+  if (exactResult) return hasProperty ? search(exactResult.properties, query) : [exactResult]
 
   // Fuzzy search for related matches
-  const fuzzySearch = new RegExp(`.*${query.split('').join('.*')}.*`, 'i')
+  const fuzzySearch = new RegExp(`.*${target.split('').join('.*')}.*`, 'i')
+  const results = source.filter((entry) => fuzzySearch.test(entry.name)).sort((a, b) => a.name.localeCompare(b.name))
 
-  const results = []
-  for (const entry of target) if (fuzzySearch.test(entry.name)) results.push(entry)
-
-  // Return alphabetically sorted matches
-  return results.sort()
+  return results
 }
 
 export const commands = [
@@ -41,57 +42,30 @@ export const commands = [
         type: 3,
         max_length: 80,
         required: true,
+        autocomplete: true,
       },
     ],
     run({ query }) {
-      // Separate property/method from base class
-      const [object, property] = query.split(/\.|#/)
-
       // Fuzzy search for matching docs
-      const results = search('docs', object)
+      const results = search('docs', query)
 
-      // Handle no matches
-      if (!results.length) {
-        return {
-          title: `Docs for "${query}"`,
-          description: `No documentation was found for \`${query}\`.`,
-        }
-      }
-
-      // Handle single match
-      if (results.length === 1) {
-        // Early return if no properties specified
-        const result = results[0]
-        if (!property) return result
-
-        // Fuzzily search result for property
-        const properties = search(result.properties, property)
-
-        // Handle unknown property
-        if (!properties.length) {
-          // Otherwise, fallback to error
+      switch (results.length) {
+        // Handle no matches
+        case 0:
           return {
             title: `Docs for "${query}"`,
-            description: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).`,
+            description: `No documentation was found for \`${query}\`.`,
           }
-        }
-
-        // Handle matching property
-        if (properties.length === 1) return properties[0]
-
-        // Handle multiple matching properties
-        return {
-          title: `Docs for "${query}"`,
-          description: `\`${property}\` is not a known method or property of [${result.name}](${result.url}).\n\nDid you mean:`,
-          entries: properties.map(({ title, url }) => `**[${title}](${url})**`),
-        }
-      }
-
-      // Handle multiple matches
-      return {
-        title: `Docs for "${query}"`,
-        description: `No documentation was found for \`${query}\`.\n\nRelated docs:`,
-        entries: results.map(({ name, url }) => `**[${name}](${url})**`),
+        // Handle single match
+        case 1:
+          return results[0]
+        // Handle multiple matches
+        default:
+          return {
+            title: `Docs for "${query}"`,
+            description: `No documentation was found for \`${query}\`.\n\nRelated docs:`,
+            entries: results.map(({ name, url }) => `**[${name}](${url})**`),
+          }
       }
     },
   },
@@ -105,28 +79,30 @@ export const commands = [
         type: 3,
         max_length: 80,
         required: true,
+        autocomplete: true,
       },
     ],
     run({ query }) {
       // Fuzzy search for matching examples
       const results = search('examples', query)
 
-      // Handle no matches
-      if (!results.length) {
-        return {
-          title: `Examples for "${query}"`,
-          description: `No examples were found for \`${query}\`.`,
-        }
-      }
-
-      // Handle single match
-      if (results.length === 1) return results[0]
-
-      // Handle multiple matches
-      return {
-        title: `Examples for "${query}"`,
-        description: `No example was found for \`${query}\`.\n\nRelated examples:`,
-        entries: results.map(({ title, url }) => `**[${title}](${url})**`),
+      switch (results.length) {
+        // Handle no matches
+        case 0:
+          return {
+            title: `Examples for "${query}"`,
+            description: `No examples were found for \`${query}\`.`,
+          }
+        // Handle single match
+        case 1:
+          return results[0]
+        // Handle multiple matches
+        default:
+          return {
+            title: `Examples for "${query}"`,
+            description: `No example was found for \`${query}\`.\n\nRelated examples:`,
+            entries: results.map(({ title, url }) => `**[${title}](${url})**`),
+          }
       }
     },
   },
@@ -252,6 +228,16 @@ export default async (request, response) => {
       const data = formatData(output, options, Number(page))
 
       return response.send({ type: InteractionResponseType.UPDATE_MESSAGE, data })
+    }
+    case InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE: {
+      const command = commands.find(({ name }) => name === request.body.data.name)
+      if (!command) return response.status(400).send({ error: 'Unknown command' })
+
+      const query = request.body.data.options.find(({ name }) => name === 'query')
+      const results = search(request.body.data.name, query.value)
+      const data = { choices: results.slice(0, 10).map(({ name }) => ({ name, value: name })) }
+
+      return response.send({ type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT, data })
     }
     default:
       return response.status(400).send({ error: 'Unknown interaction' })

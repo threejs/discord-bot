@@ -9,24 +9,23 @@ try{var data = createRequire(import.meta.url)('../api/data.json')}catch(_){}
 /**
  * Fuzzy searches three.js source for a query.
  */
-function search(source, query) {
-  // Separate property/method from docs query
-  const hasProperty = source === 'docs' && /\.|#/.test(query)
-  const target = hasProperty ? query.split(/\.|#/)[0] : query
-
-  if (typeof source === 'string') source = data[source]
+function search(type, query) {
+  // Filter to properties on prop/method delimiter
+  if (type === 'docs' && /\.|#/.test(query)) type = 'properties'
 
   // Search for exact result and recursive search for properties
-  const exactResult = source.find(({ name }) =>
+  const exactResult = data[type].find(({ name }) =>
     name.includes('_')
-      ? name.toLowerCase() === target.replace(/\s/g, '_').toLowerCase()
-      : name.toLowerCase() === target.toLowerCase(),
+      ? name.toLowerCase() === query.replace(/\s/g, '_').toLowerCase()
+      : name.toLowerCase() === query.toLowerCase(),
   )
-  if (exactResult) return hasProperty ? search(exactResult.properties, query) : [exactResult]
+  if (exactResult) return [exactResult]
 
   // Fuzzy search for related matches
-  const fuzzySearch = new RegExp(`.*${target.split('').join('.*')}.*`, 'i')
-  const results = source.filter((entry) => fuzzySearch.test(entry.name)).sort((a, b) => a.name.localeCompare(b.name))
+  const fuzzySearch = new RegExp(`.*${query.split('').join('.*')}.*`, 'i')
+  const results = data[type]
+    .filter((entry) => fuzzySearch.test(entry.name))
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   return results
 }

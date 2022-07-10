@@ -55,6 +55,7 @@ const docsEntries = await fetch(`${DOCS_PATH}/list.json`)
   .then((res) => res.json())
   .then((data) => flatten(data['en']))
 
+const properties = []
 const docs = await Promise.all(
   Object.entries(docsEntries).map(async ([name, endpoint]) => {
     const url = `${DOCS_PATH}/${endpoint}.html`
@@ -69,20 +70,18 @@ const docs = await Promise.all(
     const title = constructor?.nextElementSibling.textContent ?? name
     const description = document.querySelector('.desc')?.textContent ?? ''
 
-    const properties = []
     for (const element of document.querySelectorAll('h3')) {
       if (!DOCS_PROPS_REGEX.test(element.textContent)) continue
 
       const title = element.textContent.replace(/\n.*/g, '')
       const propertyName = title.replace(DOCS_PROPS_REGEX, '$2')
-      const type = title.startsWith('[property') ? 'property' : 'method'
       const description = element.nextElementSibling?.tagName === 'P' ? element.nextElementSibling.innerHTML : ''
       const url = `${DOCS_PATH}/#${endpoint}.${propertyName}`
 
-      properties.push(transform({ name: `${name}.${propertyName}`, type, title, description, url }))
+      properties.push(transform({ name: `${name}.${propertyName}`, title: `${name}.${title}`, description, url }))
     }
 
-    return transform({ url, name, title, description, properties })
+    return transform({ name, title, description, url })
   }),
 )
 
@@ -107,4 +106,4 @@ for (const key in examplesEntries) {
 }
 
 // Write to disk
-fs.writeFileSync(path.join(process.cwd(), 'api/data.json'), JSON.stringify({ revision, docs, examples }))
+fs.writeFileSync(path.join(process.cwd(), 'api/data.json'), JSON.stringify({ revision, docs, properties, examples }))

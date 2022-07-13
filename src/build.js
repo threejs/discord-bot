@@ -1,6 +1,7 @@
 import { config } from 'dotenv'
 import { fetch } from 'undici'
 import { JSDOM } from 'jsdom'
+import { compressSync } from 'lz4-napi'
 import fs from 'fs'
 import path from 'path'
 import { commands, getRevision } from './index.js'
@@ -39,7 +40,7 @@ const transform = ({ url, title, description, ...rest }) => ({
     // Move method return type to end
     .replace(/(\w+)(\:[^\(]+)(\([^\)]+\))/, '$1$3$2'),
   description: description
-    .trim()
+    ?.trim()
     // Trim whitespace
     .replace(/(\<br\>)+/g, ' ')
     .replace(/\s+/g, ' ')
@@ -67,14 +68,14 @@ const docs = await Promise.all(
     // Parse constructor meta
     const constructor = elements.find((node) => node.outerHTML.includes('Constructor'))
     const title = constructor?.nextElementSibling.textContent ?? name
-    const description = document.querySelector('.desc')?.textContent ?? ''
+    const description = document.querySelector('.desc')?.textContent
 
     for (const element of document.querySelectorAll('h3')) {
       if (!DOCS_PROPS_REGEX.test(element.textContent)) continue
 
       const title = element.textContent.replace(/\n.*/g, '')
       const propertyName = title.replace(DOCS_PROPS_REGEX, '$2')
-      const description = element.nextElementSibling?.tagName === 'P' ? element.nextElementSibling.innerHTML : ''
+      const description = element.nextElementSibling?.tagName === 'P' ? element.nextElementSibling.innerHTML : undefined
       const url = `${DOCS_PATH}/#${endpoint}.${propertyName}`
 
       properties.push(transform({ name: `${name}.${propertyName}`, title: `${name}.${title}`, description, url }))
@@ -105,4 +106,7 @@ for (const key in examplesEntries) {
 }
 
 // Write to disk
-fs.writeFileSync(path.join(process.cwd(), 'api/data.json'), JSON.stringify({ revision, docs, properties, examples }))
+fs.writeFileSync(
+  path.join(process.cwd(), 'api/data.lz4'),
+  compressSync(JSON.stringify({ revision, docs, properties, examples })),
+)

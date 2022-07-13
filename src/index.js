@@ -1,10 +1,11 @@
-import { createRequire } from 'module'
-import { stringify, parse } from 'querystring'
+import { readFileSync } from 'fs'
+import { resolve } from 'path'
+import { uncompressSync } from 'lz4-napi'
 import { fetch } from 'undici'
 import { verifyKey, InteractionType, InteractionResponseType } from 'discord-interactions'
 
 // prettier-ignore
-try{var data = createRequire(import.meta.url)('../api/data.json')}catch(_){}
+try{var data=JSON.parse(uncompressSync(readFileSync(resolve(process.cwd(),'api/data.lz4'))))}catch(_){}
 
 /**
  * Fuzzy searches three.js source for a query.
@@ -138,28 +139,28 @@ function formatData(output, options = {}, page = 0) {
             {
               type: 2,
               style: 2,
-              custom_id: `0${stringify({ ...options, page: 0 })}`,
+              custom_id: `0${new URLSearchParams({ ...options, page: 0 })}`,
               disabled: page === 0,
               label: '<<',
             },
             {
               type: 2,
               style: 2,
-              custom_id: `1${stringify({ ...options, page: page - 1 })}`,
+              custom_id: `1${new URLSearchParams({ ...options, page: page - 1 })}`,
               disabled: page === 0,
               label: '← Back',
             },
             {
               type: 2,
               style: 2,
-              custom_id: `2${stringify({ ...options, page: page + 1 })}`,
+              custom_id: `2${new URLSearchParams({ ...options, page: page + 1 })}`,
               disabled: page === pageLength - 1,
               label: 'Next →',
             },
             {
               type: 2,
               style: 2,
-              custom_id: `3${stringify({ ...options, page: pageLength - 1 })}`,
+              custom_id: `3${new URLSearchParams({ ...options, page: pageLength - 1 })}`,
               disabled: page === pageLength - 1,
               label: '>>',
             },
@@ -226,7 +227,7 @@ export default async (request, response) => {
       const command = commands.find(({ name }) => name === request.body.message.interaction.name)
       if (!command) return response.status(400).send({ error: 'Unknown command' })
 
-      const { page, ...options } = parse(request.body.data.custom_id.substring(1))
+      const { page, ...options } = Object.fromEntries(new URLSearchParams(request.body.data.custom_id.substring(1)))
       const output = command.run(options)
       const data = formatData(output, options, Number(page))
 

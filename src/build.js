@@ -26,7 +26,7 @@ await fetch(
 const revision = await getRevision()
 
 // Fetch docs
-const DOCS_PATH = 'http://localhost:8080/docs' ?? 'https://threejs.org/docs'
+const DOCS_PATH = 'https://threejs.org/docs'
 const DOCS_PROPS_REGEX = /^\[(property|method):[^\s]+\s([^\]]+)\].*/gi
 
 const flatten = (o) =>

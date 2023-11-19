@@ -86,7 +86,7 @@ const docs = await Promise.all(
 )
 
 // Fetch examples
-const EXAMPLES_PATH = 'http://localhost:8080/examples' ?? 'https://threejs.org/examples'
+const EXAMPLES_PATH = 'https://threejs.org/examples'
 
 const examplesEntries = await fetch(`${EXAMPLES_PATH}/files.json`).then((res) => res.json())
 const examples = []

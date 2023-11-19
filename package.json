@@ -1,48 +1,10 @@
 {
-  "name": "three-bot",
-  "version": "0.1.0",
-  "homepage": "https://github.com/threejs/discord-bot",
-  "description": "Discord bot for the three.js Discord server.",
-  "repository": "https://github.com/threejs/discord-bot",
-  "author": "Cody Bennett <hi@codyb.co>",
-  "license": "MIT",
-  "main": "src/config.js",
-  "private": true,
-  "devDependencies": {
-    "eslint": "^8.4.0",
-    "jest": "^27.4.3",
-    "nodemon": "^2.0.15",
-    "prettier": "^2.5.1",
-    "rimraf": "^3.0.2"
-  },
+  "type": "module",
   "dependencies": {
-    "@swc/cli": "^0.1.52",
-    "@swc/core": "^1.2.118",
-    "@swc/jest": "^0.2.11",
-    "discord.js": "^13.3.1",
-    "dompurify": "^2.3.3",
-    "dotenv": "^10.0.0",
-    "fetch-h2": "^3.0.1",
-    "jsdom": "^19.0.0"
-  },
-  "scripts": {
-    "dev": "nodemon --exec npm run start --ignore build",
-    "start": "swc src -d build && node build",
-    "build": "rimraf build && swc src -d build",
-    "serve": "node build",
-    "test": "jest src --testTimeout=30000",
-    "test-watch": "jest --watchAll --verbose --testTimeout=30000",
-    "lint": "eslint src && prettier src --check",
-    "lint-fix": "eslint src --fix && prettier src --write src"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "transform": {
-      "^.+\\.js$": "@swc/jest"
-    }
-  },
-  "engines": {
-    "node": ">=16.6.0",
-    "npm": ">=7.0.0"
+    "discord-interactions": "^3.2.0",
+    "dotenv": "^16.0.1",
+    "jsdom": "^20.0.0",
+    "lz4-napi": "^2.0.3",
+    "undici": "^5.6.1"
   }
 }
